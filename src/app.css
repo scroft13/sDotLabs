@@ -1,0 +1,152 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  .h-108 {
+    height: 27rem;
+  }
+
+  .btn-primary {
+    @apply bg-primary text-white py-3 px-6 md:px-11 rounded shadow-button shadow-primary/30 hover:bg-primary/90;
+  }
+
+  .skeleton-animation {
+    animation: skeleton-animation 1s linear infinite;
+    background-size: 500%;
+    background-repeat: no-repeat;
+  }
+
+  @keyframes skeleton-animation {
+    to {
+      background-position: 0 0;
+    }
+    from {
+      background-position: 100% 0;
+    }
+  }
+
+  .skeleton-text-white:empty {
+    @apply align-text-bottom skeleton-animation text-transparent inline-block rounded-sm ml-1;
+    background-image: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0),
+      rgba(255, 255, 255, 0.1) 20%,
+      rgba(255, 255, 255, 0.25) 25%,
+      rgba(255, 255, 255, 0.1) 30%,
+      rgba(255, 255, 255, 0) 80%
+    );
+  }
+  .skeleton-block:empty {
+    @apply w-full h-full skeleton-animation rounded-sm;
+    background-image: linear-gradient(
+      90deg,
+      rgba(238, 238, 238, 1),
+      rgba(238, 238, 238, 0.9) 22%,
+      rgba(238, 238, 238, 0.3) 25%,
+      rgba(238, 238, 238, 0.9) 28%,
+      rgba(238, 238, 238, 1) 80%
+    );
+  }
+
+  .floating-options {
+    @apply absolute py-4 bg-white rounded-lg shadow-lg;
+    box-shadow: 0px 2px 6px rgba(10, 8, 58, 0.15);
+    z-index: 1;
+
+    &:before {
+      @apply absolute inset-x-0 -top-1 h-2.5 border-b border-gray-300;
+      content: '';
+      background: inherit;
+      z-index: 2;
+    }
+  }
+}
+
+.icon-dialog-bubble {
+  width: 70px;
+  height: 25px;
+  background-color: hsl(var(--secondary-color));
+  color: white;
+  padding-top: 3px;
+  border-radius: 3px;
+}
+
+.icon-dialog-bubble::before {
+  content: '';
+  position: absolute;
+  transform: rotate(180deg);
+  width: 0;
+  height: 0;
+  left: 37%;
+  border: 0.75rem solid transparent;
+  border-top: none;
+  top: 60%;
+  border-bottom-color: hsl(var(--secondary-color));
+}
+.selected-icon-dialog-bubble {
+  width: 70px;
+  height: 25px;
+  background-color: hsl(var(--primary-color));
+  color: white;
+  padding-top: 3px;
+  border-radius: 3px;
+}
+
+.selected-icon-dialog-bubble::before {
+  content: '';
+  position: absolute;
+  transform: rotate(180deg);
+  width: 0;
+  height: 0;
+  left: 37%;
+  border: 0.75rem solid transparent;
+  border-top: none;
+  top: 60%;
+  border-bottom-color: hsl(var(--primary-color));
+}
+
+input.slider[type='range'] {
+  -webkit-appearance: none;
+}
+
+input.slider[type='range']::-webkit-slider-runnable-track {
+  height: 3px;
+  background: currentColor;
+  border-radius: 3px;
+}
+input.slider[type='range']::-moz-range-track {
+  height: 3px;
+  background: currentColor;
+  border-radius: 3px;
+}
+
+input.slider[type='range']::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  border: 3px solid currentColor;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: white;
+  margin-top: -6px;
+}
+input.slider[type='range']::-moz-range-thumb {
+  /* -webkit-appearance: none; */
+  border: 3px solid currentColor;
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  background: white;
+  margin-top: -6px;
+}
+
+#slide::-webkit-scrollbar {
+  height: 0px !important;
+  display: none;
+}
+#slide {
+  overflow-x: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  scroll-behavior: smooth;
+}
