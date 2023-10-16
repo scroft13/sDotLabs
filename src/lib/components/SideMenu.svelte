@@ -44,7 +44,8 @@
           <XIcon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      SIDE MENU
+      <a href="#resume">Resume</a>
+      <a href="#contact">Contact</a>
     </TransitionChild>
   </Dialog>
 </TransitionRoot>
