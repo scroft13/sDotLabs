@@ -1,6 +1,11 @@
 <script lang="ts">
   // import Resume from '$lib/components/Resume.svelte';
   import SideMenu from '$lib/components/SideMenu.svelte';
+  import { AtSymbolIcon, PhoneIcon } from '@rgossiaux/svelte-heroicons/solid';
+  import Fa from 'svelte-fa';
+  import { faGithub } from '@fortawesome/free-brands-svg-icons';
+  import { faFacebook } from '@fortawesome/free-brands-svg-icons';
+
   // import { flip } from 'svelte/animate';
   // import { circIn } from 'svelte/easing';
 
@@ -37,7 +42,7 @@
     <a href="#contact" class="">Contact</a>
   </div>
 </div>
-<div>
+<div class="snap-both w-full">
   <div
     class="flex flex-col items-center justify-center h-[100vh] snap-center snap-proximity shrink-0"
   >
@@ -60,18 +65,40 @@
       </div>
     </div>
   </div>
-  <div
-    id="resume"
-    class="flex flex-col 2xl:flex-row w-full 2xl:justify-around shrink-0 min-h-[100vh]"
-  >
-    <div class="2xl:w-1/2 bg-orange-100 flex flex-grow">
+  <div id="resume" class="flex flex-col w-full 2xl:justify-around shrink-0 min-h-[100vh]">
+    <div class="mx-4 xl:mx-16 bg-orange-100 flex flex-grow">
       <iframe src="resume.pdf" title="S. Croft Resume" class="w-full flex-grow" marginheight="5" />
     </div>
-    <div class="2xl:w-1/2 flex items-center justify-center h-min flex-shrink my-10">
+    <div class=" flex items-center justify-center h-min flex-shrink my-10">
       <a href="resume.pdf" download="S_Croft_Resume">[PDF Download]</a>
     </div>
   </div>
-  <div id="contact" class="flex h-[100vh] snap-center w-full items-center justify-center shrink-0">
-    Contact
+  <div id="contact" class="flex h-[100vh] snap-center items-center justify-center shrink-0 ">
+    <div class="flex flex-row  gap-12 flex-wrap justify-evenly">
+      <a class="w-20" href="tel:+18023042113" title="(802)304-2113">
+        <PhoneIcon />
+      </a>
+      <a href="mailto:scroft@me.com" title="scroft@me.com" class="w-20">
+        <AtSymbolIcon />
+      </a>
+      <a
+        href="https://www.facebook.com/shaun.croft.12"
+        target="_blank"
+        title="Facebook Profile"
+        class="w-20"
+        rel="noreferrer"
+      >
+        <Fa icon={faFacebook} size="5x" />
+      </a>
+      <a
+        href="https://github.com/scroft13"
+        target="_blank"
+        title="github.com/scroft13"
+        class="w-20"
+        rel="noreferrer"
+      >
+        <Fa icon={faGithub} size="5x" />
+      </a>
+    </div>
   </div>
 </div>
