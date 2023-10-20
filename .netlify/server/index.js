@@ -1,5 +1,6 @@
-import { c as create_ssr_component, s as setContext, v as validate_component, m as missing_component, n as noop, a as safe_not_equal } from "./chunks/index.js";
+import { c as create_ssr_component, s as setContext, v as validate_component, m as missing_component } from "./chunks/index.js";
 import * as devalue from "devalue";
+import { w as writable, r as readable } from "./chunks/index2.js";
 import { parse, serialize } from "cookie";
 import * as set_cookie_parser from "set-cookie-parser";
 function afterUpdate() {
@@ -663,53 +664,6 @@ async function load_data({
   });
   const data = await node.shared.load.call(null, load_event);
   return data ? unwrap_promises(data) : null;
-}
-const subscriber_queue = [];
-function readable(value, start) {
-  return {
-    subscribe: writable(value, start).subscribe
-  };
-}
-function writable(value, start = noop) {
-  let stop;
-  const subscribers = /* @__PURE__ */ new Set();
-  function set(new_value) {
-    if (safe_not_equal(value, new_value)) {
-      value = new_value;
-      if (stop) {
-        const run_queue = !subscriber_queue.length;
-        for (const subscriber of subscribers) {
-          subscriber[1]();
-          subscriber_queue.push(subscriber, value);
-        }
-        if (run_queue) {
-          for (let i = 0; i < subscriber_queue.length; i += 2) {
-            subscriber_queue[i][0](subscriber_queue[i + 1]);
-          }
-          subscriber_queue.length = 0;
-        }
-      }
-    }
-  }
-  function update(fn) {
-    set(fn(value));
-  }
-  function subscribe(run, invalidate = noop) {
-    const subscriber = [run, invalidate];
-    subscribers.add(subscriber);
-    if (subscribers.size === 1) {
-      stop = start(set) || noop;
-    }
-    run(value);
-    return () => {
-      subscribers.delete(subscriber);
-      if (subscribers.size === 0) {
-        stop();
-        stop = null;
-      }
-    };
-  }
-  return { set, update, subscribe };
 }
 function hash(value) {
   let hash2 = 5381;
@@ -2130,7 +2084,7 @@ function set_paths(paths) {
   base = paths.base;
   assets = paths.assets || base;
 }
-const app_template = ({ head, body, assets: assets2, nonce }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<link rel="icon" href="' + assets2 + '/favicon.png" />\n		<meta name="viewport" content="width=device-width" />\n		' + head + "\n	</head>\n	<body>\n		<div>" + body + "</div>\n	</body>\n</html>\n";
+const app_template = ({ head, body, assets: assets2, nonce }) => '<!DOCTYPE html>\n<html lang="en">\n  <head>\n    <meta charset="utf-8" />\n    <link rel="icon" href="' + assets2 + '/favicon.png" />\n    <title>sDotLabs</title>\n    <meta name="viewport" content="width=device-width" />\n    ' + head + "\n  </head>\n  <body>\n    <div>" + body + "</div>\n  </body>\n</html>\n";
 const error_template = ({ status, message }) => '<!DOCTYPE html>\n<html lang="en">\n	<head>\n		<meta charset="utf-8" />\n		<title>' + message + `</title>
 
 		<style>

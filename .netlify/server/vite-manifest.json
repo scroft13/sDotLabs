@@ -4,7 +4,8 @@
     "src": ".svelte-kit/build/index.js",
     "isEntry": true,
     "imports": [
-      "_index.js"
+      "_index.js",
+      "_index2.js"
     ],
     "dynamicImports": [
       ".svelte-kit/build/hooks.js"
@@ -18,7 +19,7 @@
       "_index.js"
     ],
     "css": [
-      "_app/immutable/assets/_layout-3936962a.css"
+      "_app/immutable/assets/_layout-ed9a72b8.css"
     ]
   },
   "node_modules/@sveltejs/kit/src/runtime/components/error.svelte": {
@@ -34,11 +35,18 @@
     "src": "src/routes/+page.svelte",
     "isEntry": true,
     "imports": [
-      "_index.js"
+      "_index.js",
+      "_index2.js"
     ]
   },
   "_index.js": {
     "file": "chunks/index.js"
+  },
+  "_index2.js": {
+    "file": "chunks/index2.js",
+    "imports": [
+      "_index.js"
+    ]
   },
   ".svelte-kit/build/hooks.js": {
     "file": "chunks/hooks.js",
