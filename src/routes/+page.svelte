@@ -14,7 +14,13 @@
     'Father',
     '12th Man',
     'Code Monkey',
-    'Mariners Fan',
+    'Mariner',
+    'Whovian',
+    'Electrician',
+    'Wrench Turner',
+    'Gardner',
+    'Dog Trainer',
+    'Plumber',
   ];
 
   let imgSrc = '/profilePic.jpeg';
@@ -36,7 +42,7 @@
 <div
   class="fixed flex w-full items-center h-12  justify-center bg-white  bg-opacity-95 backdrop-blur-sm"
 >
-  <div class="fixed flex justify-between w-full max-w-lg px-4">
+  <div class="fixed flex justify-evenly w-full max-w-lg px-4">
     <a href="/" class="">Home </a>
     <a href="#resume" class="">Resume </a>
     <a href="#contact" class="">Contact</a>
@@ -51,7 +57,7 @@
       <h1>Hello, my name is Shaun Croft</h1>
       <div class="text-left flex w-full items-center justify-center self-start">
         I am a &nbsp;
-        <div class="px-3 flex border-b-2">
+        <div class="flex border-b-2 min-w-[175px] justify-center">
           <div class="whitespace-nowrap">
             {#each descriptorArray as descriptor, index (descriptor)}
               <p>
