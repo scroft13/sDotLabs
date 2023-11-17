@@ -10,6 +10,7 @@
   export let sideMenuIsOpen: boolean = false;
 </script>
 
+asdfasdf
 <TransitionRoot as="div" show={sideMenuIsOpen}>
   <Dialog as="div" class="fixed inset-0 z-40" on:close={() => (sideMenuIsOpen = false)}>
     <TransitionChild
