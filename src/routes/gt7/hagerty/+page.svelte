@@ -1,6 +1,7 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import { getJson, numberFormat2 } from '$lib/shared';
+  import { getJson } from '$lib/shared';
+  import CarCard from '$lib/components/CarCard.svelte';
 
   let hagertys: {
     dailyrace: [];
@@ -51,17 +52,7 @@
   Last Updated: {hagertys.updatetimestamp}
   <div class="flex mx-4 lg:mx-16 xl:mx-40 flex-wrap">
     {#each hagertys.legend.cars as car}
-      <div class="border flex flex-col items-center justify-center w-full lg:w-96">
-        <p>
-          {car.manufacturer}
-        </p>
-        <p>
-          {car.name}
-        </p>
-        <p>
-          {numberFormat2.format(car.credits).split('.')[0]}
-        </p>
-      </div>
+      <CarCard make={car.manufacturer} model={car.name} price={car.credits} id={car.carid} />
     {/each}
   </div>
 </div>

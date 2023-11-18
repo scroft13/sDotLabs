@@ -10,7 +10,6 @@
   export let sideMenuIsOpen: boolean = false;
 </script>
 
-asdfasdf
 <TransitionRoot as="div" show={sideMenuIsOpen}>
   <Dialog as="div" class="fixed inset-0 z-40" on:close={() => (sideMenuIsOpen = false)}>
     <TransitionChild
@@ -45,8 +44,11 @@ asdfasdf
           <XIcon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      <a href="#resume">Resume</a>
-      <a href="#contact">Contact</a>
+      <a href="/gt7">Main Page</a>
+      <a href="/gt7/hagerty">Hagerty Dealership</a>
+      <a href="/gt7/ucd">Used Car Dealership</a>
+      <a href="/gt7/brandCentral">Brand Central</a>
+      <a href="/gt7/allCars">All Cars</a>
     </TransitionChild>
   </Dialog>
 </TransitionRoot>
