@@ -1,7 +1,10 @@
 <script lang="ts">
+  // import SideMenu from '$lib/components/SideMenu.svelte';
   import '../app.css';
+  // let sideMenuIsOpen = true;
 </script>
 
+<!-- <SideMenu bind:sideMenuIsOpen /> -->
 <slot />
 
 <style>

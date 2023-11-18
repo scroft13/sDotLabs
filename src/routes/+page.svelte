@@ -1,13 +1,8 @@
 <script lang="ts">
-  // import Resume from '$lib/components/Resume.svelte';
-  import SideMenu from '$lib/components/SideMenu.svelte';
   import { AtSymbolIcon, PhoneIcon } from '@rgossiaux/svelte-heroicons/solid';
   import Fa from 'svelte-fa';
   import { faGithub } from '@fortawesome/free-brands-svg-icons';
   import { faFacebook } from '@fortawesome/free-brands-svg-icons';
-
-  // import { flip } from 'svelte/animate';
-  // import { circIn } from 'svelte/easing';
 
   let descriptorArray: string[] = [
     'Web Developer',
@@ -27,7 +22,6 @@
   let currentDescriptorIndex = 0;
 
   $: descriptorLength = descriptorArray.length;
-  let sideMenuIsOpen = false;
 
   setInterval(() => {
     if (currentDescriptorIndex < descriptorLength - 1) {
@@ -38,7 +32,7 @@
   }, 3000);
 </script>
 
-<SideMenu bind:sideMenuIsOpen />
+<!-- <SideMenu bind:sideMenuIsOpen /> -->
 <div
   class="fixed flex w-full items-center h-12  justify-center bg-white  bg-opacity-95 backdrop-blur-sm"
 >
@@ -46,6 +40,7 @@
     <a href="/" class="">Home </a>
     <a href="#resume" class="">Resume </a>
     <a href="#contact" class="">Contact</a>
+    <a href="/gt7" class="">Gran Turismo 7 Project</a>
   </div>
 </div>
 <div class="snap-both w-full">

@@ -21,6 +21,7 @@
 		"@tailwindcss/aspect-ratio": "^0.4.2",
 		"@tailwindcss/forms": "^0.5.6",
 		"@tailwindcss/typography": "^0.5.10",
+		"@types/netlify-identity-widget": "^1.9.6",
 		"@typescript-eslint/eslint-plugin": "^5.27.0",
 		"@typescript-eslint/parser": "^5.27.0",
 		"autoprefixer": "^10.4.12",
@@ -44,6 +45,10 @@
 	"dependencies": {
 		"@fortawesome/free-brands-svg-icons": "^6.4.2",
 		"@fortawesome/free-solid-svg-icons": "^6.4.2",
-		"pdfjs-dist": "^3.11.174"
+		"@types/d3": "^7.4.3",
+		"d3": "^7.8.5",
+		"netlify-identity-widget": "^1.9.2",
+		"pdfjs-dist": "^3.11.174",
+		"sweetalert2": "^11.10.0"
 	}
 }

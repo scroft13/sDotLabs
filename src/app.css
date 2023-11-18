@@ -150,3 +150,7 @@ input.slider[type='range']::-moz-range-thumb {
   scrollbar-width: none;
   scroll-behavior: smooth;
 }
+
+.main-margin {
+  @apply mx-4 lg:mx-16 xl:mx-40 mt-4 lg:mt-16 xl:mt-40;
+}
