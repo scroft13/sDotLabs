@@ -10,7 +10,7 @@
 <!-- class="border flex flex-col items-center justify-center w-full lg:w-96 bg-[url('/static/gt7/carImages{id}.jpeg')]" -->
 <!-- style="background-image: url('/gt7/carImages/{id}.jpeg')" -->
 <div
-  class="border flex flex-col items-center justify-center w-full lg:w-96 bg-blue-300 bg-cover bg-center"
+  class="border flex flex-col items-center justify-center w-full lg:w-96 outline-1 shadow-md  rounded-md"
 >
   <p>
     {make}
@@ -21,5 +21,5 @@
   <p>
     {numberFormat2.format(price).split('.')[0]}
   </p>
-  <img src="/gt7/carImages/{id}.jpeg" alt="car image" class="w-15 " />
+  <!-- <img src="/gt7/carImages/{id}.jpeg" alt="car image" class="w-15 " /> -->
 </div>

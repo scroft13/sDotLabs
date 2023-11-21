@@ -34,21 +34,23 @@
       leaveFrom="translate-x-0"
       leaveTo="translate-x-full"
     >
-      <div class="px-4 pt-5 pb-2 flex justify-end">
+      <div class="flex justify-end absolute top-0 right-0">
         <button
           type="button"
-          class="-m-2 p-2 rounded-md inline-flex items-center justify-center text-white"
+          class="p-2 rounded-md inline-flex items-center justify-center"
           on:click={() => (sideMenuIsOpen = false)}
         >
           <span class="sr-only">Close menu</span>
           <XIcon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
-      <a href="/gt7">Main Page</a>
-      <a href="/gt7/hagerty">Hagerty Dealership</a>
-      <a href="/gt7/ucd">Used Car Dealership</a>
-      <a href="/gt7/brandCentral">Brand Central</a>
-      <a href="/gt7/allCars">All Cars</a>
+      <div class="mt-4 mx-4 flex flex-col">
+        <a href="/gt7">Main Page</a>
+        <a href="/gt7/hagerty">Hagerty Dealership</a>
+        <a href="/gt7/ucd">Used Car Dealership</a>
+        <a href="/gt7/brandCentral">Brand Central</a>
+        <a href="/gt7/allCars">All Cars</a>
+      </div>
     </TransitionChild>
   </Dialog>
 </TransitionRoot>
