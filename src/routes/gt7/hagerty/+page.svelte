@@ -48,9 +48,18 @@
   });
 </script>
 
-<div class="main-padding">
-  Last Updated: {hagertys.updatetimestamp}
-  <div class="flex mx-4 lg:mx-16 xl:mx-40 flex-wrap">
+<div class="main-padding mx-4 lg:mx-16 xl:mx-40 ">
+  <p class="mb-4">
+    Last Updated: {new Date(hagertys.updatetimestamp).toLocaleDateString('en-us', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })}
+  </p>
+  <div class="flex flex-wrap gap-3">
     {#each hagertys.legend.cars as car}
       <CarCard make={car.manufacturer} model={car.name} price={car.credits} id={car.carid} />
     {/each}

@@ -40,7 +40,7 @@
     <a href="/" class="">Home </a>
     <a href="#resume" class="">Resume </a>
     <a href="#contact" class="">Contact</a>
-    <a href="/gt7" class="">Gran Turismo 7 Project</a>
+    <!-- <a href="/gt7" class="">Gran Turismo 7 Project</a> -->
   </div>
 </div>
 <div class="snap-both w-full">

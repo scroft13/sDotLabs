@@ -1,0 +1,9 @@
+{
+  "APIUrl": "https://www.sdotlabs.com/gt7/.netlify/identity",
+  "token": {
+    "allowedUrls": ["https://www.sdotlabs.com/", "localhost"],
+    "cookie": {
+      "secure": true
+    }
+  }
+}

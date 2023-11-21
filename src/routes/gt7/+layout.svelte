@@ -4,7 +4,9 @@
   let sideMenuIsOpen = false;
 </script>
 
-<div class="flex justify-end">
+<SideMenu bind:sideMenuIsOpen />
+
+<div class="w-full flex justify-end sticky">
   <button
     on:click={() => {
       sideMenuIsOpen = !sideMenuIsOpen;
@@ -13,5 +15,7 @@
     <HamburgerIcon />
   </button>
 </div>
-<SideMenu bind:sideMenuIsOpen />
-<slot />
+
+<div class="flex justify-center items-center flex-col">
+  <slot />
+</div>
