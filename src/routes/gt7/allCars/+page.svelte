@@ -13,10 +13,12 @@
   });
 </script>
 
-{#each allCars as car}
-  {#each makers as maker}
-    {#if car.Maker === maker.ID}
-      <CarCard make={maker.Name} model={car.ShortName} id={car.ID} />
-    {/if}
+<div class="flex flex-wrap gap-3 justify-evenly">
+  {#each allCars as car}
+    {#each makers as maker}
+      {#if car.Maker === maker.ID}
+        <CarCard make={maker.Name} model={car.ShortName} id={car.ID} />
+      {/if}
+    {/each}
   {/each}
-{/each}
+</div>

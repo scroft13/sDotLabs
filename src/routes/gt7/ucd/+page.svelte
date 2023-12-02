@@ -3,9 +3,11 @@
   import { getJson } from '$lib/shared';
   import CarCard from '$lib/components/CarCard.svelte';
 
-  let hagertys: {
+  let ucd: {
     dailyrace: [];
-    legend: {
+    legend: [];
+    updatetimestamp: string;
+    used: {
       cars: {
         carid: string;
         credits: number;
@@ -19,11 +21,11 @@
       }[];
       date: string;
     };
-    updatetimestamp: string;
-    used: [];
   } = {
     dailyrace: [],
-    legend: {
+    legend: [],
+    updatetimestamp: '',
+    used: {
       cars: [
         {
           carid: '1925',
@@ -39,17 +41,15 @@
       ],
       date: '',
     },
-    updatetimestamp: '',
-    used: [],
   };
   onMount(async () => {
-    hagertys = await getJson('https://ddm999.github.io/gt7info/data.json');
+    ucd = await getJson('https://ddm999.github.io/gt7info/data.json');
   });
 </script>
 
-<div class="main-padding mx-4 lg:mx-16 xl:mx-40 ">
+<div class="main-padding mx-4 lg:mx-16 xl:mx-40 mb-20">
   <p class="mb-4">
-    Last Updated: {new Date(hagertys.updatetimestamp).toLocaleDateString('en-us', {
+    Last Updated: {new Date(ucd.updatetimestamp).toLocaleDateString('en-us', {
       weekday: 'long',
       year: 'numeric',
       month: 'long',
@@ -59,7 +59,7 @@
     })}
   </p>
   <div class="flex flex-wrap gap-3 justify-evenly">
-    {#each hagertys.legend.cars as car}
+    {#each ucd.used.cars as car}
       <CarCard make={car.manufacturer} model={car.name} price={car.credits} id={car.carid} />
     {/each}
   </div>

@@ -1,6 +1,13 @@
 <script lang="ts">
+  import type { UserCar } from '$lib/db';
+  import { carWantedListStore } from '$lib/stores';
+
   // import SideMenu from '$lib/components/SideMenu.svelte';
   import '../app.css';
+  export let carList: UserCar[] = [];
+
+  carWantedListStore.subscribe((x) => (carList = x));
+  $: console.log(carList);
   // let sideMenuIsOpen = true;
 </script>
 
