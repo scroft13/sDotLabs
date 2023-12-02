@@ -4,21 +4,28 @@
   // import { redirectURL, user } from '../../store';
   // import { browser } from '$app/environment';
   import { onMount } from 'svelte';
-  import { supabase } from '$lib/db';
+  import db, { supabase, type UserCar } from '$lib/db';
   import type { User } from '@supabase/supabase-js';
+  import { carWantedListStore } from '$lib/stores';
+  import CarCard from '$lib/components/CarCard.svelte';
   let email: string = '';
   let password: string = '';
+  let carList: UserCar[] = [];
 
-  // onMount(() => {
-  //   netlifyIdentity.init();
-  //   console.log(netlifyIdentity);
-  // });
+  $: carWantedListStore.subscribe((x) => (carList = x));
   let user: User | null = null;
 
-  onMount(() => {
+  onMount(async () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
-      // user = session?.user ?? null;
-      console.log(session);
+      user = session?.user ?? null;
+      carWantedListStore.subscribe((x) => {
+        if (x === undefined) {
+          console.log('setting carlist to empty array');
+          carWantedListStore.update((xx) => {
+            return (xx = []);
+          });
+        }
+      });
     });
 
     const {
@@ -28,41 +35,11 @@
       user = currentUser ?? null;
     });
 
-    console.log(user);
     return () => {
       authListener?.unsubscribe();
     };
   });
 
-  // $: isLoggedIn = !!$user;
-  // $: username = $user !== null ? $user?.username : ' there!';
-  // $: netlifyIdentity.on('close', () => {
-  //   console.log('close now');
-  // });
-
-  // function handleUserAction(action: 'logout' | 'signup' | 'login') {
-  //   console.log($user);
-  //   // if (!browser) return; //ONLY CLIENT SIDE!!!!
-  //   if (action === 'login' || action === 'signup') {netlifyIdentity.init('')
-  //     netlifyIdentity.open(action);
-  //     netlifyIdentity.on('login', (u) => {
-  //       user?.login(u);
-  //       netlifyIdentity.close();
-  //       if ($redirectURL !== '') {
-  //         goto($redirectURL);
-  //         redirectURL.clearRedirectURL();
-  //       }
-  //     });
-  //   } else if (action === 'logout') {
-  //     goto('/');
-  //     user?.logout();
-  //     netlifyIdentity.logout();
-  //   }
-  //   netlifyIdentity.on('close', () => {
-  //     console.log('close now');
-  //   });
-  //   console.log($user);
-  // }
   function login() {
     supabase.auth
       .signInWithPassword({ email: email, password: password })
@@ -70,15 +47,8 @@
         user = session?.user ?? null;
       })
       .catch(({ data }) => console.log(data));
-    console.log(user);
-
-    // const {
-    //   data: { subscription: authListener },
-    // } = supabase.auth.onAuthStateChange((_, session) => {
-    //   const currentUser = session?.user;
-    //   user = currentUser ?? null;
-    // });
   }
+
   function signup() {
     supabase.auth.signUp({ email: email, password: password });
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -92,7 +62,7 @@
       user = currentUser ?? null;
     });
 
-    console.log(user);
+    db.wantedCarList.create();
     return () => {
       authListener?.unsubscribe();
     };
@@ -100,14 +70,17 @@
   function logout() {
     supabase.auth.signOut();
   }
-  $: console.log(email, password);
 </script>
 
 <div class="">
   {#if user?.email}
-    <a href="/gt7/userCars">Your Cars</a>
-
     <p>Hello {user.email}</p>
+    <a href="/gt7/userCars">Your Cars</a>
+    <div class="flex flex-wrap gap-3 justify-evenly">
+      {#each carList as car}
+        <CarCard make={car.make} model={car.model} price={car.price} id={car.id} />
+      {/each}
+    </div>
     <div>
       <button on:click={() => logout()}>Log Out</button>
     </div>

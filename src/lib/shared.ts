@@ -52,13 +52,7 @@ export async function getJson<T>(url: string): Promise<any> {
     method: 'GET',
     cache: 'no-cache',
   });
-  let thing: any;
-  //   thing = await response.body;
-  console.log(response);
-  //   const thinger: string = await response.json
-  //   console.log(JSON.parse(thinger));
   if (response.ok) {
-    // return await response.body;
     return await response.json();
   } else if (response.status === 417) {
     const serverError = await response.json();
