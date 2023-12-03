@@ -44,68 +44,22 @@ export default {
   signOut() {
     return supabase.auth.signOut();
   },
-  //   userCars: {
-  //     async all() {
-  //       const { data } = await supabase.from('cars').select('*').order('position');
-
-  //       return data;
-  //     },
-
-  //     async get(id: string) {
-  //       const { data } = await supabase
-  //         .from('cars')
-  //         .select('id, title, lists ( id, title, position, cards ( id, description, position ))')
-  //         .eq('id', id)
-  //         .order('position')
-  //         .order('position', { foreignTable: 'lists' })
-  //         .order('position', { foreignTable: 'lists.cards' })
-  //         .single();
-
-  //       return data;
-  //     },
-
-  //     async create(car: UserCar) {
-  //       const { data } = await supabase.from('cars').insert(car).select().maybeSingle();
-
-  //       return data;
-  //     },
-
-  //     async update(car: UserCar) {
-  //       const { data } = await supabase
-  //         .from('cars')
-  //         .update({ title: car.model })
-  //         .match({ id: car.id })
-  //         .select()
-  //         .maybeSingle();
-
-  //       return data;
-  //     },
-
-  //     async sort(car: UserCar) {
-  //       const { data } = await supabase.rpc('sort_board', {
-  //         board_id: car.id,
-  //         list_ids: car.model.map((list) => list.id),
-  //       });
-
-  //       return data;
-  //     },
-  //   },
-
-  ownedCarList: {
-    async all() {
-      const { data } = await supabase.from('ownedCarList').select();
-      console.log(data);
-      return data;
-    },
+  createUser: {
     async create() {
       const { data } = await supabase
-        .from('ownedCarList')
-        .insert({ user_id, carsOwned: [], id: user_id, createdAt: new Date(), carsWanted: [] })
+        .from('userInfo')
+        .insert({ user_id, wantedCarList: [], ownedCarList: [] })
         .select()
         .maybeSingle();
 
       return data;
     },
+  },
+  ownedCarList: {
+    // async all() {
+    //   const { data } = await supabase.from('ownedCarList').select();
+    //   return data;
+    // },
     async update(carList: UserCar[]) {
       user_id
         ? await supabase
@@ -118,20 +72,6 @@ export default {
     },
   },
   wantedCarList: {
-    async all() {
-      const { data } = await supabase.from('wantedCarList').select();
-      console.log(data);
-      return data;
-    },
-    async create() {
-      const { data } = await supabase
-        .from('wantedCarList')
-        .insert({ user_id, carsOwned: [], id: user_id, createdAt: new Date(), carsWanted: [] })
-        .select()
-        .maybeSingle();
-
-      return data;
-    },
     async update(carList: UserCar[]) {
       user_id
         ? await supabase

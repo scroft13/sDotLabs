@@ -1,13 +1,15 @@
 <script lang="ts">
-  // import netlifyIdentity from 'netlify-identity-widget';
-  // import { goto } from '$app/navigation';
-  // import { redirectURL, user } from '../../store';
-  // import { browser } from '$app/environment';
   import { onMount } from 'svelte';
   import db, { supabase, type UserCar } from '$lib/db';
   import type { User } from '@supabase/supabase-js';
-  import { carWantedListStore } from '$lib/stores';
+  import { addToast, carWantedListStore } from '$lib/stores';
   import CarCard from '$lib/components/CarCard.svelte';
+
+  // let message = 'Hello, World!';
+  // let type = 'success';
+  let dismissible = true;
+  let timeout = 3000;
+
   let email: string = '';
   let password: string = '';
   let carList: UserCar[] = [];
@@ -21,9 +23,7 @@
       carWantedListStore.subscribe((x) => {
         if (x === undefined) {
           console.log('setting carlist to empty array');
-          carWantedListStore.update((xx) => {
-            return (xx = []);
-          });
+          carWantedListStore.update(() => []);
         }
       });
     });
@@ -53,6 +53,13 @@
     supabase.auth.signUp({ email: email, password: password });
     supabase.auth.getSession().then(({ data: { session } }) => {
       user = session?.user ?? null;
+      addToast({
+        id: 1,
+        message: 'Please check confirmation email to login',
+        type: 'success',
+        dismissible,
+        timeout,
+      });
     });
 
     const {
@@ -62,7 +69,7 @@
       user = currentUser ?? null;
     });
 
-    db.wantedCarList.create();
+    db.createUser.create();
     return () => {
       authListener?.unsubscribe();
     };
