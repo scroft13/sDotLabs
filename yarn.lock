@@ -703,7 +703,7 @@
     esbuild "^0.15.7"
     worktop "0.8.0-next.14"
 
-"@sveltejs/adapter-netlify@^1.0.0-next.81", "@sveltejs/adapter-netlify@1.0.0-next.81":
+"@sveltejs/adapter-netlify@1.0.0-next.81":
   version "1.0.0-next.81"
   resolved "https://registry.npmjs.org/@sveltejs/adapter-netlify/-/adapter-netlify-1.0.0-next.81.tgz"
   integrity sha512-jWZHw2uqUMJk8lFPzRm0xxmBZoDc430tbeCU9EtYhG+ypze2B6pJAlNTtcN3/J7wapHq19TgEK5oNt4LqORfNg==
@@ -996,11 +996,6 @@
   version "7.0.11"
   resolved "https://registry.npmjs.org/@types/json-schema/-/json-schema-7.0.11.tgz"
   integrity sha512-wOuvG1SN4Us4rez+tylwwwCV1psiNVOkJeM3AUWUNWg/jDQY2+HE/444y5gc+jBmRqASOm2Oeh5c1axHobwRKQ==
-
-"@types/netlify-identity-widget@^1.9.6":
-  version "1.9.6"
-  resolved "https://registry.npmjs.org/@types/netlify-identity-widget/-/netlify-identity-widget-1.9.6.tgz"
-  integrity sha512-MGRmGSQov+Udx3hwpWHu2Wxxvq00e3MywsJ9rkpI/tgOyhyhmpcbcBKeM6NRXGUgbrnqJfiiU/hOJQTvqg+r7g==
 
 "@types/node@*", "@types/node@>= 14", "@types/node@>=12.12.47", "@types/node@>=13.7.0":
   version "18.11.0"
@@ -2609,11 +2604,6 @@ natural-compare@^1.4.0:
   resolved "https://registry.npmjs.org/natural-compare/-/natural-compare-1.4.0.tgz"
   integrity sha512-OWND8ei3VtNC9h7V60qff3SVobHr996CTwgxubgyQYEpg290h9J0buyECNNJexkFm5sOajh5G116RYA1c8ZMSw==
 
-netlify-identity-widget@^1.9.2:
-  version "1.9.2"
-  resolved "https://registry.npmjs.org/netlify-identity-widget/-/netlify-identity-widget-1.9.2.tgz"
-  integrity sha512-IbS1JHhs7BflCCvp3C9f6tmNSZqbyBhZ4Gs5+Qxt4IlPybTOVv0PqJ4TAsA7uxh1R+oXOAmk0OOMAkEaPYeCtA==
-
 next-tick@^1.1.0:
   version "1.1.0"
   resolved "https://registry.npmjs.org/next-tick/-/next-tick-1.1.0.tgz"
@@ -3195,10 +3185,10 @@ svelte@^3.2.0, svelte@^3.23.0, svelte@^3.24.0, svelte@^3.44.0, "svelte@^3.57.0 |
   resolved "https://registry.npmjs.org/svelte/-/svelte-3.59.2.tgz"
   integrity sha512-vzSyuGr3eEoAtT/A6bmajosJZIUWySzY2CzB3w2pgPvnkUjGqlDnsNnA0PMO+mMAhuyMul6C2uuZzY6ELSkzyA==
 
-sweetalert2@^11.10.0:
-  version "11.10.0"
-  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.10.0.tgz"
-  integrity sha512-LhXo6si7zfI7mvB91Oe5RwgcNYujx0IniD3XE8lcifrZA94G6IMxwDjJyCbjXl+/BivutUZMuD4oAllnnhj/Yg==
+sweetalert2@^11.6.13:
+  version "11.10.1"
+  resolved "https://registry.npmjs.org/sweetalert2/-/sweetalert2-11.10.1.tgz"
+  integrity sha512-qu145oBuFfjYr5yZW9OSdG6YmRxDf8CnkgT/sXMfrXGe+asFy2imC2vlaLQ/L/naZ/JZna1MPAY56G4qYM0VUQ==
 
 tailwindcss@^3.1.8, "tailwindcss@>=2.0.0 || >=3.0.0 || >=3.0.0-alpha.1", "tailwindcss@>=3.0.0 || >= 3.0.0-alpha.1", "tailwindcss@>=3.0.0 || insiders":
   version "3.1.8"

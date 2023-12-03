@@ -1,17 +1,26 @@
 <script lang="ts">
-  import type { UserCar } from '$lib/db';
-  import { carWantedListStore } from '$lib/stores';
-
-  // import SideMenu from '$lib/components/SideMenu.svelte';
+  import Toasts from '$lib/components/Toasts.svelte';
   import '../app.css';
-  export let carList: UserCar[] = [];
 
-  carWantedListStore.subscribe((x) => (carList = x));
-  $: console.log(carList);
-  // let sideMenuIsOpen = true;
+  // import { SvelteToast } from '@zerodevx/svelte-toast';
+
+  // const options = {
+  //   duration: 4000, // duration of progress bar tween to the `next` value
+  //   initial: 1, // initial progress bar value
+  //   next: 0, // next progress value
+  //   pausable: false, // pause progress bar tween on mouse hover
+  //   dismissable: true, // allow dismiss with close button
+  //   reversed: false, // insert new toast to bottom of stack
+  //   intro: { x: 256 }, // toast intro fly animation settings
+  //   theme: {}, // css var overrides
+  //   classes: [], // user-defined classes
+  // };
 </script>
 
 <!-- <SideMenu bind:sideMenuIsOpen /> -->
+<!-- <SvelteToast {options} /> -->
+<Toasts />
+
 <slot />
 
 <style>
