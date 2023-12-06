@@ -3,6 +3,7 @@
   import db, { supabase, type UserCar } from '$lib/db';
   import type { User } from '@supabase/supabase-js';
   import { addToast, carWantedListStore } from '$lib/stores';
+
   import CarCard from '$lib/components/CarCard.svelte';
 
   // let message = 'Hello, World!';
