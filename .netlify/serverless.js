@@ -8,13 +8,15 @@ import 'buffer';
 import 'util';
 import 'querystring';
 import 'stream/web';
+import 'worker_threads';
 import 'perf_hooks';
 import 'util/types';
+import 'url';
+import 'string_decoder';
 import 'events';
 import 'tls';
 import 'async_hooks';
 import 'console';
-import 'url';
 import 'zlib';
 import 'crypto';
 
@@ -32,9 +34,11 @@ function isNonEmptyString(str) {
 
 function parseString(setCookieValue, options) {
   var parts = setCookieValue.split(";").filter(isNonEmptyString);
-  var nameValue = parts.shift().split("=");
-  var name = nameValue.shift();
-  var value = nameValue.join("="); // everything after the first =, joined by a "=" if there was more than one part
+
+  var nameValuePairStr = parts.shift();
+  var parsed = parseNameValuePair(nameValuePairStr);
+  var name = parsed.name;
+  var value = parsed.value;
 
   options = options
     ? Object.assign({}, defaultParseOptions, options)
@@ -52,7 +56,7 @@ function parseString(setCookieValue, options) {
   }
 
   var cookie = {
-    name: name, // grab everything before the first =
+    name: name,
     value: value,
   };
 
@@ -76,6 +80,22 @@ function parseString(setCookieValue, options) {
   });
 
   return cookie;
+}
+
+function parseNameValuePair(nameValuePairStr) {
+  // Parses name-value-pair according to rfc6265bis draft
+
+  var name = "";
+  var value = "";
+  var nameValueArr = nameValuePairStr.split("=");
+  if (nameValueArr.length > 1) {
+    name = nameValueArr.shift();
+    value = nameValueArr.join("="); // everything after the first =, joined by a "=" if there was more than one part
+  } else {
+    value = nameValuePairStr;
+  }
+
+  return { name: name, value: value };
 }
 
 function parse(input, options) {

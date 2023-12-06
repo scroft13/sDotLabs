@@ -1,24 +1,62 @@
 import { init } from '../serverless.js';
 
-export const handler = init({
+export const handler = init((() => {
+function __memo(fn) {
+	let value;
+	return () => value ??= (value = fn());
+}
+
+return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set(["favicon.png","profilePic.jpeg","resume.pdf"]),
+	assets: new Set([".DS_Store","favicon.png","gt7/carImages/1069.jpeg","profilePic.jpeg","resume.pdf"]),
 	mimeTypes: {".png":"image/png",".jpeg":"image/jpeg",".pdf":"application/pdf"},
 	_: {
-		entry: {"file":"_app/immutable/start-99c09e93.js","imports":["_app/immutable/start-99c09e93.js","_app/immutable/chunks/index-cf554b97.js","_app/immutable/chunks/singletons-a92c7e31.js","_app/immutable/chunks/index-42057999.js"],"stylesheets":[]},
+		client: {"start":"_app/immutable/entry/start.5583a63f.js","app":"_app/immutable/entry/app.ba519414.js","imports":["_app/immutable/entry/start.5583a63f.js","_app/immutable/chunks/index.97164529.js","_app/immutable/chunks/singletons.86894116.js","_app/immutable/chunks/index.91f9b936.js","_app/immutable/entry/app.ba519414.js","_app/immutable/chunks/preload-helper.a4192956.js","_app/immutable/chunks/index.97164529.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
-			() => import('../server/nodes/0.js'),
-			() => import('../server/nodes/1.js'),
-			() => import('../server/nodes/2.js')
+			__memo(() => import('../server/nodes/0.js')),
+			__memo(() => import('../server/nodes/1.js')),
+			__memo(() => import('../server/nodes/2.js')),
+			__memo(() => import('../server/nodes/3.js')),
+			__memo(() => import('../server/nodes/4.js')),
+			__memo(() => import('../server/nodes/5.js')),
+			__memo(() => import('../server/nodes/6.js')),
+			__memo(() => import('../server/nodes/7.js'))
 		],
 		routes: [
 			{
-				id: "",
+				id: "/",
 				pattern: /^\/$/,
-				names: [],
-				types: [],
-				page: { layouts: [0], errors: [1], leaf: 2 },
+				params: [],
+				page: { layouts: [0,], errors: [1,], leaf: 3 },
+				endpoint: null
+			},
+			{
+				id: "/gt7",
+				pattern: /^\/gt7\/?$/,
+				params: [],
+				page: { layouts: [0,2,], errors: [1,,], leaf: 4 },
+				endpoint: null
+			},
+			{
+				id: "/gt7/allCars",
+				pattern: /^\/gt7\/allCars\/?$/,
+				params: [],
+				page: { layouts: [0,2,], errors: [1,,], leaf: 5 },
+				endpoint: null
+			},
+			{
+				id: "/gt7/hagerty",
+				pattern: /^\/gt7\/hagerty\/?$/,
+				params: [],
+				page: { layouts: [0,2,], errors: [1,,], leaf: 6 },
+				endpoint: null
+			},
+			{
+				id: "/gt7/ucd",
+				pattern: /^\/gt7\/ucd\/?$/,
+				params: [],
+				page: { layouts: [0,2,], errors: [1,,], leaf: 7 },
 				endpoint: null
 			}
 		],
@@ -27,4 +65,5 @@ export const handler = init({
 			return {  };
 		}
 	}
-});
+}
+})());
