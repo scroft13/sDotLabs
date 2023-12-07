@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import { fade } from 'svelte/transition';
   import SuccessIcon from './SuccessIcon.svelte';
@@ -8,7 +8,7 @@
 
   const dispatch = createEventDispatcher();
 
-  export let type = 'error';
+  export let type: 'error' | 'success' = 'error';
   export let dismissible = true;
 </script>
 
