@@ -6,10 +6,8 @@
 
   import CarCard from '$lib/components/CarCard.svelte';
 
-  // let message = 'Hello, World!';
-  // let type = 'success';
   let dismissible = true;
-  let timeout = 3000;
+  let timeout = 300;
 
   let email: string = '';
   let password: string = '';
@@ -44,16 +42,28 @@
   function login() {
     supabase.auth
       .signInWithPassword({ email: email, password: password })
-      .then(({ data: { session } }) => {
+      .then(({ data: { session }, error }) => {
+        if (error) {
+          addToast({
+            id: 2,
+            message: error.message,
+            type: 'error',
+            dismissible,
+            timeout,
+          });
+        }
         user = session?.user ?? null;
-      })
-      .catch(({ data }) => console.log(data));
+      });
   }
 
   function signup() {
-    supabase.auth.signUp({ email: email, password: password });
+    let user_id: string | undefined;
+    supabase.auth.signUp({ email: email, password: password }).catch((error) => {
+      console.log(error);
+    });
     supabase.auth.getSession().then(({ data: { session } }) => {
       user = session?.user ?? null;
+      user_id = user?.id;
       addToast({
         id: 1,
         message: 'Please check confirmation email to login',
@@ -70,8 +80,8 @@
       user = currentUser ?? null;
     });
 
-    db.createUser.create();
     return () => {
+      user_id ? db.createUser.create(user_id) : null;
       authListener?.unsubscribe();
     };
   }
@@ -99,7 +109,7 @@
     </p>
     <form action="">
       <input
-        id={email}
+        id="email"
         placeholder="Enter your Email"
         bind:value={email}
         type="text"
@@ -108,7 +118,7 @@
         {...$$props}
       />
       <input
-        id={password}
+        id="password"
         placeholder="Enter your Password"
         bind:value={password}
         type="password"

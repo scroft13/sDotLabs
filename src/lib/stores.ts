@@ -8,7 +8,7 @@ let localStorageWantedCarList;
 
 export type ToastType = {
   id: number;
-  type: string;
+  type: 'error' | 'success' | 'info';
   message: string;
   dismissible: boolean;
   timeout: number;
@@ -26,7 +26,7 @@ if (localStorageWantedCarList != 'undefined' && localStorageWantedCarList != nul
 if (typeof localStorage !== 'undefined') {
   carWantedListStore.subscribe((value) => {
     localStorage.carList = JSON.stringify(value);
-    db.wantedCarList.update(value);
+    // db.wantedCarList.update(value);
   });
 }
 
