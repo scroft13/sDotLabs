@@ -1,6 +1,7 @@
 import { writable } from 'svelte/store';
 import db from './db';
 import type { UserCar } from './shared';
+import { browser } from '$app/environment';
 
 export let carWantedListStore = writable<UserCar[]>();
 
@@ -19,12 +20,14 @@ if (typeof localStorage !== 'undefined') {
   if (localStorageCheck) {
     localStorageWantedCarList = localStorage.getItem('wantedCarList');
   } else {
-    let data = await db.createUser.all();
-    if (!data) {
-      data = await db.createUser.create();
-    } else {
-      carWantedListStore.update(() => data?.[0].wantedCarList);
-    }
+    async () => {
+      let data = await db.createUser.all();
+      if (!data) {
+        data = await db.createUser.create();
+      } else {
+        carWantedListStore.update(() => data?.[0].wantedCarList);
+      }
+    };
   }
 }
 
