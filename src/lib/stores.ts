@@ -8,7 +8,7 @@ let localStorageWantedCarList;
 
 export type ToastType = {
   id: number;
-  type: string;
+  type: 'error' | 'success' | 'info';
   message: string;
   dismissible: boolean;
   timeout: number;

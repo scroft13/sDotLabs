@@ -1,4 +1,4 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type User } from '@supabase/supabase-js';
 import { writable } from 'svelte/store';
 import type { UserCar } from './shared';
 
@@ -6,8 +6,9 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
   import.meta.env.VITE_SUPABASE_ANON_KEY,
 );
-let user_id: string | undefined;
 const userStore = writable();
+
+let user_id: string | undefined;
 
 supabase.auth.getSession().then(({ data }) => {
   userStore.set(data.session?.user);
@@ -17,7 +18,6 @@ supabase.auth.getSession().then(({ data }) => {
 supabase.auth.onAuthStateChange((event, session) => {
   if (event == 'SIGNED_IN' && session) {
     userStore.set(session.user);
-    user_id = session.user.id;
   } else if (event == 'SIGNED_OUT') {
     userStore.set(null);
   }
