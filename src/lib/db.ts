@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { writable } from 'svelte/store';
+import type { UserCar } from './shared';
 
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -21,19 +22,7 @@ supabase.auth.onAuthStateChange((event, session) => {
     userStore.set(null);
   }
 });
-export type UserCar = {
-  id: string;
-  model: string;
-  make: string;
-  price: number;
-};
-export type UserInfo = {
-  created_at: string;
-  id: string;
-  user_id: string;
-  carsOwned: UserCar[];
-  carsWanted: UserCar[];
-};
+
 export default {
   get user() {
     return userStore;
@@ -45,6 +34,10 @@ export default {
     return supabase.auth.signOut();
   },
   createUser: {
+    async all() {
+      const { data } = await supabase.from('userInfo').select();
+      return data;
+    },
     async create() {
       const { data } = await supabase
         .from('userInfo')
@@ -63,9 +56,9 @@ export default {
     async update(carList: UserCar[]) {
       user_id
         ? await supabase
-            .from('userCarList')
+            .from('userInfo')
             .update({
-              cars: [...carList],
+              ownedCarList: [...carList],
             })
             .eq('user_id', user_id)
         : null;
@@ -75,9 +68,9 @@ export default {
     async update(carList: UserCar[]) {
       user_id
         ? await supabase
-            .from('userCarList')
+            .from('userInfo')
             .update({
-              cars: [...carList],
+              wantedCarList: [...carList],
             })
             .eq('user_id', user_id)
         : null;

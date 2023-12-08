@@ -1,13 +1,11 @@
 <script lang="ts">
   import { onMount } from 'svelte';
-  import db, { supabase, type UserCar } from '$lib/db';
+  import db, { supabase } from '$lib/db';
   import type { User } from '@supabase/supabase-js';
   import { addToast, carWantedListStore } from '$lib/stores';
-
   import CarCard from '$lib/components/CarCard.svelte';
+  import type { UserCar } from '$lib/shared';
 
-  // let message = 'Hello, World!';
-  // let type = 'success';
   let dismissible = true;
   let timeout = 3000;
 
