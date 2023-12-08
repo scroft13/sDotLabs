@@ -49,10 +49,6 @@ export default {
     },
   },
   ownedCarList: {
-    // async all() {
-    //   const { data } = await supabase.from('ownedCarList').select();
-    //   return data;
-    // },
     async update(carList: UserCar[]) {
       user_id
         ? await supabase

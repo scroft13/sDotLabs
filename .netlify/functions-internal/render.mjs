@@ -9,10 +9,10 @@ function __memo(fn) {
 return {
 	appDir: "_app",
 	appPath: "_app",
-	assets: new Set([".DS_Store","favicon.png","gt7/carImages/1069.jpeg","profilePic.jpeg","resume.pdf"]),
+	assets: new Set([".DS_Store","favicon.png","gt7/carImages/1069.jpeg","profilePic.jpeg","resume.pdf","resume_old.pdf"]),
 	mimeTypes: {".png":"image/png",".jpeg":"image/jpeg",".pdf":"application/pdf"},
 	_: {
-		client: {"start":"_app/immutable/entry/start.5583a63f.js","app":"_app/immutable/entry/app.ba519414.js","imports":["_app/immutable/entry/start.5583a63f.js","_app/immutable/chunks/index.97164529.js","_app/immutable/chunks/singletons.86894116.js","_app/immutable/chunks/index.91f9b936.js","_app/immutable/entry/app.ba519414.js","_app/immutable/chunks/preload-helper.a4192956.js","_app/immutable/chunks/index.97164529.js"],"stylesheets":[],"fonts":[]},
+		client: {"start":"_app/immutable/entry/start.92b65f47.js","app":"_app/immutable/entry/app.abc180e7.js","imports":["_app/immutable/entry/start.92b65f47.js","_app/immutable/chunks/index.97164529.js","_app/immutable/chunks/singletons.a1058b83.js","_app/immutable/chunks/index.91f9b936.js","_app/immutable/entry/app.abc180e7.js","_app/immutable/chunks/preload-helper.a4192956.js","_app/immutable/chunks/index.97164529.js"],"stylesheets":[],"fonts":[]},
 		nodes: [
 			__memo(() => import('../server/nodes/0.js')),
 			__memo(() => import('../server/nodes/1.js')),

@@ -1,4 +1,4 @@
-import { c as create_ssr_component, q as spread, u as escape_attribute_value, r as escape_object, a as add_attribute } from "../../../chunks/index2.js";
+import { c as create_ssr_component, q as spread, r as escape_object, a as add_attribute } from "../../../chunks/index2.js";
 import { c as carWantedListStore } from "../../../chunks/stores.js";
 const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   let email = "";
@@ -11,7 +11,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
     </p>
     <form action=""><input${spread(
     [
-      { id: escape_attribute_value(email) },
+      { id: "email" },
       { placeholder: "Enter your Email" },
       { type: "text" },
       { step: "any" },
@@ -22,7 +22,7 @@ const Page = create_ssr_component(($$result, $$props, $$bindings, slots) => {
   )}${add_attribute("value", email, 0)}>
       <input${spread(
     [
-      { id: escape_attribute_value(password) },
+      { id: "password" },
       { placeholder: "Enter your Password" },
       { type: "password" },
       { step: "any" },

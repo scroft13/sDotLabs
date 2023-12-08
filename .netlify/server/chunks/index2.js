@@ -357,8 +357,7 @@ export {
   escape_object as r,
   setContext as s,
   tick as t,
-  escape_attribute_value as u,
+  noop as u,
   validate_component as v,
-  noop as w,
-  safe_not_equal as x
+  safe_not_equal as w
 };
