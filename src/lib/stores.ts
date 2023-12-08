@@ -1,6 +1,6 @@
 import { writable } from 'svelte/store';
-import type { UserCar } from './db';
 import db from './db';
+import type { UserCar } from './shared';
 
 export let carWantedListStore = writable<UserCar[]>();
 
@@ -15,7 +15,17 @@ export type ToastType = {
 };
 
 if (typeof localStorage !== 'undefined') {
-  localStorageWantedCarList = localStorage.getItem('carList');
+  const localStorageCheck = localStorage.wantedCarList;
+  if (localStorageCheck) {
+    localStorageWantedCarList = localStorage.getItem('wantedCarList');
+  } else {
+    let data = await db.createUser.all();
+    if (!data) {
+      data = await db.createUser.create();
+    } else {
+      carWantedListStore.update(() => data?.[0].wantedCarList);
+    }
+  }
 }
 
 if (localStorageWantedCarList != 'undefined' && localStorageWantedCarList != null) {
@@ -24,9 +34,12 @@ if (localStorageWantedCarList != 'undefined' && localStorageWantedCarList != nul
 }
 
 if (typeof localStorage !== 'undefined') {
-  carWantedListStore.subscribe((value) => {
-    localStorage.carList = JSON.stringify(value);
-    // db.wantedCarList.update(value);
+  carWantedListStore.subscribe(async (value) => {
+    localStorage.wantedCarList = JSON.stringify(value);
+
+    console.log('changing wanted list now', value);
+
+    db.wantedCarList.update(value);
   });
 }
 

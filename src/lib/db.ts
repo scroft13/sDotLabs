@@ -1,5 +1,6 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type User } from '@supabase/supabase-js';
 import { writable } from 'svelte/store';
+import type { UserCar } from './shared';
 
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -7,8 +8,11 @@ export const supabase = createClient(
 );
 const userStore = writable();
 
+let user_id: string | undefined;
+
 supabase.auth.getSession().then(({ data }) => {
   userStore.set(data.session?.user);
+  user_id = data.session?.user.id;
 });
 
 supabase.auth.onAuthStateChange((event, session) => {
@@ -19,19 +23,6 @@ supabase.auth.onAuthStateChange((event, session) => {
   }
 });
 
-export type UserCar = {
-  id: string;
-  model: string;
-  make: string;
-  price: number;
-};
-export type UserInfo = {
-  created_at: string;
-  id: string;
-  user_id: string;
-  carsOwned: UserCar[];
-  carsWanted: UserCar[];
-};
 export default {
   get user() {
     return userStore;
@@ -43,7 +34,11 @@ export default {
     return supabase.auth.signOut();
   },
   createUser: {
-    async create(user_id: string) {
+    async all() {
+      const { data } = await supabase.from('userInfo').select();
+      return data;
+    },
+    async create() {
       const { data } = await supabase
         .from('userInfo')
         .insert({ user_id, wantedCarList: [], ownedCarList: [] })
@@ -53,32 +48,32 @@ export default {
       return data;
     },
   },
-  // ownedCarList: {
-  //   // async all() {
-  //   //   const { data } = await supabase.from('ownedCarList').select();
-  //   //   return data;
-  //   // },
-  //   async update(carList: UserCar[]) {
-  //     user_id
-  //       ? await supabase
-  //           .from('userCarList')
-  //           .update({
-  //             cars: [...carList],
-  //           })
-  //           .eq('user_id', user_id)
-  //       : null;
-  //   },
-  // },
-  // wantedCarList: {
-  //   async update(carList: UserCar[]) {
-  //     user_id
-  //       ? await supabase
-  //           .from('userCarList')
-  //           .update({
-  //             cars: [...carList],
-  //           })
-  //           .eq('user_id', user_id)
-  //       : null;
-  //   },
-  // },
+  ownedCarList: {
+    // async all() {
+    //   const { data } = await supabase.from('ownedCarList').select();
+    //   return data;
+    // },
+    async update(carList: UserCar[]) {
+      user_id
+        ? await supabase
+            .from('userInfo')
+            .update({
+              ownedCarList: [...carList],
+            })
+            .eq('user_id', user_id)
+        : null;
+    },
+  },
+  wantedCarList: {
+    async update(carList: UserCar[]) {
+      user_id
+        ? await supabase
+            .from('userInfo')
+            .update({
+              wantedCarList: [...carList],
+            })
+            .eq('user_id', user_id)
+        : null;
+    },
+  },
 };

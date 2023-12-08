@@ -1,6 +1,3 @@
-// import { is_promise } from 'svelte/internal';
-// import { writable, type Readable, type Writable } from 'svelte/store';
-
 export const options2 = { style: 'currency', currency: 'USD' };
 export const numberFormat2 = new Intl.NumberFormat('en-US', options2);
 
@@ -15,39 +12,22 @@ export class ApiError extends Error {
   }
 }
 
-function compactRequestObject(
-  data: Record<string, string | number | boolean | null | undefined>,
-): Record<string, string> {
-  const out: Record<string, string> = {};
-  for (const key in data) {
-    const value = data[key];
-    if (typeof value === 'string') {
-      out[key] = value;
-    } else if (typeof value === 'number') {
-      out[key] = '' + value;
-    } else if (typeof value === 'boolean') {
-      out[key] = `${value}`;
-    }
-  }
-  return out;
-}
-function compactRequestArray(
-  data: [string, string | number | boolean | null | undefined][],
-): [string, string][] {
-  const out: [string, string][] = [];
-  for (const [key, value] of data) {
-    if (typeof value === 'string') {
-      out.push([key, value]);
-    } else if (typeof value === 'number') {
-      out.push([key, '' + value]);
-    } else if (typeof value === 'boolean') {
-      out.push([key, value.valueOf.toString()]);
-    }
-  }
-  return out;
-}
+export type UserCar = {
+  id: string;
+  model: string;
+  make: string;
+  price: number;
+};
 
-export async function getJson<T>(url: string): Promise<any> {
+export type UserInfo = {
+  created_at: string;
+  id: string;
+  user_id: string;
+  carsOwned: UserCar[];
+  carsWanted: UserCar[];
+};
+
+export async function getJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
     method: 'GET',
     cache: 'no-cache',
