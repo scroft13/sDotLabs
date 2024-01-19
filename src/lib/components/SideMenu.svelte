@@ -40,7 +40,7 @@
           class="p-2 rounded-md inline-flex items-center justify-center"
           on:click={() => (sideMenuIsOpen = false)}
         >
-          <span class="sr-only">Close menu</span>
+          <span class="sr-only">Close Menu</span>
           <XIcon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
