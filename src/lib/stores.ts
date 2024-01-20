@@ -3,7 +3,6 @@ import db from './db';
 import type { UserCar } from './shared';
 
 export let carWantedListStore = writable<UserCar[]>();
-
 let localStorageWantedCarList;
 
 export type ToastType = {

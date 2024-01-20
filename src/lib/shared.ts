@@ -27,6 +27,17 @@ export type UserInfo = {
   carsWanted: UserCar[];
 };
 
+export type Events = {
+  id: number;
+  start: Date;
+  end: Date;
+  title: string;
+  display?: 'auto' | 'background';
+  resourceIds?: number[];
+  editable?: boolean;
+  allDay?: boolean;
+};
+
 export async function getJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
     method: 'GET',
