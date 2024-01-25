@@ -38,6 +38,36 @@ export type Events = {
   allDay?: boolean;
 };
 
+export type PublicEvent = {
+  id: number;
+  startDate: Date;
+  startTime: string;
+  durationHrs: number;
+  title: string;
+  vehicleClass: string;
+  doesRepeat: boolean;
+  contactType: 'email' | 'discord';
+  createdAt: Date;
+  endDate?: Date;
+  discordServer?: string;
+  email?: string;
+};
+export type PublicServerEvent = {
+  user_id: string | undefined;
+  id: number;
+  start_date: Date;
+  start_time: string;
+  duration_hrs: number;
+  title: string;
+  vehicle_class: string;
+  does_repeat: boolean;
+  contact_type: 'email' | 'discord';
+  created_at: Date;
+  end_date?: Date;
+  discord_server?: string;
+  email?: string;
+};
+
 export async function getJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
     method: 'GET',
