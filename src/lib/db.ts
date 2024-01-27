@@ -1,6 +1,6 @@
 import { createClient, type User } from '@supabase/supabase-js';
 import { writable } from 'svelte/store';
-import type { UserCar } from './shared';
+import type { PublicEvent, PublicServerEvent, UserCar } from './shared';
 
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -70,6 +70,35 @@ export default {
             })
             .eq('user_id', user_id)
         : null;
+    },
+  },
+  publicEventsList: {
+    async all() {
+      const { data } = await supabase.from('publicEvents').select();
+      return data;
+    },
+    async insert(publicEvent: PublicEvent) {
+      // endTimeDate = new Date(publicEvent.start_date),
+      // endTime = new Date(endTimeDate.setHours(endHours, endMins))
+
+      const publicDbEvent: PublicServerEvent = {
+        user_id: user_id,
+        created_at: publicEvent.createdAt,
+        start_date: publicEvent.startDate,
+        start_time: publicEvent.startTime,
+        duration_hrs: publicEvent.durationHrs,
+        title: publicEvent.title,
+        vehicle_class: publicEvent.vehicleClass,
+        does_repeat: publicEvent.doesRepeat,
+        contact_type: publicEvent.contactType,
+        id: publicEvent.id,
+        end_date: publicEvent.endDate,
+        discord_server: publicEvent.discordServer,
+        email: publicEvent.email,
+      };
+
+      console.log(publicDbEvent);
+      user_id ? await supabase.from('publicEvents').insert([publicDbEvent]) : null;
     },
   },
 };

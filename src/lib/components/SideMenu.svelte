@@ -40,16 +40,17 @@
           class="p-2 rounded-md inline-flex items-center justify-center"
           on:click={() => (sideMenuIsOpen = false)}
         >
-          <span class="sr-only">Close menu</span>
+          <span class="sr-only">Close Menu</span>
           <XIcon class="h-6 w-6" aria-hidden="true" />
         </button>
       </div>
       <div class="mt-4 mx-4 flex flex-col">
-        <a href="/gt7">Main Page</a>
-        <a href="/gt7/hagerty">Hagerty Dealership</a>
-        <a href="/gt7/ucd">Used Car Dealership</a>
-        <a href="/gt7/brandCentral">Brand Central</a>
-        <a href="/gt7/allCars">All Cars</a>
+        <a href="/gt7/leagues">Leagues</a>
+        <a href="/gt7/cars">My Cars</a>
+        <a href="/gt7/cars/hagerty">Hagerty Dealership</a>
+        <a href="/gt7/cars/ucd">Used Car Dealership</a>
+        <a href="/gt7/cars/brandCentral">Brand Central</a>
+        <a href="/gt7/cars/allCars">All Cars</a>
       </div>
     </TransitionChild>
   </Dialog>
