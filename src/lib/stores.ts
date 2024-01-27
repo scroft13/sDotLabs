@@ -1,10 +1,8 @@
 import { writable } from 'svelte/store';
 import db from './db';
 import type { UserCar } from './shared';
-import { browser } from '$app/environment';
 
 export let carWantedListStore = writable<UserCar[]>();
-
 let localStorageWantedCarList;
 
 export type ToastType = {

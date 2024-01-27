@@ -25,8 +25,8 @@
 
 <style>
   :root {
-    --primary-color: 44 61% 77%;
-    --secondary-color: 326 27% 71%;
+    --primary-color: 213 77% 38%;
+    --secondary-color: 350 97% 38%;
     --tertiary-color: 60 1% 42%;
     --surface-base: 0 0% 100%;
     --surface-100: 0 0% 96%;

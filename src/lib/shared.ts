@@ -27,19 +27,15 @@ export type UserInfo = {
   carsWanted: UserCar[];
 };
 
-<<<<<<< Updated upstream
-=======
 export type Events = {
   id: number;
   start: Date;
   end: Date;
   title: string;
-  extendedProps: object;
   display?: 'auto' | 'background';
   resourceIds?: number[];
   editable?: boolean;
   allDay?: boolean;
-  backgroundColor: string;
 };
 
 export type PublicEvent = {
@@ -55,7 +51,6 @@ export type PublicEvent = {
   endDate?: Date;
   discordServer?: string;
   email?: string;
-  eventInfo: string;
 };
 export type PublicServerEvent = {
   user_id: string | undefined;
@@ -71,10 +66,10 @@ export type PublicServerEvent = {
   end_date?: Date;
   discord_server?: string;
   email?: string;
+
   event_info: string;
 };
 
->>>>>>> Stashed changes
 export async function getJson<T>(url: string): Promise<T> {
   const response = await fetch(url, {
     method: 'GET',

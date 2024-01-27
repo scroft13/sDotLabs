@@ -19,7 +19,6 @@
   import LabeledCombobox from './forms/labeledComponents/LabeledCombobox.svelte';
   import db from '$lib/db';
   import { addToast } from '$lib/stores';
-  import LabeledTextarea from './forms/labeledComponents/LabeledTextarea.svelte';
 
   export let open = false;
   export let leagueName: string;
@@ -41,21 +40,24 @@
         then: (schema) => schema.required(),
       })
       .default(''),
+
     termsOfService: yup.boolean().required().default(false),
     repeatWeekly: yup.boolean().default(false),
+
     startDate: yup.string().required().default(''),
     endDate: yup.string().default(''),
     startTime: yup.string().required().default(''),
     duration: yup.number().required().default(0),
     contactMethod: yup.string().required().default('Discord'),
     vehicleClass: yup.string().required().default(''),
-    eventInfo: yup.string().required().default(''),
   });
 
   const formState = createForm<FormData>({
       initialValues: formSchema.cast({}) as FormData,
       validationSchema: formSchema,
-      onSubmit: async () => {},
+      onSubmit: async (formData: FormData) => {
+        console.log(formData);
+      },
     }),
     { form } = formState;
 
@@ -78,11 +80,14 @@
 
   let contactEmail: boolean;
 
-  function updateEvents() {
+  function updateEvents(e: Event) {
+    console.log('submitting?', e);
     let id: number = Math.floor(Math.random() * 100000);
 
     form.subscribe((x) => {
       const dateStringWithTime = new Date(`${x.startDate}T${x.startTime}`);
+      console.log(dateStringWithTime);
+
       db.publicEventsList
         .insert({
           contactType: x.contactMethod as 'email' | 'discord',
@@ -97,11 +102,11 @@
           title: leagueName + ' ' + x.vehicleClass,
           createdAt: new Date(),
           endDate: x.endDate ? new Date(x.endDate) : new Date(x.startDate),
-          eventInfo: x.eventInfo,
         })
-        .then(() => {
+        .then((e) => {
+          console.log(e);
           addToast({
-            id: Math.floor(Math.random() * 100),
+            id: 1234,
             dismissible: true,
             timeout: 2000,
             type: 'success',
@@ -115,6 +120,20 @@
   $: form.subscribe((x) => {
     x.contactMethod === 'Email' ? (contactEmail = true) : (contactEmail = false);
     repeatWeekly = x.repeatWeekly;
+    if (x.startDate && x.startTime) {
+      const dateStringWithTime = new Date(`${x.startDate}T${x.startTime}`);
+      console.log(dateStringWithTime);
+      // const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      // console.log(timezone);
+      // // Use Intl.DateTimeFormat to format the date string with timezone
+      // const formattedDate = new Intl.DateTimeFormat('en-US', { timeZone: timezone }).format(
+      //   dateStringWithTime,
+      // );
+      // console.log(formattedDate);
+      // Create a new Date object from the formatted string
+      // const newDateObject = new Date(formattedDate);
+      // console.log(newDateObject);
+    }
   });
 </script>
 
@@ -164,6 +183,9 @@
                   name="startTime"
                   label="Start Time"
                   on:changed={(e) => {
+                    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+                    console.log('User Timezone:', userTimezone);
+
                     formState.updateField('startTime', e.detail.startTime);
                     formState.updateValidateField('startTime', e.detail.startTime);
                   }}
@@ -174,20 +196,23 @@
                   label="Duration In Hours"
                   type="text"
                   placeholder="1"
-                  class="short"
+                  iconType="person"
                 />
-                <LabeledField name="repeatWeekly" label="Repeat Weekly" type="checkbox" />
+                <LabeledField
+                  name="repeatWeekly"
+                  label="Repeat Weekly"
+                  type="checkbox"
+                  class="item-height"
+                />
                 {#if repeatWeekly}
                   <LabeledDateSelector name="endDate" label="End Date" />
                 {/if}
-              </fieldset>
-              <fieldset>
                 <LabeledCombobox
                   name="vehicleClass"
                   label="Vehicle Class"
                   options={vehicleClasses}
                   placeholder="Ex. GR 3"
-                  short={true}
+                  short={false}
                 />
                 <LabeledRadioGroup
                   name="contactMethod"
@@ -210,14 +235,24 @@
                     label="Discord server"
                     type="text"
                     icon=""
-                    placeholder="Ex. https://discord.gg/sCCJ7DoN"
+                    placeholder="Ex. yourname@domain.com"
                   />
                 {/if}
-                <LabeledTextarea name="eventInfo" label="Event Info" />
               </fieldset>
             </div>
             <div class="wide footer">
-              <button type="submit" on:click={() => updateEvents()}> Submit </button>
+              <!-- <fieldset class="mb-6 relative">
+                <LabeledField
+                  name="termsOfService"
+                  label={termsOfServiceLabel}
+                  type="checkbox"
+                  class="item-height"
+                />
+              </fieldset> -->
+
+              <!-- <ReCaptcha bind:this={reCaptcha} /> -->
+
+              <button type="submit" on:click={(e) => updateEvents(e)}> Submit </button>
             </div>
           </Form>
         </div>

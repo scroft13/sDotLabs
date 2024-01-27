@@ -1,6 +1,7 @@
-<script>
+<script lang="ts">
   import HamburgerIcon from '$lib/components/HamburgerIcon.svelte';
   import SideMenu from '$lib/components/SideMenu.svelte';
+
   let sideMenuIsOpen = false;
 </script>
 
@@ -15,7 +16,4 @@
     <HamburgerIcon />
   </button>
 </div>
-
-<div class="flex justify-center items-center flex-col">
-  <slot />
-</div>
+<slot />

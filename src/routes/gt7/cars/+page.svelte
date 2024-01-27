@@ -22,6 +22,7 @@
       user = session?.user ?? null;
       carWantedListStore.subscribe((x) => {
         if (x === undefined) {
+          console.log('setting carlist to empty array');
           carWantedListStore.update(() => []);
         }
       });

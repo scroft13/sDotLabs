@@ -1,6 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
 import { writable } from 'svelte/store';
-import type { UserCar } from './shared';
+import type { PublicEvent, PublicServerEvent, UserCar } from './shared';
 
 export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -74,8 +74,7 @@ export default {
         : null;
     },
   },
-<<<<<<< Updated upstream
-=======
+
   publicEventsList: {
     async all() {
       const { data } = await supabase.from('publicEvents').select();
@@ -99,10 +98,8 @@ export default {
         end_date: publicEvent.endDate,
         discord_server: publicEvent.discordServer,
         email: publicEvent.email,
-        event_info: publicEvent.eventInfo,
       };
       user_id ? await supabase.from('publicEvents').insert([publicDbEvent]) : null;
     },
   },
->>>>>>> Stashed changes
 };

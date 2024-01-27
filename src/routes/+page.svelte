@@ -17,6 +17,8 @@
     'Gardner',
     'Dog Trainer',
     'Plumber',
+    'Husband',
+    '',
   ];
 
   let imgSrc = '/profilePic.jpeg';
