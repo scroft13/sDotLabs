@@ -8,6 +8,7 @@
     'Web Developer',
     'Father',
     '12th Man',
+    'Husband',
     'Code Monkey',
     'Mariner',
     'Whovian',

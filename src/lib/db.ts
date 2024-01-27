@@ -1,4 +1,4 @@
-import { createClient, type User } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js';
 import { writable } from 'svelte/store';
 import type { UserCar } from './shared';
 
@@ -22,6 +22,8 @@ supabase.auth.onAuthStateChange((event, session) => {
     userStore.set(null);
   }
 });
+
+export const realTimeEvents = supabase.realtime;
 
 export default {
   get user() {
@@ -72,4 +74,35 @@ export default {
         : null;
     },
   },
+<<<<<<< Updated upstream
+=======
+  publicEventsList: {
+    async all() {
+      const { data } = await supabase.from('publicEvents').select();
+      return data;
+    },
+    async insert(publicEvent: PublicEvent) {
+      // endTimeDate = new Date(publicEvent.start_date),
+      // endTime = new Date(endTimeDate.setHours(endHours, endMins))
+
+      const publicDbEvent: PublicServerEvent = {
+        user_id: user_id,
+        created_at: publicEvent.createdAt,
+        start_date: publicEvent.startDate,
+        start_time: publicEvent.startTime,
+        duration_hrs: publicEvent.durationHrs,
+        title: publicEvent.title,
+        vehicle_class: publicEvent.vehicleClass,
+        does_repeat: publicEvent.doesRepeat,
+        contact_type: publicEvent.contactType,
+        id: publicEvent.id,
+        end_date: publicEvent.endDate,
+        discord_server: publicEvent.discordServer,
+        email: publicEvent.email,
+        event_info: publicEvent.eventInfo,
+      };
+      user_id ? await supabase.from('publicEvents').insert([publicDbEvent]) : null;
+    },
+  },
+>>>>>>> Stashed changes
 };

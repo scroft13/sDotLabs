@@ -22,8 +22,6 @@
   };
 
   function renderPage(num: number) {
-    console.log('now');
-
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     pdfDoc.getPage(num).then(function (page: any) {
       let viewport = page.getViewport({ scale: scale, rotation: rotation });
@@ -63,7 +61,6 @@
       ...(url && { url }),
       ...(password && { password }),
     });
-    console.log(loadingTask);
     loadingTask.promise.then(async function (pdfDoc_) {
       pdfDoc = pdfDoc_;
       await tick();

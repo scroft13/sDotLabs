@@ -9,7 +9,6 @@
   onMount(async () => {
     allCars = await d3.csv('https://ddm999.github.io/gt7info/data/db/cars.csv');
     makers = await d3.csv('https://ddm999.github.io/gt7info/data/db/maker.csv');
-    console.log(makers);
   });
 </script>
 

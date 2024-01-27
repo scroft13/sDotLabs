@@ -39,9 +39,6 @@ if (localStorageWantedCarList != 'undefined' && localStorageWantedCarList != nul
 if (typeof localStorage !== 'undefined') {
   carWantedListStore.subscribe(async (value) => {
     localStorage.wantedCarList = JSON.stringify(value);
-
-    console.log('changing wanted list now', value);
-
     db.wantedCarList.update(value);
   });
 }

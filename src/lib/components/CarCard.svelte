@@ -1,6 +1,5 @@
 <script lang="ts">
-  import type { UserCar } from '$lib/db';
-  import { numberFormat2 } from '$lib/shared';
+  import { numberFormat2, type UserCar } from '$lib/shared';
   import { carWantedListStore } from '$lib/stores';
   import { HeartIcon } from '@rgossiaux/svelte-heroicons/solid';
 
@@ -15,12 +14,9 @@
   $: onList = wantedCarList?.find((x) => x?.id === id) === undefined;
 
   async function addToUserCars() {
-    console.log('adding');
-
     carWantedListStore.update((currentList) => [{ id, model, make, price }, ...currentList]);
   }
   async function removeFromList() {
-    console.log('removing');
     carWantedListStore.update((currentList) => [...currentList.filter((x) => x.id != id)]);
   }
 </script>
