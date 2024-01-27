@@ -98,6 +98,7 @@ export default {
         end_date: publicEvent.endDate,
         discord_server: publicEvent.discordServer,
         email: publicEvent.email,
+        event_info: publicEvent.contactType,
       };
       user_id ? await supabase.from('publicEvents').insert([publicDbEvent]) : null;
     },
