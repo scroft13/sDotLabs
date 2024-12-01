@@ -1,108 +1,98 @@
-<script lang="ts">
-  import { AtSymbolIcon, PhoneIcon } from '@rgossiaux/svelte-heroicons/solid';
-  import Fa from 'svelte-fa';
-  import { faGithub } from '@fortawesome/free-brands-svg-icons';
-  import { faFacebook } from '@fortawesome/free-brands-svg-icons';
-
-  let descriptorArray: string[] = [
-    'Web Developer',
-    'Father',
-    '12th Man',
-    'Husband',
-    'Code Monkey',
-    'Mariner',
-    'Whovian',
-    'Electrician',
-    'Wrench Turner',
-    'Gardner',
-    'Dog Trainer',
-    'Plumber',
-    'Husband',
-    '',
-  ];
-
-  let imgSrc = '/profilePic.jpeg';
-  let currentDescriptorIndex = 0;
-
-  $: descriptorLength = descriptorArray.length;
-
-  setInterval(() => {
-    if (currentDescriptorIndex < descriptorLength - 1) {
-      currentDescriptorIndex++;
-    } else {
-      currentDescriptorIndex = 0;
-    }
-  }, 3000);
+<script>
+  import Portfolio from '$lib/components/Portfolio.svelte';
+  import Toolbar from '$lib/components/Toolbar.svelte';
+  import { fade } from 'svelte/transition';
 </script>
 
-<!-- <SideMenu bind:sideMenuIsOpen /> -->
-<div
-  class="fixed flex w-full items-center h-12  justify-center bg-white  bg-opacity-95 backdrop-blur-sm"
->
-  <div class="fixed flex justify-evenly w-full max-w-lg px-4">
-    <a href="/" class="">Home </a>
-    <a href="#resume" class="">Resume </a>
-    <a href="#contact" class="">Contact</a>
-    <!-- <a href="/gt7" class="">Gran Turismo 7 Project</a> -->
+<header class="sticky top-0 bg-transparent z-100">
+  <Toolbar />
+</header>
+
+<main class="min-w-full">
+  <div class="image-container">
+    <img src="white_no_url.png" alt="main aerial" class="foreground-image" />
+
+    <img src="AdobeStock_254658845_Preview.jpeg" alt="main aerial" class="background-image" />
   </div>
-</div>
-<div class="snap-both w-full">
-  <div
-    class="flex flex-col items-center justify-center h-[100vh] snap-center snap-proximity shrink-0"
-  >
-    <img src={imgSrc} alt="" class=" w-4/5 lg:w-1/3 aspect-auto rounded-full shadow-sm" />
-    <div class="w-full text-center flex flex-col">
-      <h1>Hello, my name is Shaun Croft</h1>
-      <div class="text-left flex w-full items-center justify-center self-start">
-        I am a &nbsp;
-        <div class="flex border-b-2 min-w-[175px] justify-center">
-          <div class="whitespace-nowrap">
-            {#each descriptorArray as descriptor, index (descriptor)}
-              <p>
-                {#if index == currentDescriptorIndex}
-                  {descriptor}
-                {/if}
-              </p>
-            {/each}
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div id="resume" class="flex flex-col w-full 2xl:justify-around shrink-0 min-h-[100vh]">
-    <div class="mx-4 xl:mx-16 bg-orange-100 flex flex-grow">
-      <iframe src="resume.pdf" title="S. Croft Resume" class="w-full flex-grow" marginheight="5" />
-    </div>
-    <div class=" flex items-center justify-center h-min flex-shrink my-10">
-      <a href="resume.pdf" download="S_Croft_Resume">[PDF Download]</a>
-    </div>
-  </div>
-  <div id="contact" class="flex h-[100vh] snap-center items-center justify-center shrink-0 ">
-    <div class="flex flex-row  gap-12 flex-wrap justify-evenly">
-      <a class="w-20" href="tel:+18023042113" title="(802)304-2113">
-        <PhoneIcon />
-      </a>
-      <a href="mailto:scroft@me.com" title="scroft@me.com" class="w-20">
-        <AtSymbolIcon />
-      </a>
-      <a
-        href="https://www.facebook.com/shaun.croft.12"
-        target="_blank"
-        title="Facebook Profile"
-        class="w-20"
-        rel="noreferrer"
-      >
-        <Fa icon={faFacebook} size="5x" />
-      </a>
-      <a
-        href="https://github.com/scroft13"
-        target="_blank"
-        title="github.com/scroft13"
-        class="w-20"
-        rel="noreferrer"
-      >
-        <Fa icon={faGithub} size="5x" />
-      </a>
-    </div>
-  </div>
-</div>
+  <Portfolio />
+  <section id="services" in:fade>
+    <h2>Services</h2>
+    <p>
+      Capture breathtaking aerial photos and videos of real estate properties with our
+      state-of-the-art drone technology. We offer:
+    </p>
+    <ul>
+      <li>High-resolution photography and 4K videography</li>
+      <li>3D mapping and modeling</li>
+      <li>Virtual tours and interactive experiences</li>
+    </ul>
+    <a href="/aerial">Learn More</a>
+  </section>
+
+  <section id="pricing" in:fade class="h-[2000px]">
+    <h2>Pricing</h2>
+    <p>
+      Transform your images into precise 3D models with our photogrammetry services. We can create:
+    </p>
+    <ul>
+      <li>Detailed 3D models of objects and environments</li>
+      <li>Accurate measurements and analysis</li>
+      <li>Interactive 3D visualizations</li>
+    </ul>
+    <a href="/photogrammetry">Learn More</a>
+  </section>
+
+  <section id="photography" in:fade>
+    <h2>Photography & Videography</h2>
+    <p>
+      Our experienced photographers and videographers can capture the essence of your projects with
+      stunning visuals. We specialize in:
+    </p>
+    <ul>
+      <li>Real estate photography and videography</li>
+      <li>Architectural photography</li>
+      <li>Commercial and product photography</li>
+    </ul>
+    <a href="/photography">Learn More</a>
+  </section>
+</main>
+
+<footer>
+  <p>&copy; {new Date().getFullYear()} Sdotlabs</p>
+</footer>
+
+<style>
+  .image-container {
+    position: relative;
+    top: -100px;
+    z-index: -100;
+  }
+
+  .background-image {
+    display: block;
+    width: 100%;
+    height: auto;
+  }
+
+  .foreground-image {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 28%;
+    height: auto;
+  }
+  img {
+    width: 100%;
+    height: auto;
+  }
+
+  footer {
+    background-color: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+
+    width: 100%;
+  }
+</style>
