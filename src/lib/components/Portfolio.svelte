@@ -46,8 +46,8 @@
     display: flex;
     flex-wrap: wrap;
     gap: 10px;
-    /* justify-content: center; */
     width: 100%;
+    justify-content: center;
     align-content: center;
   }
 
