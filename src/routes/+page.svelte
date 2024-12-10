@@ -12,9 +12,14 @@
 
 <main class="min-w-full">
   <div class="image-container">
-    <img src="white_no_url.png" alt="main aerial" class="foreground-image" />
+    <img src="white_no_url.png" alt="logo" class="foreground-image" />
+    <img
+      src="AdobeStock_254658845_Preview.jpeg"
+      alt="main aerial"
+      class="background-image-desktop"
+    />
 
-    <img src="AdobeStock_254658845_Preview.jpeg" alt="main aerial" class="background-image" />
+    <div class="background-image" />
   </div>
   <section id="portfolio">
     <Portfolio />
@@ -39,8 +44,7 @@
     z-index: -100;
   }
 
-  .background-image {
-    display: block;
+  .background-image-desktop {
     width: 100%;
     height: auto;
   }
@@ -65,5 +69,31 @@
     padding: 10px;
 
     width: 100%;
+  }
+  @media (max-width: 768px) {
+    .foreground-image {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 85%;
+      height: auto;
+    }
+
+    .background-image {
+      background-image: url('AdobeStock_254658845_Preview.jpeg'); /* Replace with your image URL */
+      background-size: cover; /* Scale image to cover entire container */
+      background-position: center; /* Center the image */
+      background-repeat: no-repeat; /* Prevent tiling */
+      width: 100%;
+      height: 105vh;
+    }
+    .background-image-desktop {
+      display: none;
+    }
+  }
+
+  @media (min-width: 769px) and (max-width: 1024px) {
+    /* Tablet styles */
   }
 </style>
