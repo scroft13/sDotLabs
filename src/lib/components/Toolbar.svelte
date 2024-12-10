@@ -6,7 +6,6 @@
     >
       <li><a href="#portfolio">Portfolio</a></li>
       <li><a href="#services">Services</a></li>
-      <li><a href="#pricing">Pricing</a></li>
       <li><a href="#contact">Contact</a></li>
     </ul>
   </nav>
@@ -17,7 +16,7 @@
     position: sticky;
     top: 0;
     z-index: 100;
-    background-color: #333; /* Example: Dark blue */
+    background-color: #333;
     color: white;
     display: flex;
     align-items: center;
