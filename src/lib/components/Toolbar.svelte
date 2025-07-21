@@ -1,4 +1,4 @@
-<div class="h-120 align-top text-white sticky w-full flex-grow toolbar p-4">
+<div class="h-120 align-top text-white sticky w-full flex-grow toolbar p-4 z-50">
   <nav class="flex flex-row flex-grow h-16 content-center text-center">
     <img src="White_s_logo.png" alt="brand logo" class="h-12" />
     <ul
@@ -15,7 +15,7 @@
   .toolbar {
     position: sticky;
     top: 0;
-    z-index: 100;
+    z-index: 100 !important;
     background-color: #333;
     color: white;
     display: flex;

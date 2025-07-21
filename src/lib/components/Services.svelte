@@ -62,7 +62,7 @@
     </div>
   </div>
   <div
-    class="additional-container flex flex-col m-4 p-4 rounded-md flex-wrap gap-10 justify-center"
+    class="additional-container flex flex-col m-4 p-4 rounded-md flex-wrap gap-4 items-center text-center justify-center"
   >
     <div>REAL ESTATE PHOTOGRAPHY ADDITIONAL SERVICES</div>
     <div class="additional">
@@ -134,7 +134,7 @@
     max-width: 400px;
     flex-grow: 1;
     border-radius: 8px;
-    box-shadow: 5px 5px 12px #ccc;
+    box-shadow: 5px 5px 12px #999;
     li {
       margin-top: 20px;
     }
