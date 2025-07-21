@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -337,4 +338,17 @@
   .popover-background {
     @apply bg-white dark:bg-gray-background;
   }
+}
+
+.mr-de-haviland-regular {
+  font-family: 'Mr De Haviland', cursive;
+  /* font-weight: 400;
+  font-style: normal; */
+}
+
+body {
+  font-family: 'Cormorant', serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
 }
