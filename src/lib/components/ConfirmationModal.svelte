@@ -58,10 +58,10 @@
             <XIcon class="h-5 w-5" />
           </button>
         </div>
-        <p class="text-center w-full text-lg font-semibold">
+        <p class="text-center w-full text-lg font-semibold text-gray-900">
           {confirmationMessage}
         </p>
-        <p class="w=full text-center secondary-text mt-2 mb-4">This cannot be undone.</p>
+        <p class="w=full text-center text-gray-600 mt-2 mb-4">This cannot be undone.</p>
         <div class="flex w-full justify-around mb-6 mt-10 gap-2">
           <button
             class="rounded border-2 border-secondary dark:border-gray-500 dark:text-gray-300 text-secondary h-12 w-32 ring-secondary ring-offset-2 focus:ring-2"
