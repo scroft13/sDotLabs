@@ -28,11 +28,6 @@
   resolved "https://registry.npmjs.org/@antfu/utils/-/utils-0.7.10.tgz"
   integrity sha512-+562v9k4aI80m1+VuMHehNJWLOFjBnXn3tdOitzD0il5b7smkSBal4+a3oKiQTbrwMmN/TBUMDvbdoWDehgOww==
 
-"@esbuild/darwin-arm64@0.16.17":
-  version "0.16.17"
-  resolved "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.16.17.tgz"
-  integrity sha512-/2agbUEfmxWHi9ARTX6OQ/KgXnOWfsNlTeLcoV7HSuSTv63E4DqtAc+2XqGw1KHxKMHGZgbVCZge7HXWX9Vn+w==
-
 "@esbuild/darwin-arm64@0.18.20":
   version "0.18.20"
   resolved "https://registry.npmjs.org/@esbuild/darwin-arm64/-/darwin-arm64-0.18.20.tgz"
@@ -93,11 +88,6 @@
   version "2.0.3"
   resolved "https://registry.npmjs.org/@humanwhocodes/object-schema/-/object-schema-2.0.3.tgz"
   integrity sha512-93zYdMES/c1D69yZiKDBj0V24vqNzB/koF26KPaagAfd3P/4gUlh3Dys5ogAK+Exi9QyzlD8x/08Zt7wIKcDcA==
-
-"@iarna/toml@^2.2.5":
-  version "2.2.5"
-  resolved "https://registry.npmjs.org/@iarna/toml/-/toml-2.2.5.tgz"
-  integrity sha512-trnsAYxU3xnS1gPHPyU961coFyLkh4gAD/0zQ5mymY4yOZ+CYvsPqUbOFSw0aDM4y0tV7tiFxL/1XfXPNC6IPg==
 
 "@iconify/json@^2.2.131":
   version "2.2.278"
@@ -303,16 +293,12 @@
   dependencies:
     import-meta-resolve "^2.2.0"
 
-"@sveltejs/adapter-netlify@^1.0.0-next.88":
-  version "1.0.5"
-  resolved "https://registry.npmjs.org/@sveltejs/adapter-netlify/-/adapter-netlify-1.0.5.tgz"
-  integrity sha512-CQpSf2y29+DdaSELLWb4P5ewWSPUFRfJn2DwtiDZ+YOiIVhUk0caudFZoscH1GAP/sFrJekIMtawP542BjWA1g==
-  dependencies:
-    "@iarna/toml" "^2.2.5"
-    esbuild "^0.16.3"
-    set-cookie-parser "^2.5.1"
+"@sveltejs/adapter-static@^2.0.3":
+  version "2.0.3"
+  resolved "https://registry.npmjs.org/@sveltejs/adapter-static/-/adapter-static-2.0.3.tgz"
+  integrity sha512-VUqTfXsxYGugCpMqQv1U0LIdbR3S5nBkMMDmpjGVJyM6Q2jHVMFtdWJCkeHMySc6mZxJ+0eZK3T7IgmUCDrcUQ==
 
-"@sveltejs/kit@^1.0.0", "@sveltejs/kit@^1.0.0-next.587", "@sveltejs/kit@^1.27.6":
+"@sveltejs/kit@^1.0.0-next.587", "@sveltejs/kit@^1.27.6", "@sveltejs/kit@^1.5.0":
   version "1.30.4"
   resolved "https://registry.npmjs.org/@sveltejs/kit/-/kit-1.30.4.tgz"
   integrity sha512-JSQIQT6XvdchCRQEm7BABxPC56WP5RYVONAi+09S8tmzeP43fBsRlr95bFmsTQM2RHBldfgQk+jgdnsKI75daA==
@@ -813,34 +799,6 @@ es6-promise@^3.1.2:
   version "3.3.1"
   resolved "https://registry.npmjs.org/es6-promise/-/es6-promise-3.3.1.tgz"
   integrity sha512-SOp9Phqvqn7jtEUxPWdWfWoLmyt2VaJ6MpvP9Comy1MceMXqE6bxvaTu4iaxpYYPzhny28Lc+M87/c2cPK6lDg==
-
-esbuild@^0.16.3:
-  version "0.16.17"
-  resolved "https://registry.npmjs.org/esbuild/-/esbuild-0.16.17.tgz"
-  integrity sha512-G8LEkV0XzDMNwXKgM0Jwu3nY3lSTwSGY6XbxM9cr9+s0T/qSV1q1JVPBGzm3dcjhCic9+emZDmMffkwgPeOeLg==
-  optionalDependencies:
-    "@esbuild/android-arm" "0.16.17"
-    "@esbuild/android-arm64" "0.16.17"
-    "@esbuild/android-x64" "0.16.17"
-    "@esbuild/darwin-arm64" "0.16.17"
-    "@esbuild/darwin-x64" "0.16.17"
-    "@esbuild/freebsd-arm64" "0.16.17"
-    "@esbuild/freebsd-x64" "0.16.17"
-    "@esbuild/linux-arm" "0.16.17"
-    "@esbuild/linux-arm64" "0.16.17"
-    "@esbuild/linux-ia32" "0.16.17"
-    "@esbuild/linux-loong64" "0.16.17"
-    "@esbuild/linux-mips64el" "0.16.17"
-    "@esbuild/linux-ppc64" "0.16.17"
-    "@esbuild/linux-riscv64" "0.16.17"
-    "@esbuild/linux-s390x" "0.16.17"
-    "@esbuild/linux-x64" "0.16.17"
-    "@esbuild/netbsd-x64" "0.16.17"
-    "@esbuild/openbsd-x64" "0.16.17"
-    "@esbuild/sunos-x64" "0.16.17"
-    "@esbuild/win32-arm64" "0.16.17"
-    "@esbuild/win32-ia32" "0.16.17"
-    "@esbuild/win32-x64" "0.16.17"
 
 esbuild@^0.18.10:
   version "0.18.20"
@@ -1920,7 +1878,7 @@ semver@^7.3.7:
   resolved "https://registry.npmjs.org/semver/-/semver-7.6.3.tgz"
   integrity sha512-oVekP1cKtI+CTDvHWYFUcMtsK/00wmAEfyqKfNdARm8u1wNVhSgaX7A8d4UuIlUI5e84iEwOhs7ZPYRmzU9U6A==
 
-set-cookie-parser@^2.5.1, set-cookie-parser@^2.6.0:
+set-cookie-parser@^2.6.0:
   version "2.7.1"
   resolved "https://registry.npmjs.org/set-cookie-parser/-/set-cookie-parser-2.7.1.tgz"
   integrity sha512-IOc8uWeOZgnb3ptbCURJWNjWUPcO3ZnTTdzsurqERrP6nPyv+paC55vJM0LpOlT2ne+Ix+9+CRG1MNLlyZ4GjQ==

@@ -18,9 +18,11 @@ No test runner is configured (no `test` script, no test files) — `npm run chec
 
 Requires a `.env` with `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` (see `.env.example`) — the Supabase client is created at module load in `src/lib/db.ts`, so even `npm run build` will crash without these set.
 
+Deploys are manual: `npm run build` then `firebase deploy --only hosting` (requires `firebase login` and access to the `sdotlabs-2` Firebase project; `firebase-tools` isn't a project dependency — run it via `npx firebase-tools` from outside this repo if `npm run build`'s `.npmrc` `engine-strict=true` conflicts with your local Node version).
+
 ## Architecture
 
-A SvelteKit 1 (Svelte 3) photo gallery, styled with Tailwind, deployed to Netlify (`@sveltejs/adapter-netlify`). Public gallery + a single-owner admin portal for uploading/managing photos, backed entirely by Supabase (Postgres + Storage + Auth).
+A SvelteKit 1 (Svelte 3) photo gallery, styled with Tailwind, built as a static SPA (`@sveltejs/adapter-static`, SPA fallback mode) and deployed to Firebase Hosting (project `sdotlabs-2`, config in `firebase.json`/`.firebaserc`). Public gallery + a single-owner admin portal for uploading/managing photos, backed entirely by Supabase (Postgres + Storage + Auth).
 
 - **`/`** — public gallery home: grid of albums (`src/routes/+page.svelte` + `+page.ts` load via `db.albums.allWithCover()`).
 - **`/album/[slug]`** — album detail: photo grid (`PhotoGrid`) + full-screen viewer (`Lightbox`).
@@ -34,7 +36,7 @@ Schema lives in `supabase-setup.sql` at the repo root (not Supabase-CLI-managed 
 
 **The actual access control is Postgres RLS + Storage policies**, not the app: both tables and the bucket allow public `select`, but `insert`/`update`/`delete` are restricted to a single hardcoded `auth.uid()` — the owner's Supabase user ID, pasted into the SQL script after creating that one account. The `/admin` route guard (`src/routes/admin/+layout.svelte`, checking `$lib/auth`'s `user` store) is UX only — it just avoids flashing admin UI at a signed-out visitor. Don't treat it as the security boundary when reasoning about what an anonymous visitor can or can't do.
 
-`/admin` and everything under it has `export const ssr = false` (`src/routes/admin/+layout.ts`) — Supabase's session lives in browser storage, so admin pages only ever render client-side; the public routes above it are still SSR'd normally.
+The whole app has `export const ssr = false` at the root (`src/routes/+layout.ts`) — there is no server runtime (Firebase Hosting serves static files only), so every route renders client-side; `firebase.json` rewrites all paths to `/index.html` so deep links resolve via client-side routing. `src/routes/admin/+layout.ts` also sets `ssr = false`, which is now redundant with the root but harmless.
 
 ### Data layer (`src/lib/`)
 
@@ -45,7 +47,7 @@ Schema lives in `supabase-setup.sql` at the repo root (not Supabase-CLI-managed 
 
 ### Upload flow
 
-Uploads go directly from the browser to Supabase Storage (`db.photos.upload`) — never proxied through a Netlify function, which sidesteps Netlify's ~6MB sync function payload ceiling. After the Storage upload succeeds, a `photos` row is inserted with the resulting `storage_path`; public URLs are derived on demand via `db.photos.publicUrl()` (`storage.from('gallery').getPublicUrl(...)`), not stored.
+Uploads go directly from the browser to Supabase Storage (`db.photos.upload`) — there's no backend to proxy through (Firebase Hosting serves static files only). After the Storage upload succeeds, a `photos` row is inserted with the resulting `storage_path`; public URLs are derived on demand via `db.photos.publicUrl()` (`storage.from('gallery').getPublicUrl(...)`), not stored.
 
 ### Forms
 
