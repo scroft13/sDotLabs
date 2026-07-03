@@ -3,6 +3,13 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  input,
+  textarea {
+    @apply text-gray-900;
+  }
+}
+
 @layer components {
   .modal-background {
     @apply bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-600 shadow-2xl ring-1 ring-black dark:ring-gray-700 ring-opacity-5 dark:shadow-white/10;
