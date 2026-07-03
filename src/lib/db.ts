@@ -8,6 +8,15 @@ export const supabase = createClient(
 
 const GALLERY_BUCKET = 'gallery';
 
+// crypto.randomUUID() only exists in secure contexts (HTTPS, or specifically
+// http://localhost) -- falls back so local dev over a LAN IP still works.
+function generateId(): string {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2)}`;
+}
+
 export default {
   albums: {
     async all(): Promise<Album[]> {
@@ -120,7 +129,7 @@ export default {
     },
     async upload(albumId: string, file: File): Promise<string> {
       const ext = file.name.split('.').pop() ?? 'jpg';
-      const path = `${albumId}/${crypto.randomUUID()}.${ext}`;
+      const path = `${albumId}/${generateId()}.${ext}`;
       const { error } = await supabase.storage
         .from(GALLERY_BUCKET)
         .upload(path, file, { cacheControl: '3600', upsert: false });
