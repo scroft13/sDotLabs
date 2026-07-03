@@ -1,99 +1,42 @@
-<script>
-  import Contact from '$lib/components/Contact.svelte';
-  import Portfolio from '$lib/components/Portfolio.svelte';
-  import Services from '$lib/components/Services.svelte';
-  import Toolbar from '$lib/components/Toolbar.svelte';
-  import { fade } from 'svelte/transition';
+<script lang="ts">
+  import AlbumCard from '$lib/components/AlbumCard.svelte';
+  import type { PageData } from './$types';
+
+  export let data: PageData;
 </script>
 
-<header class="sticky top-0 bg-transparent z-100">
-  <Toolbar />
-</header>
+<svelte:head>
+  <title>Gallery</title>
+</svelte:head>
 
-<main class="min-w-full">
-  <div class="image-container">
-    <img src="white_no_url.png" alt="logo" class="foreground-image" />
-    <img
-      src="AdobeStock_254658845_Preview.jpeg"
-      alt="main aerial"
-      class="background-image-desktop"
-    />
-
-    <div class="background-image" />
-  </div>
-  <section id="portfolio">
-    <Portfolio />
-  </section>
-  <section id="services" in:fade>
-    <Services />
-  </section>
-
-  <section id="contact" in:fade>
-    <Contact />
-  </section>
+<main>
+  <h1>Gallery</h1>
+  {#if data.albums.length === 0}
+    <p class="empty">No albums yet.</p>
+  {:else}
+    <div class="album-grid">
+      {#each data.albums as album (album.id)}
+        <AlbumCard {album} coverStoragePath={album.coverStoragePath} />
+      {/each}
+    </div>
+  {/if}
 </main>
 
-<footer>
-  <p>&copy; {new Date().getFullYear()} Sdotlabs</p>
-</footer>
-
 <style>
-  .image-container {
-    position: relative;
-    top: -100px;
-    z-index: -100;
+  main {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem 4rem;
   }
-
-  .background-image-desktop {
-    width: 100%;
-    height: auto;
+  h1 {
+    margin-bottom: 1.5rem;
   }
-
-  .foreground-image {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 28%;
-    height: auto;
+  .album-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 1.5rem;
   }
-  img {
-    width: 100%;
-    height: auto;
-  }
-
-  footer {
-    background-color: #333;
-    color: white;
-    text-align: center;
-    padding: 10px;
-
-    width: 100%;
-  }
-  @media (max-width: 768px) {
-    .foreground-image {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      width: 85%;
-      height: auto;
-    }
-
-    .background-image {
-      background-image: url('AdobeStock_254658845_Preview.jpeg'); /* Replace with your image URL */
-      background-size: cover; /* Scale image to cover entire container */
-      background-position: center; /* Center the image */
-      background-repeat: no-repeat; /* Prevent tiling */
-      width: 100%;
-      height: 105vh;
-    }
-    .background-image-desktop {
-      display: none;
-    }
-  }
-
-  @media (min-width: 769px) and (max-width: 1024px) {
-    /* Tablet styles */
+  .empty {
+    opacity: 0.6;
   }
 </style>

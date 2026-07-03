@@ -1,15 +1,9 @@
 <script lang="ts">
   import { getFormContext } from '../../utils';
   import Loading from '../Loading.svelte';
-  const { isSubmitting, handleSubmit, form } = getFormContext();
+  const { isSubmitting, handleSubmit } = getFormContext();
   export let buttonName: string;
   export let loading = true;
-
-  $: form.subscribe((x) => {
-    console.log(x);
-  });
-
-  $: console.log($isSubmitting);
 </script>
 
 <button

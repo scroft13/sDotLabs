@@ -50,7 +50,7 @@
       class="w-full"
     >
       <div
-        class="absolute left-1/2 -translate-x-1/2 transform rounded-md modal-background main-text overflow-y-auto mb-3 mt-64 max-w-sm px-6"
+        class="absolute left-1/2 -translate-x-1/2 transform rounded-md modal-background overflow-y-auto mb-3 mt-64 max-w-sm px-6"
       >
         <div class="flex justify-end w-full mt-2">
           <button on:click|preventDefault={close} class="w-10 h-9 p-2">
@@ -64,7 +64,7 @@
         <p class="w=full text-center secondary-text mt-2 mb-4">This cannot be undone.</p>
         <div class="flex w-full justify-around mb-6 mt-10 gap-2">
           <button
-            class="rounded border-2 border-secondary dark:border-dark-mode-button-color dark:text-dark-mode-button-color text-secondary h-12 w-32 ring-secondary ring-offset-2 focus:ring-2"
+            class="rounded border-2 border-secondary dark:border-gray-500 dark:text-gray-300 text-secondary h-12 w-32 ring-secondary ring-offset-2 focus:ring-2"
             on:click={close}>Cancel</button
           >
           <button class="submit-button h-12 w-32" on:click={confirm}>Confirm</button>

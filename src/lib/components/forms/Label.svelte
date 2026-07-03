@@ -3,34 +3,15 @@
   export let name: string;
   export let title: string;
   export let disabled: boolean;
-  const { schema, form } = getFormContext();
+  const { schema } = getFormContext();
 
   const fieldInfo = schema.fields[name].describe() as {
     tests: { name: string }[];
     optional: boolean;
   };
-  let required =
-    fieldInfo.tests.find((set) => set.name === 'required') !== undefined ? true : false;
-  $: {
-    let isZip = name === 'zip';
-    let isState = name === 'state';
-    if (isZip || isState) {
-      if (
-        ($form.country === 'United States' || $form.country === 'Canada') &&
-        fieldInfo.tests.length >= 1
-      ) {
-        required = true;
-      } else {
-        required = false;
-      }
-    }
-  }
-
-  $: {
-    if (fieldInfo.optional === false) {
-      required = true;
-    }
-  }
+  const required =
+    fieldInfo.optional === false ||
+    fieldInfo.tests.find((set) => set.name === 'required') !== undefined;
 </script>
 
 <label for={name} {...$$props}>

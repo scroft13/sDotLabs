@@ -8,7 +8,7 @@
 
   const dispatch = createEventDispatcher();
 
-  export let type: 'error' | 'success' = 'error';
+  export let type: 'error' | 'success' | 'info' = 'error';
   export let dismissible = true;
 </script>
 

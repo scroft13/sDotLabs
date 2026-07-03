@@ -13,7 +13,7 @@
   const { form, errors, handleChange, validateField } = getFormContext();
 
   export let dependsOn: string[] | undefined = undefined;
-  let lastDependsOnValue: Record<string, string>;
+  let lastDependsOnValue: Record<string, unknown>;
   $: if (dependsOn && pick($form ?? {}, ...dependsOn) !== lastDependsOnValue) {
     validateField(name);
     lastDependsOnValue = pick($form ?? {}, ...dependsOn);
@@ -32,7 +32,7 @@
     on:blur={handleChange}
     class:invalid={$errors[name]}
     {...$$props}
-    checked={$form[name]}
+    checked={!!$form[name]}
   />
   {#if iconType}
     <p class="absolute right-3 top-[22px] secondary-text">
