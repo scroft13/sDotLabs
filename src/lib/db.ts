@@ -34,7 +34,7 @@ export default {
     async allWithCover(): Promise<(Album & { coverStoragePath: string | null })[]> {
       const { data, error } = await supabase
         .from('albums')
-        .select('*, photos(id, storage_path, sort_order)')
+        .select('*, photos!photos_album_id_fkey(id, storage_path, sort_order)')
         .order('sort_order');
       if (error) throw error;
       return (data ?? []).map((album) => {
