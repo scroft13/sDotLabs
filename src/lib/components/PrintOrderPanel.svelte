@@ -33,22 +33,36 @@
   $: matchingVariants = resolvedCategory
     ? product.variants.filter((v) => v.aspectRatio === resolvedCategory)
     : product.variants;
-  $: sizes = [...new Set(matchingVariants.map((v) => v.size))];
-  $: frameColors = [
-    ...new Set(matchingVariants.map((v) => v.frameColor).filter(Boolean)),
-  ] as string[];
+  // Matted vs. unmatted is a distinct Prodigi product, not every size/aspect
+  // combo has both (e.g. 4:5 currently has no matted option) -- so mounts are
+  // derived per aspect category, and size/frame options narrow further once
+  // a mount is picked.
+  $: mounts = [...new Set(matchingVariants.map((v) => v.mount).filter(Boolean))] as (
+    | 'matted'
+    | 'unmatted'
+  )[];
 
   let selectedSize = '';
   let selectedFrame = '';
+  let selectedMount: 'matted' | 'unmatted' | '' = '';
+  $: if (mounts.length && !mounts.includes(selectedMount as 'matted' | 'unmatted')) {
+    selectedMount = mounts.includes('matted') ? 'matted' : mounts[0];
+  }
+  $: mountVariants = mounts.length
+    ? matchingVariants.filter((v) => v.mount === selectedMount)
+    : matchingVariants;
+  $: sizes = [...new Set(mountVariants.map((v) => v.size))];
+  $: frameColors = [...new Set(mountVariants.map((v) => v.frameColor).filter(Boolean))] as string[];
+
   $: if (!sizes.includes(selectedSize)) selectedSize = firstOrderableSize(sizes) ?? sizes[0];
   $: if (frameColors.length && !frameColors.includes(selectedFrame)) selectedFrame = frameColors[0];
 
-  $: variant = matchingVariants.find(
+  $: variant = mountVariants.find(
     (v) => v.size === selectedSize && (!frameColors.length || v.frameColor === selectedFrame),
   );
 
   function variantForSize(size: string): PrintVariant {
-    return matchingVariants.find((v) => v.size === size) as PrintVariant;
+    return mountVariants.find((v) => v.size === size) as PrintVariant;
   }
 
   function sizeTooSmall(size: string): boolean {
@@ -98,6 +112,7 @@
     <GalleryFrame
       framed={productId === 'framed'}
       frameColor={FRAME_SWATCHES[selectedFrame] ?? '#161616'}
+      matted={selectedMount !== 'unmatted'}
     >
       <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
     </GalleryFrame>
@@ -118,6 +133,23 @@
     </div>
     <p class="field-note">{product.description}</p>
   </div>
+
+  {#if mounts.length > 1}
+    <div class="field">
+      <div class="field-label">MAT</div>
+      <div class="options">
+        {#each mounts as mount (mount)}
+          <button
+            class="option"
+            class:selected={selectedMount === mount}
+            on:click={() => (selectedMount = mount)}
+          >
+            {mount === 'matted' ? 'Matted' : 'No Mat'}
+          </button>
+        {/each}
+      </div>
+    </div>
+  {/if}
 
   <div class="field">
     <div class="field-label">SIZE</div>

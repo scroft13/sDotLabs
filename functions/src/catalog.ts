@@ -13,6 +13,9 @@ export type PrintVariant = {
   // panel offer only variants that fit a given photo without a border.
   aspectRatio: '2:3' | '4:5' | '3:4' | '1:1' | '2:1';
   frameColor?: string;
+  // Only present on framed variants -- Prodigi's matted vs. unmatted mount is
+  // a distinct product (different prodigiSku), not an order-time attribute.
+  mount?: 'matted' | 'unmatted';
   costCents: number;
   shippingCents: number;
   retailCents: number;

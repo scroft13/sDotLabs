@@ -5,6 +5,7 @@
   export let exif: PhotoExif | null = null;
   export let framed = true;
   export let frameColor = '#161616';
+  export let matted = true;
 
   $: exifLine = exif
     ? [
@@ -21,7 +22,7 @@
 <figure class="gallery-frame">
   {#if framed}
     <div class="frame" style={`background: ${frameColor}`}>
-      <div class="mat">
+      <div class="mat" class:no-mat={!matted}>
         <div class="print">
           <slot />
         </div>
@@ -62,6 +63,12 @@
   .mat {
     background: #fdfdfb;
     padding: 34px;
+  }
+  /* Unmatted: the print sits almost flush in the frame, just a thin recessed
+     edge instead of a visible mat board. */
+  .mat.no-mat {
+    background: rgba(0, 0, 0, 0.06);
+    padding: 6px;
   }
   .mat.unframed {
     box-shadow: 0 10px 24px -12px rgba(30, 25, 18, 0.3), 0 2px 5px rgba(30, 25, 18, 0.12);
