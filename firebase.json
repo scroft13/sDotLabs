@@ -1,4 +1,18 @@
 {
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "storage": [
+    {
+      "bucket": "sdotlabs-2",
+      "rules": "storage.rules"
+    },
+    {
+      "bucket": "sdotlabs-2.firebasestorage.app",
+      "rules": "storage.rules"
+    }
+  ],
   "hosting": {
     "public": "build",
     "ignore": ["firebase.json", "**/.*"],

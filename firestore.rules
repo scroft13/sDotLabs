@@ -1,0 +1,27 @@
+rules_version = '2';
+
+// Public gallery, single-owner writes. The hardcoded uid below is the one
+// Firebase Auth account created manually in the console (Authentication ->
+// Users). There is no signup flow in the app, so this uid is the actual
+// access-control boundary (the /admin route guard in the app is UX only).
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function isOwner() {
+      return request.auth != null && request.auth.uid == 'AbzprqTmVHOF1fCMt84c7aWa7o73';
+    }
+
+    match /albums/{albumId} {
+      allow read: if true;
+      allow create, update, delete: if isOwner();
+    }
+
+    match /photos/{photoId} {
+      allow read: if true;
+      allow create, update, delete: if isOwner();
+    }
+
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

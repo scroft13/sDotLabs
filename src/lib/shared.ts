@@ -8,6 +8,13 @@ export type Album = {
   created_at: string;
 };
 
+export type PhotoExif = {
+  iso: number | null;
+  aperture: number | null;
+  shutterSpeed: string | null;
+  focalLength: number | null;
+};
+
 export type Photo = {
   id: string;
   album_id: string;
@@ -17,5 +24,6 @@ export type Photo = {
   sort_order: number;
   width: number | null;
   height: number | null;
+  exif: PhotoExif | null;
   created_at: string;
 };

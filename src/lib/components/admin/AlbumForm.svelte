@@ -11,12 +11,20 @@
   import { createEventDispatcher } from 'svelte';
 
   export let album: Album | null = null;
+  export let nextSortOrder = 0;
 
   const dispatch = createEventDispatcher<{ saved: void }>();
 
   const formSchema = yup.object().shape({
-    title: yup.string().required().default(album?.title ?? ''),
-    slug: yup.string().required().slug().default(album?.slug ?? ''),
+    title: yup
+      .string()
+      .required()
+      .default(album?.title ?? ''),
+    slug: yup
+      .string()
+      .required()
+      .slug()
+      .default(album?.slug ?? ''),
     description: yup.string().default(album?.description ?? ''),
   });
 
@@ -34,7 +42,7 @@
       if (album) {
         await db.albums.update(album.id, patch);
       } else {
-        await db.albums.create(patch);
+        await db.albums.create({ ...patch, sort_order: nextSortOrder });
       }
       addToast({
         id: Math.floor(Math.random() * 100000),

@@ -1,6 +1,8 @@
 <script lang="ts">
+  import { parse as parseExif } from 'exifr';
   import db from '$lib/db';
   import { addToast } from '$lib/stores';
+  import type { PhotoExif } from '$lib/shared';
   import { createEventDispatcher } from 'svelte';
 
   export let albumId: string;
@@ -25,6 +27,32 @@
     });
   }
 
+  function formatShutterSpeed(seconds: number): string {
+    return seconds >= 1 ? `${seconds}s` : `1/${Math.round(1 / seconds)}s`;
+  }
+
+  // Most images have no EXIF (screenshots, social-media re-exports, etc.) or
+  // exifr can't parse the format -- either way, missing EXIF shouldn't block
+  // the upload, so this resolves to null rather than throwing.
+  async function readExif(file: File): Promise<PhotoExif | null> {
+    try {
+      const tags = await parseExif(file, ['ISO', 'FNumber', 'ExposureTime', 'FocalLength']);
+      if (!tags) return null;
+      const { ISO, FNumber, ExposureTime, FocalLength } = tags;
+      if (ISO == null && FNumber == null && ExposureTime == null && FocalLength == null) {
+        return null;
+      }
+      return {
+        iso: ISO ?? null,
+        aperture: FNumber ?? null,
+        shutterSpeed: ExposureTime ? formatShutterSpeed(ExposureTime) : null,
+        focalLength: FocalLength ? Math.round(FocalLength) : null,
+      };
+    } catch {
+      return null;
+    }
+  }
+
   async function handleFiles(e: Event) {
     const input = e.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
@@ -34,9 +62,10 @@
     let sortOrder = nextSortOrder;
     for (const file of files) {
       try {
-        const [storagePath, size] = await Promise.all([
+        const [storagePath, size, exif] = await Promise.all([
           db.photos.upload(albumId, file),
           readImageSize(file),
+          readExif(file),
         ]);
         await db.photos.create({
           album_id: albumId,
@@ -44,6 +73,7 @@
           sort_order: sortOrder++,
           width: size?.width,
           height: size?.height,
+          exif: exif ?? undefined,
         });
       } catch (err) {
         addToast({

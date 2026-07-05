@@ -6,8 +6,8 @@
   $: isLoginPage = $page.url.pathname === '/admin/login';
 
   // Route guarding here is UX only (avoids flashing admin UI at a signed-out
-  // visitor) -- the real access control is the Postgres RLS / storage
-  // policies keyed to the owner's auth.uid(), set up in supabase-setup.sql.
+  // visitor) -- the real access control is the Firestore / Storage security
+  // rules keyed to the owner's uid (firestore.rules / storage.rules).
   $: if ($user === null && !isLoginPage) {
     goto('/admin/login');
   }
@@ -23,7 +23,10 @@
 {:else}
   {#if $user && !isLoginPage}
     <nav class="admin-nav">
-      <a href="/admin">Albums</a>
+      <div class="nav-left">
+        <a href="/" class="site-link"><span class="mark">[S.]</span> View Site</a>
+        <a href="/admin">Albums</a>
+      </div>
       <button on:click={() => signOut()}>Sign Out</button>
     </nav>
   {/if}
@@ -36,11 +39,26 @@
     justify-content: space-between;
     align-items: center;
     padding: 1rem 1.5rem;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid #e5e5e5;
   }
   .admin-nav a {
     color: inherit;
     text-decoration: none;
+    font-weight: 500;
+  }
+  .nav-left {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+  }
+  .site-link {
+    color: #6f6b64;
+  }
+  .site-link:hover {
+    color: inherit;
+  }
+  .site-link .mark {
+    font-family: 'Cormorant Garamond', Georgia, serif;
     font-weight: 500;
   }
   .admin-nav button {

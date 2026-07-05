@@ -17,23 +17,23 @@
   type FormData = yup.InferType<typeof formSchema>;
 
   const formState = createForm<FormData>({
-      initialValues: formSchema.cast({}) as FormData,
-      validationSchema: formSchema,
-      onSubmit: async (values) => {
-        const { error } = await signIn(values.email, values.password);
-        if (error) {
-          addToast({
-            id: Math.floor(Math.random() * 100000),
-            type: 'error',
-            message: error.message,
-            dismissible: true,
-            timeout: 4000,
-          });
-          return;
-        }
-        goto('/admin');
-      },
-    });
+    initialValues: formSchema.cast({}) as FormData,
+    validationSchema: formSchema,
+    onSubmit: async (values) => {
+      const { error } = await signIn(values.email, values.password);
+      if (error) {
+        addToast({
+          id: Math.floor(Math.random() * 100000),
+          type: 'error',
+          message: error.message,
+          dismissible: true,
+          timeout: 4000,
+        });
+        return;
+      }
+      goto('/admin');
+    },
+  });
 </script>
 
 <svelte:head>

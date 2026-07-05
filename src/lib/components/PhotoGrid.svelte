@@ -1,4 +1,5 @@
 <script lang="ts">
+  import GalleryFrame from '$lib/components/GalleryFrame.svelte';
   import db from '$lib/db';
   import type { Photo } from '$lib/shared';
   import { createEventDispatcher } from 'svelte';
@@ -11,29 +12,33 @@
 <div class="photo-grid">
   {#each photos as photo, index (photo.id)}
     <button class="photo-tile" on:click={() => dispatch('select', index)}>
-      <img src={db.photos.publicUrl(photo.storage_path)} alt={photo.title ?? ''} loading="lazy" />
+      <GalleryFrame title={photo.title ?? photo.caption} exif={photo.exif}>
+        <img src={db.photos.publicUrl(photo.storage_path)} alt={photo.title ?? ''} loading="lazy" />
+      </GalleryFrame>
     </button>
   {/each}
 </div>
 
 <style>
   .photo-grid {
-    columns: 4 220px;
-    column-gap: 0.75rem;
+    columns: 3 300px;
+    column-gap: 56px;
   }
   .photo-tile {
     display: block;
     width: 100%;
     padding: 0;
-    margin: 0 0 0.75rem;
+    margin: 0;
     border: 0;
     background: none;
     cursor: pointer;
     break-inside: avoid;
+    text-align: inherit;
+    font: inherit;
   }
   .photo-tile img {
-    width: 100%;
     display: block;
-    border-radius: 0.25rem;
+    width: 100%;
+    height: auto;
   }
 </style>

@@ -12,9 +12,7 @@
   let editingId: string | null = null;
   let deletingPhoto: Photo | null = null;
 
-  $: nextSortOrder = data.photos.length
-    ? Math.max(...data.photos.map((p) => p.sort_order)) + 1
-    : 0;
+  $: nextSortOrder = data.photos.length ? Math.max(...data.photos.map((p) => p.sort_order)) + 1 : 0;
 
   async function move(photo: Photo, direction: -1 | 1) {
     const photos = data.photos;
@@ -117,7 +115,7 @@
     display: flex;
     gap: 1rem;
     padding: 1rem 0;
-    border-bottom: 1px solid #2a2a2a;
+    border-bottom: 1px solid #e5e5e5;
   }
   .photo-list img {
     width: 120px;
@@ -148,6 +146,6 @@
     margin-top: 0.5rem;
   }
   button.danger {
-    color: #ff8888;
+    color: #dc2626;
   }
 </style>

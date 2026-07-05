@@ -1,26 +1,37 @@
 import { writable } from 'svelte/store';
-import type { AuthError, User } from '@supabase/supabase-js';
-import { supabase } from './db';
+import {
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signOut as firebaseSignOut,
+  type User,
+} from 'firebase/auth';
+import { auth } from './firebase';
 
 // undefined = session not yet resolved, null = signed out, User = signed in
 export const user = writable<User | null | undefined>(undefined);
 
-supabase.auth.getSession().then(({ data }) => {
-  user.set(data.session?.user ?? null);
-});
-
-supabase.auth.onAuthStateChange((_event, session) => {
-  user.set(session?.user ?? null);
+onAuthStateChanged(auth, (firebaseUser) => {
+  user.set(firebaseUser);
 });
 
 export async function signIn(
   email: string,
   password: string,
-): Promise<{ error: AuthError | null }> {
-  const { error } = await supabase.auth.signInWithPassword({ email, password });
-  return { error };
+): Promise<{ error: { message: string } | null }> {
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+    return { error: null };
+  } catch (err) {
+    // Firebase error messages read like "Firebase: Error (auth/invalid-credential)."
+    // -- strip the noise down to something a human can act on in a toast.
+    const message =
+      err instanceof Error && !err.message.includes('auth/')
+        ? err.message.replace(/^Firebase: /, '')
+        : 'Invalid login credentials';
+    return { error: { message } };
+  }
 }
 
 export async function signOut(): Promise<void> {
-  await supabase.auth.signOut();
+  await firebaseSignOut(auth);
 }

@@ -16,38 +16,39 @@ npm run format           # prettier --write
 
 No test runner is configured (no `test` script, no test files) — `npm run check` and `npm run lint` are the only automated verification. Both `yarn.lock` and `package-lock.json` exist; either works, but stick to whichever you last used so the other lockfile doesn't drift.
 
-Requires a `.env` with `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` (see `.env.example`) — the Supabase client is created at module load in `src/lib/db.ts`, so even `npm run build` will crash without these set.
+No `.env` is needed — the Firebase web config is hardcoded in `src/lib/firebase.ts` (it's public by design; access control lives entirely in the security rules).
 
-Deploys are manual: `npm run build` then `firebase deploy --only hosting` (requires `firebase login` and access to the `sdotlabs-2` Firebase project; `firebase-tools` isn't a project dependency — run it via `npx firebase-tools` from outside this repo if `npm run build`'s `.npmrc` `engine-strict=true` conflicts with your local Node version).
+Deploys are manual: `npm run build` then `firebase deploy --only hosting` (requires `firebase login` and access to the `sdotlabs-2` Firebase project; `firebase-tools` isn't a project dependency — run it via `npx firebase-tools` from outside this repo if `npm run build`'s `.npmrc` `engine-strict=true` conflicts with your local Node version). Rules/index changes deploy separately: `firebase deploy --only firestore` / `--only storage`.
 
 ## Architecture
 
-A SvelteKit 1 (Svelte 3) photo gallery, styled with Tailwind, built as a static SPA (`@sveltejs/adapter-static`, SPA fallback mode) and deployed to Firebase Hosting (project `sdotlabs-2`, config in `firebase.json`/`.firebaserc`). Public gallery + a single-owner admin portal for uploading/managing photos, backed entirely by Supabase (Postgres + Storage + Auth).
+A SvelteKit 1 (Svelte 3) photo gallery, styled with Tailwind, built as a static SPA (`@sveltejs/adapter-static`, SPA fallback mode) and deployed to Firebase Hosting (project `sdotlabs-2`, config in `firebase.json`/`.firebaserc`). Public gallery + a single-owner admin portal for uploading/managing photos, backed entirely by Firebase (Firestore + Storage + Auth). The public design is an editorial "gallery wall": framed/matted photos (`GalleryFrame`) on a masonry wall, serif display type (Cormorant Garamond), EXIF captions.
 
-- **`/`** — public gallery home: grid of albums (`src/routes/+page.svelte` + `+page.ts` load via `db.albums.allWithCover()`).
-- **`/album/[slug]`** — album detail: photo grid (`PhotoGrid`) + full-screen viewer (`Lightbox`).
+- **`/`** — public gallery home: masonry wall of album covers (`src/routes/+page.svelte` + `+page.ts` load via `db.albums.allWithCover()`).
+- **`/album/[slug]`** — album detail: framed photo wall (`PhotoGrid`) + full-screen viewer (`Lightbox`).
 - **`/admin`** — album management (create/edit/delete/reorder), gated by `src/routes/admin/+layout.svelte`.
-- **`/admin/login`** — email/password sign-in (no signup route anywhere — the owner account is created once, manually, in the Supabase Dashboard).
+- **`/admin/login`** — email/password sign-in (no signup route anywhere — the owner account is created once, manually, in the Firebase Console).
 - **`/admin/[albumId]`** — photo management within one album: upload, reorder, edit captions, delete.
 
 ### Data model & security boundary
 
-Schema lives in `supabase-setup.sql` at the repo root (not Supabase-CLI-managed — a one-time script run manually in the Supabase SQL Editor). Two tables, `albums` and `photos` (photos FK to albums, `on delete cascade`), plus a public `gallery` Storage bucket.
+Two top-level Firestore collections, `albums` and `photos` (photos reference their album via an `album_id` field — snake_case field names throughout, kept from the original Postgres schema so the `Album`/`Photo` types in `shared.ts` never changed). Photos carry optional `exif` (ISO/aperture/shutter/focal length, extracted client-side by `exifr` at upload). The `photos (album_id, sort_order)` composite index lives in `firestore.indexes.json`. There is no cascade delete in Firestore — `db.albums.remove()` deletes the album's photo docs and storage objects client-side, and `db.photos.remove()` clears a pointing `cover_photo_id` (both behaviors the old Postgres FKs used to provide).
 
-**The actual access control is Postgres RLS + Storage policies**, not the app: both tables and the bucket allow public `select`, but `insert`/`update`/`delete` are restricted to a single hardcoded `auth.uid()` — the owner's Supabase user ID, pasted into the SQL script after creating that one account. The `/admin` route guard (`src/routes/admin/+layout.svelte`, checking `$lib/auth`'s `user` store) is UX only — it just avoids flashing admin UI at a signed-out visitor. Don't treat it as the security boundary when reasoning about what an anonymous visitor can or can't do.
+**The actual access control is the Firestore + Storage security rules** (`firestore.rules` / `storage.rules`), not the app: public reads, but all writes restricted to a single hardcoded owner uid pasted into both rules files after creating the one Firebase Auth account. The `/admin` route guard (`src/routes/admin/+layout.svelte`, checking `$lib/auth`'s `user` store) is UX only — it just avoids flashing admin UI at a signed-out visitor. Don't treat it as the security boundary when reasoning about what an anonymous visitor can or can't do.
 
 The whole app has `export const ssr = false` at the root (`src/routes/+layout.ts`) — there is no server runtime (Firebase Hosting serves static files only), so every route renders client-side; `firebase.json` rewrites all paths to `/index.html` so deep links resolve via client-side routing. `src/routes/admin/+layout.ts` also sets `ssr = false`, which is now redundant with the root but harmless.
 
 ### Data layer (`src/lib/`)
 
-- **`db.ts`** — the Supabase client (`supabase`) plus a default-exported `{ albums, photos }` namespace wrapping all Postgres/Storage calls (`albums.all/byId/bySlug/allWithCover/create/update/remove`, `photos.byAlbum/create/update/remove/publicUrl/upload`). Route/component code should go through this, not call `supabase.from(...)` directly.
-- **`auth.ts`** — the single source of truth for auth state: a `user` writable (`undefined` = session not yet resolved, `null` = signed out, `User` = signed in) plus `signIn`/`signOut`. Populated once at module load via `getSession()`/`onAuthStateChange`.
-- **`shared.ts`** — `Album`/`Photo` types matching the SQL schema.
+- **`firebase.ts`** — Firebase app init (hardcoded public web config) exporting `auth`/`firestore`/`storage`.
+- **`db.ts`** — a default-exported `{ albums, photos }` namespace wrapping all Firestore/Storage calls (`albums.all/byId/bySlug/allWithCover/create/update/remove`, `photos.byAlbum/create/update/remove/publicUrl/upload`). Route/component code should go through this, not call Firestore APIs directly. Converters in here map Firestore docs (server `Timestamp`s, missing optional fields) onto the plain `Album`/`Photo` types; Firestore rejects `undefined` values, so writes pass through `stripUndefined`.
+- **`auth.ts`** — the single source of truth for auth state: a `user` writable (`undefined` = session not yet resolved, `null` = signed out, `User` = signed in) plus `signIn`/`signOut`, backed by `onAuthStateChanged`.
+- **`shared.ts`** — `Album`/`Photo`/`PhotoExif` types.
 - **`stores.ts`** — just the toast system (`toasts`, `addToast`, `dismissToast`).
 
 ### Upload flow
 
-Uploads go directly from the browser to Supabase Storage (`db.photos.upload`) — there's no backend to proxy through (Firebase Hosting serves static files only). After the Storage upload succeeds, a `photos` row is inserted with the resulting `storage_path`; public URLs are derived on demand via `db.photos.publicUrl()` (`storage.from('gallery').getPublicUrl(...)`), not stored.
+Uploads go directly from the browser to Firebase Storage (`db.photos.upload`, path `{albumId}/{uuid}.{ext}`) — there's no backend to proxy through (Firebase Hosting serves static files only). After the Storage upload succeeds, a `photos` doc is created with the resulting `storage_path` plus client-extracted EXIF; public URLs are derived on demand via `db.photos.publicUrl()` (a constructed `firebasestorage.googleapis.com/...?alt=media` URL — works tokenless because the Storage rules allow public reads), not stored.
 
 ### Forms
 
