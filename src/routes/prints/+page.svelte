@@ -19,8 +19,7 @@
 <main>
   <p class="intro">
     Every photograph in the gallery is available as an archival print. Open any photo and choose
-    <em>Order a print</em> — each one is produced when you order it, and ships within 2–5 business
-    days.
+    <em>Order a print</em> — each one is produced when you order it, and ships within 2–5 business days.
   </p>
 
   <div class="editions">
@@ -51,8 +50,8 @@
   </div>
 
   <p class="shipping">
-    {formatPrice(catalog.shipping.flatCents)} flat {catalog.shipping.label.toLowerCase()} to the US
-    and Canada.
+    {formatPrice(catalog.shipping.flatCents)} flat {catalog.shipping.label.toLowerCase()} to the US and
+    Canada.
   </p>
 
   <a href="/" class="cta">BROWSE THE GALLERY</a>

@@ -6,6 +6,9 @@ export type PrintVariant = {
   size: string;
   widthIn: number;
   heightIn: number;
+  // Matches Photo['printAspectRatio'] in src/lib/shared.ts -- lets the order
+  // panel offer only variants that fit a given photo without a border.
+  aspectRatio: '2:3' | '4:5' | '3:4';
   // Pixel dimensions of Printful's print area for this variant (300 DPI) --
   // used to place the photo without cropping (see functions/src/index.ts).
   printAreaWidthPx: number;

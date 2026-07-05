@@ -1,6 +1,12 @@
 <script lang="ts">
   import { httpsCallable } from 'firebase/functions';
-  import { aspectMismatch, catalog, dpiFor, formatPrice } from '$lib/catalog';
+  import {
+    aspectMismatch,
+    catalog,
+    dpiFor,
+    formatPrice,
+    resolveAspectCategory,
+  } from '$lib/catalog';
   import type { PrintVariant } from '$lib/catalog';
   import GalleryFrame from '$lib/components/GalleryFrame.svelte';
   import db from '$lib/db';
@@ -20,20 +26,29 @@
   let redirecting = false;
 
   $: product = catalog.products.find((p) => p.id === productId) ?? catalog.products[0];
-  $: sizes = [...new Set(product.variants.map((v) => v.size))];
-  $: frameColors = [...new Set(product.variants.map((v) => v.frameColor).filter(Boolean))] as string[];
+  // Only offer sizes matching this photo's aspect category (override or
+  // auto-detected) when we have a confident one; otherwise fall back to
+  // every size, same as before this photo was tagged/cropped.
+  $: resolvedCategory = resolveAspectCategory(photo);
+  $: matchingVariants = resolvedCategory
+    ? product.variants.filter((v) => v.aspectRatio === resolvedCategory)
+    : product.variants;
+  $: sizes = [...new Set(matchingVariants.map((v) => v.size))];
+  $: frameColors = [
+    ...new Set(matchingVariants.map((v) => v.frameColor).filter(Boolean)),
+  ] as string[];
 
   let selectedSize = '';
   let selectedFrame = '';
   $: if (!sizes.includes(selectedSize)) selectedSize = firstOrderableSize(sizes) ?? sizes[0];
   $: if (frameColors.length && !frameColors.includes(selectedFrame)) selectedFrame = frameColors[0];
 
-  $: variant = product.variants.find(
+  $: variant = matchingVariants.find(
     (v) => v.size === selectedSize && (!frameColors.length || v.frameColor === selectedFrame),
   );
 
   function variantForSize(size: string): PrintVariant {
-    return product.variants.find((v) => v.size === size) as PrintVariant;
+    return matchingVariants.find((v) => v.size === size) as PrintVariant;
   }
 
   function sizeTooSmall(size: string): boolean {
@@ -80,7 +95,10 @@
   <h2>Order a print</h2>
 
   <div class="preview">
-    <GalleryFrame framed={productId === 'framed'} frameColor={FRAME_SWATCHES[selectedFrame] ?? '#161616'}>
+    <GalleryFrame
+      framed={productId === 'framed'}
+      frameColor={FRAME_SWATCHES[selectedFrame] ?? '#161616'}
+    >
       <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
     </GalleryFrame>
   </div>
@@ -89,7 +107,11 @@
     <div class="field-label">EDITION</div>
     <div class="options">
       {#each catalog.products as p (p.id)}
-        <button class="option" class:selected={productId === p.id} on:click={() => (productId = p.id)}>
+        <button
+          class="option"
+          class:selected={productId === p.id}
+          on:click={() => (productId = p.id)}
+        >
           {p.label}
         </button>
       {/each}
@@ -137,7 +159,10 @@
   {/if}
 
   {#if marginNote}
-    <p class="crop-note">This size differs from the photo’s native proportions — nothing is cropped, but you’ll see a plain border on two sides to keep the full frame.</p>
+    <p class="crop-note">
+      This size differs from the photo’s native proportions — nothing is cropped, but you’ll see a
+      plain border on two sides to keep the full frame.
+    </p>
   {/if}
 
   {#if variant}
@@ -145,8 +170,8 @@
       {redirecting ? 'REDIRECTING…' : `ORDER — ${formatPrice(variant.retailCents)}`}
     </button>
     <p class="shipping-note">
-      Plus {formatPrice(catalog.shipping.flatCents)} {catalog.shipping.label.toLowerCase()}. Made to
-      order, ships in 2–5 business days.
+      Plus {formatPrice(catalog.shipping.flatCents)}
+      {catalog.shipping.label.toLowerCase()}. Made to order, ships in 2–5 business days.
     </p>
   {/if}
 </section>

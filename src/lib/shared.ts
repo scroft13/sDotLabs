@@ -15,6 +15,11 @@ export type PhotoExif = {
   focalLength: number | null;
 };
 
+// Which manufactured print aspect ratio this photo should be sold as, so the
+// order panel can offer only sizes that fit without a border. Null means
+// auto-detect from width/height.
+export type PrintAspectRatio = '2:3' | '4:5' | '3:4' | null;
+
 export type Photo = {
   id: string;
   album_id: string;
@@ -25,5 +30,6 @@ export type Photo = {
   width: number | null;
   height: number | null;
   exif: PhotoExif | null;
+  printAspectRatio: PrintAspectRatio;
   created_at: string;
 };

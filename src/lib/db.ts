@@ -66,6 +66,7 @@ function toPhoto(snap: DocumentSnapshot | QueryDocumentSnapshot): Photo {
     width: data.width ?? null,
     height: data.height ?? null,
     exif: data.exif ?? null,
+    printAspectRatio: data.printAspectRatio ?? null,
     created_at: isoDate(data.created_at),
   };
 }
@@ -181,7 +182,7 @@ export default {
     },
     async update(
       id: string,
-      patch: Partial<Pick<Photo, 'title' | 'caption' | 'sort_order'>>,
+      patch: Partial<Pick<Photo, 'title' | 'caption' | 'sort_order' | 'printAspectRatio'>>,
     ): Promise<void> {
       await updateDoc(doc(photosCol, id), stripUndefined({ ...patch }));
     },

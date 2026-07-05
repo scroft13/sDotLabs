@@ -169,7 +169,8 @@ export const stripeWebhook = onRequest(
       shipping_details?: Stripe.Checkout.Session.ShippingDetails | null;
       collected_information?: { shipping_details?: Stripe.Checkout.Session.ShippingDetails | null };
     };
-    const shipping = sessionAny.collected_information?.shipping_details ?? sessionAny.shipping_details;
+    const shipping =
+      sessionAny.collected_information?.shipping_details ?? sessionAny.shipping_details;
     const address = shipping?.address;
     if (!shipping || !address) {
       await orderRef.update({ status: 'missing_shipping' });

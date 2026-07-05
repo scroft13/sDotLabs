@@ -3,6 +3,8 @@ node_modules
 /build
 /.svelte-kit
 /package
+# Compiled Firebase Functions output (CommonJS require() is expected here)
+/functions/lib
 .env
 .env.*
 !.env.example
