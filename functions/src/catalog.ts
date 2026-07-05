@@ -2,31 +2,29 @@ import catalogJson from './catalog.json';
 
 export type PrintVariant = {
   sku: string;
-  printfulVariantId: number;
+  prodigiSku: string;
   size: string;
-  widthIn: number;
-  heightIn: number;
-  // Matches Photo['printAspectRatio'] in src/lib/shared.ts -- lets the order
-  // panel offer only variants that fit a given photo without a border.
-  aspectRatio: '2:3' | '4:5' | '3:4';
-  // Pixel dimensions of Printful's print area for this variant (300 DPI) --
-  // used to place the photo without cropping (see functions/src/index.ts).
+  // Manufactured print-area pixel dimensions -- not always the same aspect
+  // ratio as the nominal product size (e.g. a framed product's mat cutout
+  // can be a different ratio than the frame's own labeled size).
   printAreaWidthPx: number;
   printAreaHeightPx: number;
+  // Matches Photo['printAspectRatio'] in src/lib/shared.ts -- lets the order
+  // panel offer only variants that fit a given photo without a border.
+  aspectRatio: '2:3' | '4:5' | '3:4' | '1:1' | '2:1';
   frameColor?: string;
   costCents: number;
+  shippingCents: number;
   retailCents: number;
 };
 
 export type Catalog = {
   currency: string;
-  shipping: { flatCents: number; label: string };
-  minDpi: number;
+  maxUpscale: number;
   products: {
     id: string;
     label: string;
     description: string;
-    printfulProductId: number;
     variants: PrintVariant[];
   }[];
 };
@@ -41,19 +39,18 @@ export function findVariant(sku: string): { variant: PrintVariant; productLabel:
   return null;
 }
 
-// Server-side mirror of the client's DPI guard (client is advisory only).
-export function dpiFor(
+// Server-side mirror of the client's resolution guard (client is advisory
+// only -- this is the authoritative check).
+export function resolutionScale(
   photoWidth: number | null,
   photoHeight: number | null,
   variant: PrintVariant,
 ): number | null {
   if (!photoWidth || !photoHeight) return null;
-  const landscape = photoWidth >= photoHeight;
-  const printW = landscape
-    ? Math.max(variant.widthIn, variant.heightIn)
-    : Math.min(variant.widthIn, variant.heightIn);
-  const printH = landscape
-    ? Math.min(variant.widthIn, variant.heightIn)
-    : Math.max(variant.widthIn, variant.heightIn);
-  return Math.min(photoWidth / printW, photoHeight / printH);
+  const photoLandscape = photoWidth >= photoHeight;
+  const areaLong = Math.max(variant.printAreaWidthPx, variant.printAreaHeightPx);
+  const areaShort = Math.min(variant.printAreaWidthPx, variant.printAreaHeightPx);
+  const photoLong = photoLandscape ? photoWidth : photoHeight;
+  const photoShort = photoLandscape ? photoHeight : photoWidth;
+  return Math.max(areaLong / photoLong, areaShort / photoShort);
 }

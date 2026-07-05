@@ -3,8 +3,8 @@
   import {
     aspectMismatch,
     catalog,
-    dpiFor,
     formatPrice,
+    resolutionScale,
     resolveAspectCategory,
   } from '$lib/catalog';
   import type { PrintVariant } from '$lib/catalog';
@@ -52,8 +52,8 @@
   }
 
   function sizeTooSmall(size: string): boolean {
-    const dpi = dpiFor(photo, variantForSize(size));
-    return dpi !== null && dpi < catalog.minDpi;
+    const scale = resolutionScale(photo, variantForSize(size));
+    return scale !== null && scale > catalog.maxUpscale;
   }
 
   function firstOrderableSize(list: string[]): string | undefined {
@@ -170,8 +170,8 @@
       {redirecting ? 'REDIRECTING…' : `ORDER — ${formatPrice(variant.retailCents)}`}
     </button>
     <p class="shipping-note">
-      Plus {formatPrice(catalog.shipping.flatCents)}
-      {catalog.shipping.label.toLowerCase()}. Made to order, ships in 2–5 business days.
+      Plus {formatPrice(variant.shippingCents)} tracked shipping. Made to order, ships in 2–5 business
+      days.
     </p>
   {/if}
 </section>

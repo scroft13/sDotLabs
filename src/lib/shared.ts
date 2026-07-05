@@ -17,8 +17,8 @@ export type PhotoExif = {
 
 // Which manufactured print aspect ratio this photo should be sold as, so the
 // order panel can offer only sizes that fit without a border. Null means
-// auto-detect from width/height.
-export type PrintAspectRatio = '2:3' | '4:5' | '3:4' | null;
+// auto-detect from width/height. '1:1' is square, '2:1' is panoramic.
+export type PrintAspectRatio = '2:3' | '4:5' | '3:4' | '1:1' | '2:1' | null;
 
 export type Photo = {
   id: string;

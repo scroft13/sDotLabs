@@ -50,6 +50,8 @@
       <option value="2:3">2:3 (e.g. 12×18)</option>
       <option value="4:5">4:5 (e.g. 16×20)</option>
       <option value="3:4">3:4 (e.g. 18×24)</option>
+      <option value="1:1">1:1 Square</option>
+      <option value="2:1">2:1 Panoramic</option>
     </select>
   </div>
   <SubmitButton buttonName="Save" class="submit-button mt-2" />

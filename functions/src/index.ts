@@ -3,8 +3,8 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { defineSecret, defineString } from 'firebase-functions/params';
 import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import Stripe from 'stripe';
-import { catalog, dpiFor, findVariant } from './catalog';
-import { containFitPosition, createPrintfulOrder } from './printful';
+import { catalog, findVariant, resolutionScale } from './catalog';
+import { createProdigiOrder, prodigiColorAttribute } from './prodigi';
 import { publicUrl } from './publicUrl';
 
 initializeApp();
@@ -12,10 +12,11 @@ const db = getFirestore();
 
 const STRIPE_SECRET_KEY = defineSecret('STRIPE_SECRET_KEY');
 const STRIPE_WEBHOOK_SECRET = defineSecret('STRIPE_WEBHOOK_SECRET');
-const PRINTFUL_API_KEY = defineSecret('PRINTFUL_API_KEY');
-// Launch safety net: while 'false', Printful orders are created as free,
-// deletable drafts the owner confirms manually in the Printful dashboard.
-const PRINTFUL_CONFIRM = defineString('PRINTFUL_CONFIRM', { default: 'false' });
+const PRODIGI_API_KEY = defineSecret('PRODIGI_API_KEY');
+// Prodigi has no per-order draft/confirm mode like Printful did -- the
+// sandbox environment (never fulfils, never charges) is the safety net
+// instead. Flip to 'false' only once verified end-to-end (see plan).
+const PRODIGI_SANDBOX = defineString('PRODIGI_SANDBOX', { default: 'true' });
 
 // Origins allowed to receive Stripe redirects. Guards against a third party
 // using this callable to mint checkout sessions that bounce buyers (and
@@ -57,8 +58,8 @@ export const createCheckoutSession = onCall(
       height?: number | null;
     };
 
-    const dpi = dpiFor(photo.width ?? null, photo.height ?? null, variant);
-    if (dpi !== null && dpi < catalog.minDpi) {
+    const scale = resolutionScale(photo.width ?? null, photo.height ?? null, variant);
+    if (scale !== null && scale > catalog.maxUpscale) {
       throw new HttpsError(
         'failed-precondition',
         'This photo does not have enough resolution for that print size',
@@ -85,12 +86,15 @@ export const createCheckoutSession = onCall(
         },
       ],
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
+      // Real cost per item -- Prodigi's shipping varies a lot by product
+      // (framed pieces cost several times more to ship than a bare print),
+      // so a single flat rate would lose money on the pricier items.
       shipping_options: [
         {
           shipping_rate_data: {
             type: 'fixed_amount',
-            display_name: catalog.shipping.label,
-            fixed_amount: { amount: catalog.shipping.flatCents, currency: catalog.currency },
+            display_name: 'Tracked shipping',
+            fixed_amount: { amount: variant.shippingCents, currency: catalog.currency },
           },
         },
       ],
@@ -101,11 +105,6 @@ export const createCheckoutSession = onCall(
         photoId,
         storagePath: photo.storage_path,
         sku,
-        printfulVariantId: String(variant.printfulVariantId),
-        // Carried through to the webhook so the Printful order can be placed
-        // to fit the photo's own aspect ratio instead of cropping it.
-        photoWidth: photo.width ? String(photo.width) : '',
-        photoHeight: photo.height ? String(photo.height) : '',
       },
     });
 
@@ -114,7 +113,7 @@ export const createCheckoutSession = onCall(
 );
 
 export const stripeWebhook = onRequest(
-  { secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, PRINTFUL_API_KEY] },
+  { secrets: [STRIPE_SECRET_KEY, STRIPE_WEBHOOK_SECRET, PRODIGI_API_KEY] },
   async (req, res) => {
     const stripe = new Stripe(STRIPE_SECRET_KEY.value());
 
@@ -140,7 +139,7 @@ export const stripeWebhook = onRequest(
     const orderRef = db.doc(`orders/${session.id}`);
 
     // Idempotency guard: create() throws ALREADY_EXISTS on Stripe redelivery.
-    // Only re-attempt Printful when the previous attempt recorded a failure.
+    // Only re-attempt Prodigi when the previous attempt recorded a failure.
     try {
       await orderRef.create({
         status: 'processing',
@@ -153,7 +152,7 @@ export const stripeWebhook = onRequest(
       });
     } catch {
       const existing = await orderRef.get();
-      const retryableStatuses = ['printful_failed', 'missing_shipping'];
+      const retryableStatuses = ['prodigi_failed', 'missing_shipping'];
       if (!retryableStatuses.includes(existing.data()?.status)) {
         res.status(200).send('Duplicate');
         return;
@@ -178,55 +177,53 @@ export const stripeWebhook = onRequest(
       return;
     }
 
-    // Fit the photo into the print area instead of letting Printful crop it
-    // to fill -- only possible when we know both the photo's pixel
-    // dimensions (older uploads may not) and the variant's print area.
     const variantForOrder = findVariant(meta.sku ?? '')?.variant;
-    const photoWidth = Number(meta.photoWidth);
-    const photoHeight = Number(meta.photoHeight);
-    const position =
-      variantForOrder && photoWidth && photoHeight
-        ? containFitPosition(
-            photoWidth,
-            photoHeight,
-            variantForOrder.printAreaWidthPx,
-            variantForOrder.printAreaHeightPx,
-          )
-        : undefined;
+    if (!variantForOrder) {
+      await orderRef.update({ status: 'prodigi_failed', error: 'Unknown sku in order metadata' });
+      res.status(500).send('Unknown sku');
+      return;
+    }
 
     try {
-      const printfulOrder = await createPrintfulOrder(
-        PRINTFUL_API_KEY.value(),
+      const prodigiOrder = await createProdigiOrder(
+        PRODIGI_API_KEY.value(),
         {
-          // Printful caps external_id at 32 chars; the full Stripe session id
-          // (~66 chars) exceeds that, so use its trailing random segment --
-          // Firestore's own idempotency guard still keys off the full id.
-          external_id: session.id.slice(-32),
+          merchantReference: session.id,
           recipient: {
             name: shipping.name ?? session.customer_details?.name ?? 'Customer',
-            address1: address.line1 ?? '',
-            address2: address.line2 ?? undefined,
-            city: address.city ?? '',
-            state_code: address.state ?? undefined,
-            country_code: address.country ?? 'US',
-            zip: address.postal_code ?? undefined,
             email: session.customer_details?.email ?? undefined,
+            address: {
+              line1: address.line1 ?? '',
+              line2: address.line2 ?? undefined,
+              postalOrZipCode: address.postal_code ?? '',
+              countryCode: address.country ?? 'US',
+              townOrCity: address.city ?? '',
+              stateOrCounty: address.state ?? undefined,
+            },
           },
           items: [
             {
-              variant_id: Number(meta.printfulVariantId),
-              quantity: 1,
-              files: [{ url: publicUrl(meta.storagePath ?? ''), position }],
+              sku: variantForOrder.prodigiSku,
+              copies: 1,
+              // Fits the whole photo into the print area (no crop) rather
+              // than Prodigi's default fill/crop -- see catalog discovery
+              // notes for why this replaced Printful's manual position math.
+              sizing: 'fitPrintArea',
+              attributes: variantForOrder.frameColor
+                ? { color: prodigiColorAttribute(variantForOrder.frameColor) }
+                : {},
+              assets: [{ printArea: 'default', url: publicUrl(meta.storagePath ?? '') }],
             },
           ],
         },
-        PRINTFUL_CONFIRM.value() === 'true',
+        PRODIGI_SANDBOX.value() === 'true',
       );
 
       await orderRef.update({
-        status: PRINTFUL_CONFIRM.value() === 'true' ? 'submitted' : 'draft_created',
-        printful_order_id: printfulOrder.id,
-        printful_status: printfulOrder.status,
+        status: 'submitted',
+        prodigi_order_id: prodigiOrder.id,
+        prodigi_status: prodigiOrder.status,
+        prodigi_sandbox: PRODIGI_SANDBOX.value() === 'true',
         shipping: {
           name: shipping.name ?? null,
           city: address.city ?? null,
@@ -237,11 +234,11 @@ export const stripeWebhook = onRequest(
       res.status(200).send('OK');
     } catch (err) {
       await orderRef.update({
-        status: 'printful_failed',
+        status: 'prodigi_failed',
         error: err instanceof Error ? err.message : String(err),
       });
       // 500 makes Stripe retry; the guard above allows the retry through.
-      res.status(500).send('Printful order failed');
+      res.status(500).send('Prodigi order failed');
     }
   },
 );

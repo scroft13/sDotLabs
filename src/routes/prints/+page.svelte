@@ -39,19 +39,12 @@
             {/if}
           {/each}
         </ul>
-        {#if product.variants.some((v) => v.frameColor)}
-          <p class="frames-note">
-            Frames in black, red oak, and white — semi-hardwood with an off-white mat and acrylite
-            front, ready to hang.
-          </p>
-        {/if}
       </section>
     {/each}
   </div>
 
   <p class="shipping">
-    {formatPrice(catalog.shipping.flatCents)} flat {catalog.shipping.label.toLowerCase()} to the US and
-    Canada.
+    Shipping is calculated at checkout, based on size — tracked to the US and Canada.
   </p>
 
   <a href="/" class="cta">BROWSE THE GALLERY</a>
@@ -120,8 +113,7 @@
     font-size: 26px;
     text-align: center;
   }
-  .description,
-  .frames-note {
+  .description {
     margin: 0;
     font-size: 12px;
     letter-spacing: 0.05em;
