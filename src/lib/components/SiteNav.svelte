@@ -5,7 +5,7 @@
   </a>
   <div class="links">
     <a href="/" class="active">GALLERY</a>
-    <a href="#prints">PRINTS</a>
+    <a href="/prints">PRINTS</a>
     <a href="#contact">CONTACT</a>
   </div>
 </nav>

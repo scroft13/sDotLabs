@@ -13,6 +13,12 @@ const config = {
       precompress: false,
       strict: false,
     }),
+    alias: {
+      // Single source of truth for the print catalog: the functions deploy
+      // bundle owns the file (server-side price authority), the client
+      // imports the very same JSON for the picker UI.
+      $catalog: 'functions/src/catalog.json',
+    },
   },
 };
 

@@ -1,6 +1,7 @@
 import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
+import { getFunctions, connectFunctionsEmulator } from 'firebase/functions';
 import { getStorage } from 'firebase/storage';
 
 // Firebase web config is public by design (it ships to every browser);
@@ -21,4 +22,9 @@ export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const firestore = getFirestore(app);
 export const storage = getStorage(app);
+export const functions = getFunctions(app);
 export const STORAGE_BUCKET = firebaseConfig.storageBucket;
+
+if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATOR) {
+  connectFunctionsEmulator(functions, 'localhost', 5001);
+}

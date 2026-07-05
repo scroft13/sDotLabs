@@ -7,4 +7,7 @@ node_modules
 .env
 .env.*
 !.env.example
+# Non-secret Firebase Functions runtime config (e.g. PRINTFUL_CONFIRM) --
+# Firebase's own deploy tooling requires this file to exist.
+!functions/.env
 /.netlify

@@ -1,0 +1,35 @@
+{
+  "currency": "usd",
+  "shipping": { "flatCents": 900, "label": "Tracked shipping" },
+  "minDpi": 150,
+  "products": [
+    {
+      "id": "framed",
+      "label": "Framed print",
+      "description": "Enhanced matte paper in a semi-hardwood frame with an off-white mat, acrylite front, and hanging hardware included.",
+      "printfulProductId": 795,
+      "variants": [
+        { "sku": "framed-12x18-black", "printfulVariantId": 20259, "size": "12″×18″", "widthIn": 12, "heightIn": 18, "frameColor": "black", "costCents": 3769, "retailCents": 9500 },
+        { "sku": "framed-12x18-oak", "printfulVariantId": 20260, "size": "12″×18″", "widthIn": 12, "heightIn": 18, "frameColor": "oak", "costCents": 3769, "retailCents": 9500 },
+        { "sku": "framed-12x18-white", "printfulVariantId": 20261, "size": "12″×18″", "widthIn": 12, "heightIn": 18, "frameColor": "white", "costCents": 3769, "retailCents": 9500 },
+        { "sku": "framed-16x20-black", "printfulVariantId": 20262, "size": "16″×20″", "widthIn": 16, "heightIn": 20, "frameColor": "black", "costCents": 4483, "retailCents": 11000 },
+        { "sku": "framed-16x20-oak", "printfulVariantId": 20263, "size": "16″×20″", "widthIn": 16, "heightIn": 20, "frameColor": "oak", "costCents": 4483, "retailCents": 11000 },
+        { "sku": "framed-16x20-white", "printfulVariantId": 20264, "size": "16″×20″", "widthIn": 16, "heightIn": 20, "frameColor": "white", "costCents": 4483, "retailCents": 11000 },
+        { "sku": "framed-18x24-black", "printfulVariantId": 20265, "size": "18″×24″", "widthIn": 18, "heightIn": 24, "frameColor": "black", "costCents": 4993, "retailCents": 12500 },
+        { "sku": "framed-18x24-oak", "printfulVariantId": 20266, "size": "18″×24″", "widthIn": 18, "heightIn": 24, "frameColor": "oak", "costCents": 4993, "retailCents": 12500 },
+        { "sku": "framed-18x24-white", "printfulVariantId": 20267, "size": "18″×24″", "widthIn": 18, "heightIn": 24, "frameColor": "white", "costCents": 4993, "retailCents": 12500 }
+      ]
+    },
+    {
+      "id": "matte",
+      "label": "Print only",
+      "description": "Museum-quality enhanced matte paper, 10.3 mil, archival and acid-free.",
+      "printfulProductId": 1,
+      "variants": [
+        { "sku": "matte-12x18", "printfulVariantId": 3876, "size": "12″×18″", "widthIn": 12, "heightIn": 18, "costCents": 1139, "retailCents": 2900 },
+        { "sku": "matte-16x20", "printfulVariantId": 3877, "size": "16″×20″", "widthIn": 16, "heightIn": 20, "costCents": 1189, "retailCents": 3200 },
+        { "sku": "matte-18x24", "printfulVariantId": 1, "size": "18″×24″", "widthIn": 18, "heightIn": 24, "costCents": 1289, "retailCents": 3500 }
+      ]
+    }
+  ]
+}

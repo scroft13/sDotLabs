@@ -1,19 +1,10 @@
 <script lang="ts">
-  import Lightbox from '$lib/components/Lightbox.svelte';
   import PhotoGrid from '$lib/components/PhotoGrid.svelte';
   import SiteFooter from '$lib/components/SiteFooter.svelte';
   import SiteNav from '$lib/components/SiteNav.svelte';
   import type { PageData } from './$types';
 
   export let data: PageData;
-
-  let lightboxOpen = false;
-  let lightboxIndex = 0;
-
-  function openLightbox(e: CustomEvent<number>) {
-    lightboxIndex = e.detail;
-    lightboxOpen = true;
-  }
 </script>
 
 <svelte:head>
@@ -35,13 +26,11 @@
   {#if data.photos.length === 0}
     <p class="empty">No photos in this album yet.</p>
   {:else}
-    <PhotoGrid photos={data.photos} on:select={openLightbox} />
+    <PhotoGrid photos={data.photos} albumSlug={data.album.slug} />
   {/if}
 </main>
 
 <SiteFooter />
-
-<Lightbox photos={data.photos} bind:open={lightboxOpen} bind:index={lightboxIndex} />
 
 <style>
   header {

@@ -20,6 +20,13 @@ service cloud.firestore {
       allow create, update, delete: if isOwner();
     }
 
+    // Order records are written exclusively by the stripeWebhook function
+    // via the Admin SDK (which bypasses rules); clients never write them.
+    match /orders/{orderId} {
+      allow read: if isOwner();
+      allow write: if false;
+    }
+
     match /{document=**} {
       allow read, write: if false;
     }
