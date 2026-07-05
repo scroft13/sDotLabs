@@ -2,6 +2,8 @@
   import { httpsCallable } from 'firebase/functions';
   import { aspectMismatch, catalog, dpiFor, formatPrice } from '$lib/catalog';
   import type { PrintVariant } from '$lib/catalog';
+  import GalleryFrame from '$lib/components/GalleryFrame.svelte';
+  import db from '$lib/db';
   import { functions } from '$lib/firebase';
   import type { Photo } from '$lib/shared';
   import { addToast } from '$lib/stores';
@@ -76,6 +78,12 @@
 <section class="order-panel">
   <div class="rule" />
   <h2>Order a print</h2>
+
+  <div class="preview">
+    <GalleryFrame framed={productId === 'framed'} frameColor={FRAME_SWATCHES[selectedFrame] ?? '#161616'}>
+      <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
+    </GalleryFrame>
+  </div>
 
   <div class="field">
     <div class="field-label">EDITION</div>
@@ -157,6 +165,18 @@
     width: 40px;
     height: 1px;
     background: #1a1a1a;
+  }
+  .preview {
+    width: 100%;
+    max-width: 320px;
+  }
+  .preview :global(.gallery-frame) {
+    margin: 0;
+  }
+  .preview :global(img) {
+    display: block;
+    width: 100%;
+    height: auto;
   }
   h2 {
     margin: 0;

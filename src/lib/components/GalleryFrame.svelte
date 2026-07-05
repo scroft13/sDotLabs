@@ -3,6 +3,8 @@
 
   export let title: string | null = null;
   export let exif: PhotoExif | null = null;
+  export let framed = true;
+  export let frameColor = '#161616';
 
   $: exifLine = exif
     ? [
@@ -17,13 +19,21 @@
 </script>
 
 <figure class="gallery-frame">
-  <div class="frame">
-    <div class="mat">
+  {#if framed}
+    <div class="frame" style={`background: ${frameColor}`}>
+      <div class="mat">
+        <div class="print">
+          <slot />
+        </div>
+      </div>
+    </div>
+  {:else}
+    <div class="mat unframed">
       <div class="print">
         <slot />
       </div>
     </div>
-  </div>
+  {/if}
   {#if title || exifLine}
     <figcaption>
       {#if title}
@@ -52,6 +62,9 @@
   .mat {
     background: #fdfdfb;
     padding: 34px;
+  }
+  .mat.unframed {
+    box-shadow: 0 10px 24px -12px rgba(30, 25, 18, 0.3), 0 2px 5px rgba(30, 25, 18, 0.12);
   }
   .print {
     border: 1px solid rgba(0, 0, 0, 0.14);
