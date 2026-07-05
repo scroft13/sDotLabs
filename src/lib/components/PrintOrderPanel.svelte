@@ -43,7 +43,7 @@
     return list.find((s) => !sizeTooSmall(s));
   }
 
-  $: cropNote = variant ? (aspectMismatch(photo, variant) ?? 0) > 0.05 : false;
+  $: marginNote = variant ? (aspectMismatch(photo, variant) ?? 0) > 0.05 : false;
 
   async function order() {
     if (!variant || redirecting) return;
@@ -128,8 +128,8 @@
     </div>
   {/if}
 
-  {#if cropNote}
-    <p class="crop-note">This size differs from the photo’s native proportions — the image will be cropped to fit.</p>
+  {#if marginNote}
+    <p class="crop-note">This size differs from the photo’s native proportions — nothing is cropped, but you’ll see a plain border on two sides to keep the full frame.</p>
   {/if}
 
   {#if variant}

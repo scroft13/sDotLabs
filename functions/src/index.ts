@@ -4,7 +4,7 @@ import { defineSecret, defineString } from 'firebase-functions/params';
 import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import Stripe from 'stripe';
 import { catalog, dpiFor, findVariant } from './catalog';
-import { createPrintfulOrder } from './printful';
+import { containFitPosition, createPrintfulOrder } from './printful';
 import { publicUrl } from './publicUrl';
 
 initializeApp();
@@ -102,6 +102,10 @@ export const createCheckoutSession = onCall(
         storagePath: photo.storage_path,
         sku,
         printfulVariantId: String(variant.printfulVariantId),
+        // Carried through to the webhook so the Printful order can be placed
+        // to fit the photo's own aspect ratio instead of cropping it.
+        photoWidth: photo.width ? String(photo.width) : '',
+        photoHeight: photo.height ? String(photo.height) : '',
       },
     });
 
@@ -173,6 +177,22 @@ export const stripeWebhook = onRequest(
       return;
     }
 
+    // Fit the photo into the print area instead of letting Printful crop it
+    // to fill -- only possible when we know both the photo's pixel
+    // dimensions (older uploads may not) and the variant's print area.
+    const variantForOrder = findVariant(meta.sku ?? '')?.variant;
+    const photoWidth = Number(meta.photoWidth);
+    const photoHeight = Number(meta.photoHeight);
+    const position =
+      variantForOrder && photoWidth && photoHeight
+        ? containFitPosition(
+            photoWidth,
+            photoHeight,
+            variantForOrder.printAreaWidthPx,
+            variantForOrder.printAreaHeightPx,
+          )
+        : undefined;
+
     try {
       const printfulOrder = await createPrintfulOrder(
         PRINTFUL_API_KEY.value(),
@@ -195,7 +215,7 @@ export const stripeWebhook = onRequest(
             {
               variant_id: Number(meta.printfulVariantId),
               quantity: 1,
-              files: [{ url: publicUrl(meta.storagePath ?? '') }],
+              files: [{ url: publicUrl(meta.storagePath ?? ''), position }],
             },
           ],
         },

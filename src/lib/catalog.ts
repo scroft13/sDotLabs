@@ -7,6 +7,8 @@ export type PrintVariant = {
   size: string;
   widthIn: number;
   heightIn: number;
+  printAreaWidthPx: number;
+  printAreaHeightPx: number;
   frameColor?: string;
   costCents: number;
   retailCents: number;
@@ -48,8 +50,10 @@ export function dpiFor(photo: Photo, variant: PrintVariant): number | null {
   return Math.min(photo.width / printW, photo.height / printH);
 }
 
-// Printful center-crops when the photo's aspect doesn't match the print's.
-// Returns the fractional mismatch (0 = perfect fit) or null without dims.
+// Orders are placed to fit (never cropped, see functions/src/index.ts), so a
+// mismatched aspect ratio just means a plain border on two sides rather than
+// a full-bleed print. Returns the fractional mismatch (0 = exact fit) or
+// null without dims, so callers can note when that border will be visible.
 export function aspectMismatch(photo: Photo, variant: PrintVariant): number | null {
   if (!photo.width || !photo.height) return null;
   const photoAspect =

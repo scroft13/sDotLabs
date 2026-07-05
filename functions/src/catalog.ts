@@ -6,6 +6,10 @@ export type PrintVariant = {
   size: string;
   widthIn: number;
   heightIn: number;
+  // Pixel dimensions of Printful's print area for this variant (300 DPI) --
+  // used to place the photo without cropping (see functions/src/index.ts).
+  printAreaWidthPx: number;
+  printAreaHeightPx: number;
   frameColor?: string;
   costCents: number;
   retailCents: number;
