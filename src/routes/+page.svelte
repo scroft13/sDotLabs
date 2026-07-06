@@ -69,25 +69,34 @@
     height: 1px;
     background: #1a1a1a;
   }
+  /* Justified rows: uniform frame height, width follows each cover's aspect
+     ratio (see PhotoGrid for the same treatment on album pages). */
   main {
+    --wall-h: 240px;
     max-width: 1240px;
     margin: 0 auto;
     padding: 0 48px 120px;
-    columns: 3 300px;
-    column-gap: 56px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 44px;
+    row-gap: 8px;
   }
   .frame-link {
     display: block;
     text-decoration: none;
     color: inherit;
   }
+  .frame-link :global(.gallery-frame) {
+    margin: 0 0 40px;
+  }
   .frame-link img {
     display: block;
-    width: 100%;
-    height: auto;
+    height: var(--wall-h);
+    width: auto;
   }
   .cover-empty {
-    width: 100%;
+    height: var(--wall-h);
     aspect-ratio: 4 / 3;
     background: #eceae6;
   }
@@ -95,9 +104,28 @@
     text-align: center;
     color: #8a8680;
   }
+  @media (max-width: 900px) {
+    main {
+      --wall-h: 180px;
+      column-gap: 32px;
+    }
+  }
+  /* Single column of full-width frames on phones -- see PhotoGrid for why. */
   @media (max-width: 640px) {
     main {
+      flex-direction: column;
+      align-items: center;
       padding: 0 24px 80px;
+      row-gap: 0;
+    }
+    .frame-link {
+      width: 100%;
+      max-width: 380px;
+    }
+    .frame-link img,
+    .cover-empty {
+      width: 100%;
+      height: auto;
     }
     h1 {
       font-size: 38px;

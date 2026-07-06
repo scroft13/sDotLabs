@@ -18,20 +18,53 @@
 </div>
 
 <style>
+  /* Justified rows: every framed photo is the same height, its width set by
+     the photo's aspect ratio, so mixed ratios still line up on a common
+     baseline instead of a ragged masonry. Row height scales down on narrow
+     screens so a wide panorama can't overflow. */
   .photo-grid {
-    columns: 3 300px;
-    column-gap: 56px;
+    --wall-h: 240px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 44px;
+    row-gap: 8px;
   }
   .photo-tile {
     display: block;
-    width: 100%;
-    break-inside: avoid;
     text-decoration: none;
     color: inherit;
   }
+  .photo-tile :global(.gallery-frame) {
+    margin: 0 0 40px;
+  }
   .photo-tile img {
     display: block;
-    width: 100%;
-    height: auto;
+    height: var(--wall-h);
+    width: auto;
+  }
+  @media (max-width: 900px) {
+    .photo-grid {
+      --wall-h: 180px;
+      column-gap: 32px;
+    }
+  }
+  /* Below the phone breakpoint a wide panorama at any uniform height would
+     overflow the viewport, so drop the row layout for a single column of
+     full-width frames -- the conventional mobile photo feed. */
+  @media (max-width: 640px) {
+    .photo-grid {
+      flex-direction: column;
+      align-items: center;
+      row-gap: 0;
+    }
+    .photo-tile {
+      width: 100%;
+      max-width: 380px;
+    }
+    .photo-tile img {
+      width: 100%;
+      height: auto;
+    }
   }
 </style>
