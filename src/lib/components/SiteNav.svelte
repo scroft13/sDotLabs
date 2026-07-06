@@ -1,7 +1,6 @@
 <nav>
   <a href="/" class="logo">
-    <span class="mark">[S.]</span>
-    <span class="wordmark">sdotlabs</span>
+    <span class="mark">[s.labs]</span>
   </a>
   <div class="links">
     <a href="/" class="active">GALLERY</a>
@@ -30,11 +29,6 @@
     font-family: 'Cormorant Garamond', Georgia, serif;
     font-size: 24px;
     font-weight: 500;
-  }
-  .wordmark {
-    font-size: 12px;
-    letter-spacing: 0.22em;
-    color: #6f6b64;
   }
   .links {
     display: flex;
