@@ -10,6 +10,7 @@ import {
   resolveAspectCategory,
   type PrintAspectRatio,
 } from './catalog';
+import { parsePricingSettings, retailCentsFor, shippingCentsFor } from './pricing';
 import { createProdigiOrder, prodigiColorAttribute } from './prodigi';
 import { publicUrl } from './publicUrl';
 
@@ -88,6 +89,11 @@ export const createCheckoutSession = onCall(
       );
     }
 
+    // Admin-tuned pricing knobs (multiplier + per-product shipping charge);
+    // the client reads the same doc, so display and charge stay in lockstep.
+    const pricingSnap = await db.doc('settings/pricing').get();
+    const pricing = parsePricingSettings(pricingSnap.data());
+
     const stripe = new Stripe(STRIPE_SECRET_KEY.value());
     const title = photo.title || 'Untitled';
     const frameNote = variant.frameColor ? `, ${variant.frameColor} frame` : '';
@@ -99,7 +105,7 @@ export const createCheckoutSession = onCall(
           quantity: 1,
           price_data: {
             currency: catalog.currency,
-            unit_amount: variant.retailCents,
+            unit_amount: retailCentsFor(variant, pricing.multiplier),
             product_data: {
               name: `“${title}” — ${productLabel}, ${variant.size}${frameNote}`,
               images: [publicUrl(photo.storage_path)],
@@ -108,15 +114,19 @@ export const createCheckoutSession = onCall(
         },
       ],
       shipping_address_collection: { allowed_countries: ['US', 'CA'] },
-      // Real cost per item -- Prodigi's shipping varies a lot by product
-      // (framed pieces cost several times more to ship than a bare print),
-      // so a single flat rate would lose money on the pricier items.
+      // What the buyer is charged for shipping: Prodigi's real per-product
+      // cost by default (it varies a lot -- framed pieces ship for several
+      // times a bare print), or the admin's override when the owner chooses
+      // to eat part of it.
       shipping_options: [
         {
           shipping_rate_data: {
             type: 'fixed_amount',
             display_name: 'Tracked shipping',
-            fixed_amount: { amount: variant.shippingCents, currency: catalog.currency },
+            fixed_amount: {
+              amount: shippingCentsFor(variant, pricing.shipping),
+              currency: catalog.currency,
+            },
           },
         },
       ],

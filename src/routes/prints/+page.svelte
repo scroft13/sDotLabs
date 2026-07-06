@@ -1,7 +1,10 @@
 <script lang="ts">
+  import { onMount } from 'svelte';
   import { catalog, formatPrice } from '$lib/catalog';
   import SiteFooter from '$lib/components/SiteFooter.svelte';
   import SiteNav from '$lib/components/SiteNav.svelte';
+  import db from '$lib/db';
+  import { retailCentsFor, type PricingSettings } from '$lib/pricing';
 
   // Real Classic-frame moulding corners (Prodigi product photography),
   // matching the black/oak/white frame colors offered in the order panel.
@@ -10,6 +13,12 @@
     { label: 'Oak', src: '/prints/frame-oak.jpg' },
     { label: 'White', src: '/prints/frame-white.jpg' },
   ];
+
+  // Admin-tuned pricing; until it loads the catalog's baked-in prices show.
+  let pricing: PricingSettings | null = null;
+  onMount(async () => {
+    pricing = await db.settings.pricing().catch(() => null);
+  });
 </script>
 
 <svelte:head>
@@ -62,7 +71,7 @@
               <li>
                 <span>{size}</span>
                 <span class="dots" />
-                <span>{formatPrice(variant.retailCents)}</span>
+                <span>{formatPrice(retailCentsFor(variant, pricing?.multiplier ?? null))}</span>
               </li>
             {/if}
           {/each}

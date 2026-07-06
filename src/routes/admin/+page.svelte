@@ -44,6 +44,10 @@
 </svelte:head>
 
 <main>
+  <nav class="admin-nav">
+    <a href="/admin/pricing">Pricing &rarr;</a>
+  </nav>
+
   <section class="new-album">
     <h2>New Album</h2>
     <AlbumForm {nextSortOrder} on:saved={refresh} />
@@ -99,6 +103,15 @@
     max-width: 800px;
     margin: 0 auto;
     padding: 2rem 1.5rem 4rem;
+  }
+  .admin-nav {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+  }
+  .admin-nav a {
+    color: inherit;
+    font-size: 0.9rem;
   }
   h2 {
     margin-bottom: 1rem;

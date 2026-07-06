@@ -9,6 +9,7 @@ import {
   orderBy,
   query,
   serverTimestamp,
+  setDoc,
   Timestamp,
   updateDoc,
   where,
@@ -17,6 +18,7 @@ import {
 } from 'firebase/firestore';
 import { deleteObject, ref, uploadBytes } from 'firebase/storage';
 import { firestore, storage, STORAGE_BUCKET } from './firebase';
+import type { PricingSettings } from './pricing';
 import type { Album, Photo, PhotoExif } from './shared';
 
 const albumsCol = collection(firestore, 'albums');
@@ -221,6 +223,23 @@ export default {
         cacheControl: 'public, max-age=3600',
       });
       return path;
+    },
+  },
+  settings: {
+    // Null when the doc hasn't been created yet -- callers fall back to the
+    // catalog's baked-in retail/shipping (equivalent to multiplier 2.5 with
+    // no overrides).
+    async pricing(): Promise<PricingSettings | null> {
+      const snap = await getDoc(doc(firestore, 'settings', 'pricing'));
+      if (!snap.exists()) return null;
+      const data = snap.data();
+      return {
+        multiplier: typeof data.multiplier === 'number' ? data.multiplier : 2.5,
+        shipping: data.shipping ?? {},
+      };
+    },
+    async setPricing(settings: PricingSettings): Promise<void> {
+      await setDoc(doc(firestore, 'settings', 'pricing'), settings);
     },
   },
 };

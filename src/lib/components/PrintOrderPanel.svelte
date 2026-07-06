@@ -4,10 +4,20 @@
   import type { PrintVariant } from '$lib/catalog';
   import db from '$lib/db';
   import { functions } from '$lib/firebase';
+  import { retailCentsFor, shippingCentsFor, type PricingSettings } from '$lib/pricing';
   import type { Photo } from '$lib/shared';
   import { addToast } from '$lib/stores';
+  import { onMount } from 'svelte';
 
   export let photo: Photo;
+
+  // Admin-tuned pricing (multiplier + shipping overrides). Checkout computes
+  // from the same doc server-side, so these numbers match what Stripe
+  // charges; until it loads, the catalog's baked-in prices show.
+  let pricing: PricingSettings | null = null;
+  onMount(async () => {
+    pricing = await db.settings.pricing().catch(() => null);
+  });
 
   const FRAME_SWATCHES: Record<string, string> = {
     black: '#161616',
@@ -309,12 +319,12 @@
       {:else if redirecting}
         REDIRECTING…
       {:else}
-        ORDER — {formatPrice(variant.retailCents)}
+        ORDER — {formatPrice(retailCentsFor(variant, pricing?.multiplier ?? null))}
       {/if}
     </button>
     <p class="shipping-note">
-      Plus {formatPrice(variant.shippingCents)} tracked shipping. Made to order, ships in 2–5 business
-      days.
+      Plus {formatPrice(shippingCentsFor(variant, pricing?.shipping ?? null))} tracked shipping. Made
+      to order, ships in 2–5 business days.
     </p>
   {/if}
 </section>
