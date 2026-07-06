@@ -2,6 +2,14 @@
   import { catalog, formatPrice } from '$lib/catalog';
   import SiteFooter from '$lib/components/SiteFooter.svelte';
   import SiteNav from '$lib/components/SiteNav.svelte';
+
+  // Real Classic-frame moulding corners (Prodigi product photography),
+  // matching the black/oak/white frame colors offered in the order panel.
+  const FRAME_FINISHES = [
+    { label: 'Black', src: '/prints/frame-black.jpg' },
+    { label: 'Oak', src: '/prints/frame-oak.jpg' },
+    { label: 'White', src: '/prints/frame-white.jpg' },
+  ];
 </script>
 
 <svelte:head>
@@ -22,11 +30,31 @@
     <em>Order a print</em> — each one is produced when you order it, and ships within 2–5 business days.
   </p>
 
+  <figure class="hero">
+    <img
+      src="/prints/frame-detail.jpg"
+      alt="Corner detail of a matted print in a black Classic frame"
+      loading="lazy"
+    />
+    <figcaption>Classic frame, matted — corner detail.</figcaption>
+  </figure>
+
   <div class="editions">
     {#each catalog.products as product (product.id)}
+      {@const isFramed = product.id === 'framed'}
       <section class="edition">
         <h2>{product.label}</h2>
         <p class="description">{product.description}</p>
+        {#if isFramed}
+          <div class="finishes">
+            {#each FRAME_FINISHES as finish (finish.label)}
+              <figure class="finish">
+                <img src={finish.src} alt={`${finish.label} Classic frame corner`} loading="lazy" />
+                <figcaption>{finish.label}</figcaption>
+              </figure>
+            {/each}
+          </div>
+        {/if}
         <ul>
           {#each [...new Set(product.variants.map((v) => v.size))] as size (size)}
             {@const variant = product.variants.find((v) => v.size === size)}
@@ -94,6 +122,50 @@
     letter-spacing: 0.04em;
     line-height: 1.7;
     color: #6f6b64;
+  }
+  .hero {
+    margin: 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+  .hero img {
+    width: 100%;
+    height: auto;
+    display: block;
+    box-shadow: 0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
+  }
+  .hero figcaption {
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #a8a39b;
+  }
+  .finishes {
+    display: flex;
+    justify-content: center;
+    gap: 18px;
+  }
+  .finish {
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .finish img {
+    width: 72px;
+    height: 72px;
+    object-fit: cover;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+  .finish figcaption {
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: #8a8680;
   }
   .editions {
     display: grid;
