@@ -58,12 +58,19 @@
   $: sizes = [...new Set(mountVariants.map((v) => v.size))];
   $: frameColors = [...new Set(mountVariants.map((v) => v.frameColor).filter(Boolean))] as string[];
 
-  $: if (!sizes.includes(selectedSize)) selectedSize = firstOrderableSize(sizes) ?? sizes[0];
+  // Re-pick the size when the current one leaves the list or is too small for
+  // this photo (e.g. after switching mount), preferring the first orderable
+  // one so the panel never lands on a grayed-out size by default.
+  $: if (!sizes.includes(selectedSize) || sizeTooSmall(selectedSize))
+    selectedSize = firstOrderableSize(sizes) ?? sizes[0];
   $: if (frameColors.length && !frameColors.includes(selectedFrame)) selectedFrame = frameColors[0];
 
   $: variant = mountVariants.find(
     (v) => v.size === selectedSize && (!frameColors.length || v.frameColor === selectedFrame),
   );
+  // True when even the chosen size can't be met by this photo's resolution --
+  // every size is grayed out, so there's nothing orderable.
+  $: selectedTooSmall = !!selectedSize && sizeTooSmall(selectedSize);
 
   function variantForSize(size: string): PrintVariant {
     return mountVariants.find((v) => v.size === size) as PrintVariant;
@@ -209,8 +216,14 @@
   {/if}
 
   {#if variant}
-    <button class="order-button" disabled={redirecting} on:click={order}>
-      {redirecting ? 'REDIRECTING…' : `ORDER — ${formatPrice(variant.retailCents)}`}
+    <button class="order-button" disabled={redirecting || selectedTooSmall} on:click={order}>
+      {#if selectedTooSmall}
+        NOT ENOUGH RESOLUTION
+      {:else if redirecting}
+        REDIRECTING…
+      {:else}
+        ORDER — {formatPrice(variant.retailCents)}
+      {/if}
     </button>
     <p class="shipping-note">
       Plus {formatPrice(variant.shippingCents)} tracked shipping. Made to order, ships in 2–5 business
