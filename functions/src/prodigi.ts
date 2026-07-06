@@ -31,7 +31,7 @@ export type ProdigiOrderInput = {
   items: {
     sku: string;
     copies: number;
-    sizing: 'fitPrintArea';
+    sizing: 'fillPrintArea' | 'fitPrintArea';
     attributes?: Record<string, string>;
     assets: { printArea: string; url: string }[];
   }[];

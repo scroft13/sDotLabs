@@ -1,12 +1,6 @@
 <script lang="ts">
   import { httpsCallable } from 'firebase/functions';
-  import {
-    aspectMismatch,
-    catalog,
-    formatPrice,
-    resolutionScale,
-    resolveAspectCategory,
-  } from '$lib/catalog';
+  import { catalog, formatPrice, resolutionScale, resolveAspectCategory } from '$lib/catalog';
   import type { PrintVariant } from '$lib/catalog';
   import GalleryFrame from '$lib/components/GalleryFrame.svelte';
   import db from '$lib/db';
@@ -26,13 +20,14 @@
   let redirecting = false;
 
   $: product = catalog.products.find((p) => p.id === productId) ?? catalog.products[0];
-  // Only offer sizes matching this photo's aspect category (override or
-  // auto-detected) when we have a confident one; otherwise fall back to
-  // every size, same as before this photo was tagged/cropped.
+  // Only sizes matching this photo's aspect category (override or
+  // auto-detected) are ever sold -- prints always fill the paper edge to
+  // edge, so a photo without a confident category gets no sizes at all
+  // rather than a print with blank paper borders.
   $: resolvedCategory = resolveAspectCategory(photo);
   $: matchingVariants = resolvedCategory
     ? product.variants.filter((v) => v.aspectRatio === resolvedCategory)
-    : product.variants;
+    : [];
   // Matted vs. unmatted is a distinct Prodigi product, not every size/aspect
   // combo has both (e.g. 4:5 currently has no matted option) -- so mounts are
   // derived per aspect category, and size/frame options narrow further once
@@ -73,8 +68,6 @@
   function firstOrderableSize(list: string[]): string | undefined {
     return list.find((s) => !sizeTooSmall(s));
   }
-
-  $: marginNote = variant ? (aspectMismatch(photo, variant) ?? 0) > 0.05 : false;
 
   async function order() {
     if (!variant || redirecting) return;
@@ -134,6 +127,13 @@
     <p class="field-note">{product.description}</p>
   </div>
 
+  {#if !resolvedCategory}
+    <p class="crop-note">
+      Prints aren’t available for this photo yet — its proportions don’t match one of the offered
+      print ratios.
+    </p>
+  {/if}
+
   {#if mounts.length > 1}
     <div class="field">
       <div class="field-label">MAT</div>
@@ -151,26 +151,30 @@
     </div>
   {/if}
 
-  <div class="field">
-    <div class="field-label">SIZE</div>
-    <div class="options">
-      {#each sizes as size (size)}
-        {@const disabled = sizeTooSmall(size)}
-        <button
-          class="option"
-          class:selected={selectedSize === size}
-          {disabled}
-          title={disabled ? 'This photo does not have enough resolution for this size' : undefined}
-          on:click={() => (selectedSize = size)}
-        >
-          {size}
-        </button>
-      {/each}
+  {#if sizes.length}
+    <div class="field">
+      <div class="field-label">SIZE</div>
+      <div class="options">
+        {#each sizes as size (size)}
+          {@const disabled = sizeTooSmall(size)}
+          <button
+            class="option"
+            class:selected={selectedSize === size}
+            {disabled}
+            title={disabled
+              ? 'This photo does not have enough resolution for this size'
+              : undefined}
+            on:click={() => (selectedSize = size)}
+          >
+            {size}
+          </button>
+        {/each}
+      </div>
+      {#if sizes.some(sizeTooSmall)}
+        <p class="field-note">Grayed sizes exceed this photo’s resolution.</p>
+      {/if}
     </div>
-    {#if sizes.some(sizeTooSmall)}
-      <p class="field-note">Grayed sizes exceed this photo’s resolution.</p>
-    {/if}
-  </div>
+  {/if}
 
   {#if frameColors.length}
     <div class="field">
@@ -188,13 +192,6 @@
         {/each}
       </div>
     </div>
-  {/if}
-
-  {#if marginNote}
-    <p class="crop-note">
-      This size differs from the photo’s native proportions — nothing is cropped, but you’ll see a
-      plain border on two sides to keep the full frame.
-    </p>
   {/if}
 
   {#if variant}

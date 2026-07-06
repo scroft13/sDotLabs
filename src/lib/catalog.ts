@@ -57,19 +57,6 @@ export function resolutionScale(photo: Photo, variant: PrintVariant): number | n
   return Math.max(areaLong / photoLong, areaShort / photoShort);
 }
 
-// Orders are placed to fit (never cropped, see functions/src/index.ts), so a
-// mismatched aspect ratio just means a plain border on two sides rather than
-// a full-bleed print. Returns the fractional mismatch (0 = exact fit) or
-// null without dims, so callers can note when that border will be visible.
-export function aspectMismatch(photo: Photo, variant: PrintVariant): number | null {
-  if (!photo.width || !photo.height) return null;
-  const photoAspect = Math.max(photo.width, photo.height) / Math.min(photo.width, photo.height);
-  const printAspect =
-    Math.max(variant.printAreaWidthPx, variant.printAreaHeightPx) /
-    Math.min(variant.printAreaWidthPx, variant.printAreaHeightPx);
-  return Math.abs(photoAspect - printAspect) / printAspect;
-}
-
 // Long-side/short-side ratio for each category, for comparing against a
 // photo's own (also long/short normalized) aspect ratio.
 const ASPECT_RATIOS: Record<'2:3' | '4:5' | '3:4' | '1:1' | '2:1', number> = {

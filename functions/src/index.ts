@@ -3,7 +3,13 @@ import { getFirestore, FieldValue } from 'firebase-admin/firestore';
 import { defineSecret, defineString } from 'firebase-functions/params';
 import { HttpsError, onCall, onRequest } from 'firebase-functions/v2/https';
 import Stripe from 'stripe';
-import { catalog, findVariant, resolutionScale } from './catalog';
+import {
+  catalog,
+  findVariant,
+  resolutionScale,
+  resolveAspectCategory,
+  type PrintAspectRatio,
+} from './catalog';
 import { createProdigiOrder, prodigiColorAttribute } from './prodigi';
 import { publicUrl } from './publicUrl';
 
@@ -56,7 +62,23 @@ export const createCheckoutSession = onCall(
       title?: string | null;
       width?: number | null;
       height?: number | null;
+      printAspectRatio?: PrintAspectRatio;
     };
+
+    // Prints are always full-bleed (fillPrintArea), so only sizes matching
+    // the photo's aspect category may be sold -- anything else would crop
+    // visibly rather than leave paper borders.
+    const category = resolveAspectCategory(
+      photo.printAspectRatio ?? null,
+      photo.width ?? null,
+      photo.height ?? null,
+    );
+    if (category !== variant.aspectRatio) {
+      throw new HttpsError(
+        'failed-precondition',
+        "This print size does not match the photo's aspect ratio",
+      );
+    }
 
     const scale = resolutionScale(photo.width ?? null, photo.height ?? null, variant);
     if (scale !== null && scale > catalog.maxUpscale) {
@@ -205,10 +227,11 @@ export const stripeWebhook = onRequest(
             {
               sku: variantForOrder.prodigiSku,
               copies: 1,
-              // Fits the whole photo into the print area (no crop) rather
-              // than Prodigi's default fill/crop -- see catalog discovery
-              // notes for why this replaced Printful's manual position math.
-              sizing: 'fitPrintArea',
+              // Full-bleed: the photo always fills the paper edge to edge.
+              // Checkout only sells sizes matching the photo's aspect
+              // category, so at most a sub-3%-tolerance sliver ever gets
+              // shaved -- never a visible crop, and never a paper border.
+              sizing: 'fillPrintArea',
               attributes: variantForOrder.frameColor
                 ? { color: prodigiColorAttribute(variantForOrder.frameColor) }
                 : {},
