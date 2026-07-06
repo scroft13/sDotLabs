@@ -23,7 +23,7 @@
      baseline instead of a ragged masonry. Row height scales down on narrow
      screens so a wide panorama can't overflow. */
   .photo-grid {
-    --wall-h: 240px;
+    --wall-h: 250px;
     display: flex;
     flex-wrap: wrap;
     justify-content: center;

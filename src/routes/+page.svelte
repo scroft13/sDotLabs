@@ -72,7 +72,7 @@
   /* Justified rows: uniform frame height, width follows each cover's aspect
      ratio (see PhotoGrid for the same treatment on album pages). */
   main {
-    --wall-h: 240px;
+    --wall-h: 250px;
     max-width: 1240px;
     margin: 0 auto;
     padding: 0 48px 120px;
