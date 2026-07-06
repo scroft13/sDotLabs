@@ -16,6 +16,15 @@
     white: '#fdfdfb',
   };
 
+  // Real Classic-frame moulding corners (see static/prints) shown as the
+  // frame-color swatches, so buyers see the actual wood/finish, not a flat
+  // color chip. Falls back to the hex swatch above if a color has no image.
+  const FRAME_THUMBS: Record<string, string> = {
+    black: '/prints/frame-black.jpg',
+    oak: '/prints/frame-oak.jpg',
+    white: '/prints/frame-white.jpg',
+  };
+
   let productId = catalog.products[0].id;
   let redirecting = false;
 
@@ -184,11 +193,16 @@
           <button
             class="swatch"
             class:selected={selectedFrame === color}
-            style={`background: ${FRAME_SWATCHES[color] ?? '#ccc'}`}
             aria-label={`${color} frame`}
             title={`${color} frame`}
             on:click={() => (selectedFrame = color)}
-          />
+          >
+            {#if FRAME_THUMBS[color]}
+              <img src={FRAME_THUMBS[color]} alt="" />
+            {:else}
+              <span class="swatch-fill" style={`background: ${FRAME_SWATCHES[color] ?? '#ccc'}`} />
+            {/if}
+          </button>
         {/each}
       </div>
     </div>
@@ -279,11 +293,21 @@
     cursor: not-allowed;
   }
   .swatch {
-    width: 28px;
-    height: 28px;
-    border: 1px solid rgba(0, 0, 0, 0.25);
+    width: 40px;
+    height: 40px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
     cursor: pointer;
     padding: 0;
+    overflow: hidden;
+    background: none;
+    line-height: 0;
+  }
+  .swatch img,
+  .swatch-fill {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   .swatch.selected {
     outline: 2px solid #1a1a1a;
