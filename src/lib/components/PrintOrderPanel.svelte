@@ -2,7 +2,6 @@
   import { httpsCallable } from 'firebase/functions';
   import { catalog, formatPrice, resolutionScale, resolveAspectCategory } from '$lib/catalog';
   import type { PrintVariant } from '$lib/catalog';
-  import GalleryFrame from '$lib/components/GalleryFrame.svelte';
   import db from '$lib/db';
   import { functions } from '$lib/firebase';
   import type { Photo } from '$lib/shared';
@@ -85,6 +84,74 @@
     return list.find((s) => !sizeTooSmall(s));
   }
 
+  // --- Exact-proportion preview -------------------------------------------
+  // The preview is computed from the product's real dimensions so it matches
+  // what ships: the Classic frame moulding has a 20mm face, and the mat
+  // border is derived per variant from (nominal frame size - mat opening)/2,
+  // where the opening comes from the print-area pixels at 300dpi. The photo
+  // is drawn object-fit:cover inside the true opening ratio, so any center
+  // crop Prodigi's fillPrintArea would make (e.g. matted panoramics) is shown
+  // exactly rather than idealized away.
+  const FRAME_FACE_IN = 20 / 25.4;
+  const PREVIEW_MAX_W = 320;
+  const PREVIEW_MAX_H = 300;
+
+  $: photoLandscape = (photo.width ?? 1) >= (photo.height ?? 1);
+
+  type PreviewGeom = { framePx: number; matPx: number; openWpx: number; openHpx: number };
+
+  function previewGeometry(v: PrintVariant, framed: boolean, landscape: boolean): PreviewGeom {
+    // Catalog sizes are listed portrait (e.g. "12″×16″"); orient to the photo.
+    const m = v.size.match(/^(\d+)″×(\d+)″$/);
+    let frameW = m ? Number(m[1]) : v.printAreaWidthPx / 300;
+    let frameH = m ? Number(m[2]) : v.printAreaHeightPx / 300;
+    let openW = v.printAreaWidthPx / 300;
+    let openH = v.printAreaHeightPx / 300;
+    if (landscape) {
+      [frameW, frameH] = [frameH, frameW];
+      [openW, openH] = [openH, openW];
+    }
+    const face = framed ? FRAME_FACE_IN : 0;
+    // Unmatted glaze equals the print area bar manufacturing slack, so the
+    // derived border collapses to ~0 and only the moulding shows.
+    const mat = framed ? Math.max(0, (frameW - openW) / 2) : 0;
+    const outerW = (framed ? frameW : openW) + 2 * face;
+    const outerH = (framed ? frameH : openH) + 2 * face;
+    const scale = Math.min(PREVIEW_MAX_W / outerW, PREVIEW_MAX_H / outerH);
+    return {
+      framePx: face * scale,
+      matPx: mat * scale,
+      openWpx: openW * scale,
+      openHpx: openH * scale,
+    };
+  }
+
+  $: geom = variant ? previewGeometry(variant, productId === 'framed', photoLandscape) : null;
+
+  // Fractional trim fillPrintArea will make when the opening's ratio differs
+  // from the photo's (only matted panoramics today). 0 when they match.
+  function cropFraction(v: PrintVariant): number {
+    if (!photo.width || !photo.height) return 0;
+    const photoR = Math.max(photo.width, photo.height) / Math.min(photo.width, photo.height);
+    const openR =
+      Math.max(v.printAreaWidthPx, v.printAreaHeightPx) /
+      Math.min(v.printAreaWidthPx, v.printAreaHeightPx);
+    return openR > photoR ? 1 - photoR / openR : 1 - openR / photoR;
+  }
+
+  $: cropFrac = variant ? cropFraction(variant) : 0;
+  // The trimmed dimension: a more-elongated opening eats the photo's short
+  // side (height for landscape), a squarer one eats the long side.
+  $: cropDimension = (() => {
+    if (!variant || !photo.width || !photo.height) return 'edges';
+    const photoR = Math.max(photo.width, photo.height) / Math.min(photo.width, photo.height);
+    const openR =
+      Math.max(variant.printAreaWidthPx, variant.printAreaHeightPx) /
+      Math.min(variant.printAreaWidthPx, variant.printAreaHeightPx);
+    const eatsShort = openR > photoR;
+    return eatsShort === photoLandscape ? 'height' : 'width';
+  })();
+
   async function order() {
     if (!variant || redirecting) return;
     redirecting = true;
@@ -117,15 +184,35 @@
   <div class="rule" />
   <h2>Order a print</h2>
 
-  <div class="preview">
-    <GalleryFrame
-      framed={productId === 'framed'}
-      frameColor={FRAME_SWATCHES[selectedFrame] ?? '#161616'}
-      matted={selectedMount !== 'unmatted'}
-    >
-      <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
-    </GalleryFrame>
-  </div>
+  {#if geom}
+    <div class="preview">
+      {#if productId === 'framed'}
+        <div
+          class="pv-frame"
+          style={`padding: ${geom.framePx}px; background: ${
+            FRAME_SWATCHES[selectedFrame] ?? '#161616'
+          }`}
+        >
+          <div class="pv-mat" style={`padding: ${geom.matPx}px`}>
+            <div class="pv-open" style={`width: ${geom.openWpx}px; height: ${geom.openHpx}px`}>
+              <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
+            </div>
+          </div>
+        </div>
+      {:else}
+        <div class="pv-open pv-bare" style={`width: ${geom.openWpx}px; height: ${geom.openHpx}px`}>
+          <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
+        </div>
+      {/if}
+    </div>
+    {#if cropFrac > 0.01}
+      <p class="crop-note">
+        The mat opening on this size is a slightly different shape — about {Math.round(
+          cropFrac * 100,
+        )}% of the photo’s {cropDimension} is trimmed to fill it, exactly as shown above.
+      </p>
+    {/if}
+  {/if}
 
   <div class="field">
     <div class="field-label">EDITION</div>
@@ -248,16 +335,29 @@
     background: #1a1a1a;
   }
   .preview {
-    width: 100%;
-    max-width: 320px;
+    display: flex;
+    justify-content: center;
   }
-  .preview :global(.gallery-frame) {
-    margin: 0;
+  .pv-frame {
+    box-shadow: 0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
   }
-  .preview :global(img) {
+  .pv-mat {
+    background: #fdfdfb;
+  }
+  .pv-open {
+    position: relative;
+    overflow: hidden;
+    /* Mat bevel edge around the opening. */
+    box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
+  }
+  .pv-open img {
     display: block;
     width: 100%;
-    height: auto;
+    height: 100%;
+    object-fit: cover;
+  }
+  .pv-bare {
+    box-shadow: 0 10px 24px -12px rgba(30, 25, 18, 0.3), 0 2px 5px rgba(30, 25, 18, 0.12);
   }
   h2 {
     margin: 0;
