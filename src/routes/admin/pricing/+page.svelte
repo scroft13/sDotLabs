@@ -31,9 +31,10 @@
     }
   }
 
-  let multiplier = DEFAULT_MULTIPLIER;
-  // Shipping charge inputs in dollars ('' = pass Prodigi's cost through).
-  let shippingInput: Record<string, string> = {};
+  let multiplier: number | null = DEFAULT_MULTIPLIER;
+  // Shipping charge inputs in dollars. type="number" binds a number (or null
+  // when the field is empty); null/NaN means pass Prodigi's cost through.
+  let shippingInput: Record<string, number | null> = {};
   let loaded = false;
   let saving = false;
 
@@ -42,27 +43,25 @@
     if (settings) {
       multiplier = settings.multiplier;
       shippingInput = Object.fromEntries(
-        Object.entries(settings.shipping).map(([sku, cents]) => [sku, (cents / 100).toFixed(2)]),
+        Object.entries(settings.shipping).map(([sku, cents]) => [sku, cents / 100]),
       );
     }
     loaded = true;
   });
 
   function chargedCents(row: Row): number {
-    const raw = shippingInput[row.prodigiSku];
-    if (raw === undefined || raw.trim() === '') return row.variant.shippingCents;
-    const dollars = Number(raw);
-    return Number.isFinite(dollars) && dollars >= 0
-      ? Math.round(dollars * 100)
-      : row.variant.shippingCents;
+    const dollars = shippingInput[row.prodigiSku];
+    if (dollars == null || !Number.isFinite(dollars) || dollars < 0)
+      return row.variant.shippingCents;
+    return Math.round(dollars * 100);
   }
 
   async function save() {
-    if (multiplier < 1) {
+    if (multiplier == null || !Number.isFinite(multiplier) || multiplier < 1) {
       addToast({
         id: Math.floor(Math.random() * 100000),
         type: 'error',
-        message: 'Multiplier below 1 would sell prints under cost',
+        message: 'Multiplier must be a number of at least 1 (or it would sell below cost)',
         dismissible: true,
         timeout: 4000,
       });
@@ -71,10 +70,8 @@
     saving = true;
     const shipping: Record<string, number> = {};
     for (const row of rows) {
-      const raw = shippingInput[row.prodigiSku];
-      if (raw === undefined || raw.trim() === '') continue;
-      const dollars = Number(raw);
-      if (!Number.isFinite(dollars) || dollars < 0) continue;
+      const dollars = shippingInput[row.prodigiSku];
+      if (dollars == null || !Number.isFinite(dollars) || dollars < 0) continue;
       const cents = Math.round(dollars * 100);
       // Only store real overrides -- matching Prodigi's cost is the default.
       if (cents !== row.variant.shippingCents) shipping[row.prodigiSku] = cents;
