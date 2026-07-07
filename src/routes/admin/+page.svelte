@@ -45,6 +45,7 @@
 
 <main>
   <nav class="admin-nav">
+    <a href="/admin/site">Site settings &rarr;</a>
     <a href="/admin/pricing">Pricing &rarr;</a>
   </nav>
 
@@ -107,6 +108,7 @@
   .admin-nav {
     display: flex;
     justify-content: flex-end;
+    gap: 1.5rem;
     margin-bottom: 1rem;
   }
   .admin-nav a {

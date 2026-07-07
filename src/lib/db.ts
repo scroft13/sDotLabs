@@ -19,6 +19,7 @@ import {
 import { deleteObject, ref, uploadBytes } from 'firebase/storage';
 import { firestore, storage, STORAGE_BUCKET } from './firebase';
 import type { PricingSettings } from './pricing';
+import { toSiteSettings, type SiteSettings } from './site';
 import type { Album, Photo, PhotoExif } from './shared';
 
 const albumsCol = collection(firestore, 'albums');
@@ -266,6 +267,15 @@ export default {
     },
     async setPricing(settings: PricingSettings): Promise<void> {
       await setDoc(doc(firestore, 'settings', 'pricing'), settings);
+    },
+    // Always returns a complete SiteSettings -- defaults fill anything the
+    // owner hasn't set (or the whole doc if it doesn't exist yet).
+    async site(): Promise<SiteSettings> {
+      const snap = await getDoc(doc(firestore, 'settings', 'site'));
+      return toSiteSettings(snap.exists() ? snap.data() : null);
+    },
+    async setSite(settings: SiteSettings): Promise<void> {
+      await setDoc(doc(firestore, 'settings', 'site'), settings);
     },
   },
 };

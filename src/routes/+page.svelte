@@ -10,14 +10,16 @@
 </script>
 
 <svelte:head>
-  <title>The Light Lab — sdotlabs</title>
+  <title>{data.site.title} — sdotlabs</title>
 </svelte:head>
 
 <SiteNav />
 
 <header id="top">
-  <div class="eyebrow">EXPERIMENTS IN LIGHT</div>
-  <h1>The Light Lab</h1>
+  {#if data.site.subtitle}
+    <div class="eyebrow">{data.site.subtitle}</div>
+  {/if}
+  <h1>{data.site.title}</h1>
   <div class="rule" />
 </header>
 
