@@ -357,6 +357,7 @@
   .pv-open {
     position: relative;
     overflow: hidden;
+    background: #eceae6;
     /* Mat bevel edge around the opening. */
     box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.14);
   }

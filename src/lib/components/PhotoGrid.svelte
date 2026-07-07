@@ -11,7 +11,15 @@
   {#each photos as photo (photo.id)}
     <a class="photo-tile" href={`/album/${albumSlug}/photo/${photo.id}`}>
       <GalleryFrame title={photo.title ?? photo.caption} exif={photo.exif}>
-        <img src={db.photos.publicUrl(photo.storage_path)} alt={photo.title ?? ''} loading="lazy" />
+        <img
+          src={db.photos.publicUrl(photo.storage_path)}
+          alt={photo.title ?? ''}
+          class="skeleton-shimmer"
+          style={photo.width && photo.height
+            ? `aspect-ratio: ${photo.width} / ${photo.height}`
+            : undefined}
+          loading="lazy"
+        />
       </GalleryFrame>
     </a>
   {/each}

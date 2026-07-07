@@ -64,7 +64,12 @@
     {/if}
     <div class="frame-wrap" style={`max-width: ${frameMaxWidth}`}>
       <GalleryFrame title={photo.title} exif={photo.exif}>
-        <img src={db.photos.publicUrl(photo.storage_path)} alt={photo.title ?? ''} />
+        <img
+          src={db.photos.publicUrl(photo.storage_path)}
+          alt={photo.title ?? ''}
+          class="skeleton-shimmer"
+          style={aspect ? `aspect-ratio: ${aspect}` : undefined}
+        />
       </GalleryFrame>
     </div>
     {#if hasSiblings}

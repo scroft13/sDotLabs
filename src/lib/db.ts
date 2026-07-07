@@ -73,22 +73,37 @@ function toPhoto(snap: DocumentSnapshot | QueryDocumentSnapshot): Photo {
   };
 }
 
-async function coverForAlbum(
-  album: Album,
-): Promise<{ storagePath: string | null; exif: PhotoExif | null }> {
+type AlbumCover = {
+  storagePath: string | null;
+  exif: PhotoExif | null;
+  width: number | null;
+  height: number | null;
+};
+
+async function coverForAlbum(album: Album): Promise<AlbumCover> {
   if (album.cover_photo_id) {
     const snap = await getDoc(doc(photosCol, album.cover_photo_id));
     if (snap.exists()) {
       const photo = toPhoto(snap);
-      return { storagePath: photo.storage_path, exif: photo.exif };
+      return {
+        storagePath: photo.storage_path,
+        exif: photo.exif,
+        width: photo.width,
+        height: photo.height,
+      };
     }
   }
   const firstPhoto = await getDocs(
     query(photosCol, where('album_id', '==', album.id), orderBy('sort_order'), limit(1)),
   );
-  if (firstPhoto.empty) return { storagePath: null, exif: null };
+  if (firstPhoto.empty) return { storagePath: null, exif: null, width: null, height: null };
   const photo = toPhoto(firstPhoto.docs[0]);
-  return { storagePath: photo.storage_path, exif: photo.exif };
+  return {
+    storagePath: photo.storage_path,
+    exif: photo.exif,
+    width: photo.width,
+    height: photo.height,
+  };
 }
 
 export default {
@@ -110,13 +125,24 @@ export default {
     // has no joins, so covers are resolved with one extra read per album --
     // fine at personal-gallery scale.
     async allWithCover(): Promise<
-      (Album & { coverStoragePath: string | null; coverExif: PhotoExif | null })[]
+      (Album & {
+        coverStoragePath: string | null;
+        coverExif: PhotoExif | null;
+        coverWidth: number | null;
+        coverHeight: number | null;
+      })[]
     > {
       const albums = await this.all();
       return Promise.all(
         albums.map(async (album) => {
           const cover = await coverForAlbum(album);
-          return { ...album, coverStoragePath: cover.storagePath, coverExif: cover.exif };
+          return {
+            ...album,
+            coverStoragePath: cover.storagePath,
+            coverExif: cover.exif,
+            coverWidth: cover.width,
+            coverHeight: cover.height,
+          };
         }),
       );
     },

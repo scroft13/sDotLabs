@@ -2,6 +2,7 @@
   import PhotoGrid from '$lib/components/PhotoGrid.svelte';
   import SiteFooter from '$lib/components/SiteFooter.svelte';
   import SiteNav from '$lib/components/SiteNav.svelte';
+  import SkeletonFrame from '$lib/components/SkeletonFrame.svelte';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -23,11 +24,21 @@
 </header>
 
 <main>
-  {#if data.photos.length === 0}
-    <p class="empty">No photos in this album yet.</p>
-  {:else}
-    <PhotoGrid photos={data.photos} albumSlug={data.album.slug} />
-  {/if}
+  {#await data.lazy.photos}
+    <div class="skeleton-grid">
+      {#each [3 / 2, 3 / 2, 3 / 2, 3 / 2] as aspect, i (i)}
+        <SkeletonFrame {aspect} />
+      {/each}
+    </div>
+  {:then photos}
+    {#if photos.length === 0}
+      <p class="empty">No photos in this album yet.</p>
+    {:else}
+      <PhotoGrid {photos} albumSlug={data.album.slug} />
+    {/if}
+  {:catch}
+    <p class="empty">Couldn’t load this album — try refreshing.</p>
+  {/await}
 </main>
 
 <SiteFooter />
@@ -75,9 +86,33 @@
     margin: 0 auto;
     padding: 0 48px 120px;
   }
+  /* Mirrors PhotoGrid's justified-row layout so skeletons occupy the same
+     footprint as the frames that replace them. */
+  .skeleton-grid {
+    --wall-h: 250px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    column-gap: 44px;
+    row-gap: 8px;
+  }
+  .skeleton-grid :global(.gallery-frame) {
+    margin: 0 0 40px;
+  }
   .empty {
     text-align: center;
     color: #8a8680;
+  }
+  @media (max-width: 900px) {
+    .skeleton-grid {
+      --wall-h: 180px;
+      column-gap: 32px;
+    }
+  }
+  @media (max-width: 640px) {
+    .skeleton-grid {
+      --wall-h: 140px;
+    }
   }
   @media (max-width: 640px) {
     main {

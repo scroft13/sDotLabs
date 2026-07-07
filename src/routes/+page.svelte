@@ -2,6 +2,7 @@
   import GalleryFrame from '$lib/components/GalleryFrame.svelte';
   import SiteFooter from '$lib/components/SiteFooter.svelte';
   import SiteNav from '$lib/components/SiteNav.svelte';
+  import SkeletonFrame from '$lib/components/SkeletonFrame.svelte';
   import db from '$lib/db';
   import type { PageData } from './$types';
 
@@ -21,25 +22,39 @@
 </header>
 
 <main id="gallery">
-  {#if data.albums.length === 0}
-    <p class="empty">No albums yet.</p>
-  {:else}
-    {#each data.albums as album (album.id)}
-      <a href={`/album/${album.slug}`} class="frame-link">
-        <GalleryFrame title={album.title} exif={album.coverExif}>
-          {#if album.coverStoragePath}
-            <img
-              src={db.photos.publicUrl(album.coverStoragePath)}
-              alt={album.title}
-              loading="lazy"
-            />
-          {:else}
-            <div class="cover-empty" />
-          {/if}
-        </GalleryFrame>
-      </a>
+  {#await data.lazy.albums}
+    {#each [3 / 2, 3 / 2] as aspect, i (i)}
+      <div class="frame-link">
+        <SkeletonFrame {aspect} />
+      </div>
     {/each}
-  {/if}
+  {:then albums}
+    {#if albums.length === 0}
+      <p class="empty">No albums yet.</p>
+    {:else}
+      {#each albums as album (album.id)}
+        <a href={`/album/${album.slug}`} class="frame-link">
+          <GalleryFrame title={album.title} exif={album.coverExif}>
+            {#if album.coverStoragePath}
+              <img
+                src={db.photos.publicUrl(album.coverStoragePath)}
+                alt={album.title}
+                class="skeleton-shimmer"
+                style={album.coverWidth && album.coverHeight
+                  ? `aspect-ratio: ${album.coverWidth} / ${album.coverHeight}`
+                  : undefined}
+                loading="lazy"
+              />
+            {:else}
+              <div class="cover-empty" />
+            {/if}
+          </GalleryFrame>
+        </a>
+      {/each}
+    {/if}
+  {:catch}
+    <p class="empty">Couldn’t load the gallery — try refreshing.</p>
+  {/await}
 </main>
 
 <SiteFooter />
