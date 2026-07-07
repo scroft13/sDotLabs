@@ -9,12 +9,14 @@
   export let data: PageData;
 
   let editingId: string | null = null;
+  let creating = false;
   let deletingAlbum: Album | null = null;
 
   $: nextSortOrder = data.albums.length ? Math.max(...data.albums.map((a) => a.sort_order)) + 1 : 0;
 
   async function refresh() {
     editingId = null;
+    creating = false;
     await invalidateAll();
   }
 
@@ -40,54 +42,64 @@
 </script>
 
 <svelte:head>
-  <title>Manage Albums</title>
+  <title>Albums — Admin</title>
 </svelte:head>
 
-<main>
-  <nav class="admin-nav">
-    <a href="/admin/site">Site settings &rarr;</a>
-    <a href="/admin/pricing">Pricing &rarr;</a>
-  </nav>
-
-  <section class="new-album">
-    <h2>New Album</h2>
-    <AlbumForm {nextSortOrder} on:saved={refresh} />
-  </section>
-
-  <section>
-    <h2>Albums</h2>
-    {#if data.albums.length === 0}
-      <p class="secondary-text">No albums yet.</p>
-    {:else}
-      <ul>
-        {#each data.albums as album, index (album.id)}
-          <li>
-            {#if editingId === album.id}
-              <AlbumForm {album} on:saved={refresh} />
-              <button class="link" on:click={() => (editingId = null)}>Cancel</button>
-            {:else}
-              <div class="row">
-                <div class="info">
-                  <strong>{album.title}</strong>
-                  <span class="secondary-text">/{album.slug}</span>
-                </div>
-                <div class="actions">
-                  <button disabled={index === 0} on:click={() => move(album, -1)}>&uarr;</button>
-                  <button
-                    disabled={index === data.albums.length - 1}
-                    on:click={() => move(album, 1)}>&darr;</button
-                  >
-                  <a href={`/admin/${album.id}`}>Photos</a>
-                  <button on:click={() => (editingId = album.id)}>Edit</button>
-                  <button class="danger" on:click={() => (deletingAlbum = album)}>Delete</button>
-                </div>
-              </div>
-            {/if}
-          </li>
-        {/each}
-      </ul>
+<main class="admin-page">
+  <div class="page-head">
+    <h1>Albums</h1>
+    {#if !creating}
+      <button class="btn-primary" on:click={() => (creating = true)}>New album</button>
     {/if}
-  </section>
+  </div>
+
+  {#if creating}
+    <div class="card new-card">
+      <div class="section-label">New album</div>
+      <AlbumForm {nextSortOrder} on:saved={refresh} />
+      <button class="link" on:click={() => (creating = false)}>Cancel</button>
+    </div>
+  {/if}
+
+  {#if data.albums.length === 0}
+    <p class="muted empty">No albums yet. Create your first one above.</p>
+  {:else}
+    <ul class="album-list">
+      {#each data.albums as album, index (album.id)}
+        <li class="card album-row">
+          {#if editingId === album.id}
+            <div class="section-label">Edit album</div>
+            <AlbumForm {album} on:saved={refresh} />
+            <button class="link" on:click={() => (editingId = null)}>Cancel</button>
+          {:else}
+            <div class="row">
+              <div class="info">
+                <strong>{album.title}</strong>
+                <span class="muted">/{album.slug}</span>
+              </div>
+              <div class="actions">
+                <button
+                  class="btn-ghost"
+                  disabled={index === 0}
+                  title="Move up"
+                  on:click={() => move(album, -1)}>↑</button
+                >
+                <button
+                  class="btn-ghost"
+                  disabled={index === data.albums.length - 1}
+                  title="Move down"
+                  on:click={() => move(album, 1)}>↓</button
+                >
+                <a class="btn" href={`/admin/${album.id}`}>Photos</a>
+                <button class="btn" on:click={() => (editingId = album.id)}>Edit</button>
+                <button class="btn-danger" on:click={() => (deletingAlbum = album)}>Delete</button>
+              </div>
+            </div>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+  {/if}
 </main>
 
 {#if deletingAlbum}
@@ -100,62 +112,67 @@
 {/if}
 
 <style>
-  main {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-  }
-  .admin-nav {
+  .page-head {
     display: flex;
-    justify-content: flex-end;
-    gap: 1.5rem;
-    margin-bottom: 1rem;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
   }
-  .admin-nav a {
-    color: inherit;
-    font-size: 0.9rem;
+  .page-head :global(h1) {
+    margin-bottom: 0;
   }
-  h2 {
-    margin-bottom: 1rem;
+  .new-card {
+    margin: 1.5rem 0;
   }
-  .new-album {
-    margin-bottom: 3rem;
-    padding-bottom: 2rem;
-    border-bottom: 1px solid #e5e5e5;
+  .empty {
+    margin-top: 2rem;
   }
-  ul {
+  .album-list {
     list-style: none;
     padding: 0;
-    margin: 0;
+    margin: 1.5rem 0 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
-  li {
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #e5e5e5;
+  .album-row {
+    padding: 1rem 1.25rem;
   }
   .row {
     display: flex;
     justify-content: space-between;
     align-items: center;
     gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .info {
+    display: flex;
+    align-items: baseline;
+    gap: 0.6rem;
+    min-width: 0;
+  }
+  .info strong {
+    font-size: 1rem;
+  }
+  .info .muted {
+    font-size: 0.85rem;
   }
   .actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem;
     align-items: center;
   }
   .actions a {
-    color: inherit;
+    text-decoration: none;
   }
-  button.link {
+  .link {
     background: none;
     border: 0;
     text-decoration: underline;
     cursor: pointer;
-    color: inherit;
+    color: #6f6b64;
     padding: 0;
-    margin-top: 0.5rem;
-  }
-  button.danger {
-    color: #dc2626;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
   }
 </style>

@@ -103,22 +103,21 @@
   <title>Pricing</title>
 </svelte:head>
 
-<main>
-  <a href="/admin" class="back">&larr; Albums</a>
+<main class="admin-page">
   <h1>Pricing</h1>
 
   {#if !loaded}
-    <p class="secondary-text">Loading…</p>
+    <p class="muted">Loading…</p>
   {:else}
-    <section class="multiplier">
-      <label for="multiplier">Cost multiplier</label>
+    <div class="card multiplier">
+      <label for="multiplier" class="section-label">Cost multiplier</label>
       <input id="multiplier" type="number" step="0.1" min="1" bind:value={multiplier} />
       <p class="hint">
         Price = Prodigi cost × multiplier, rounded to the dollar. Applies to every variant.
       </p>
-    </section>
+    </div>
 
-    <table>
+    <table class="admin-table">
       <thead>
         <tr>
           <th>Product</th>
@@ -160,7 +159,7 @@
       </tbody>
     </table>
 
-    <button class="save" disabled={saving} on:click={save}>
+    <button class="btn-primary save" disabled={saving} on:click={save}>
       {saving ? 'Saving…' : 'Save pricing'}
     </button>
     <p class="hint">
@@ -171,75 +170,29 @@
 </main>
 
 <style>
-  main {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-  }
-  .back {
-    font-size: 0.85rem;
-    color: inherit;
-  }
-  h1 {
-    margin: 0.5rem 0 1.5rem;
-  }
   .multiplier {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
     margin-bottom: 1.5rem;
   }
-  .multiplier label {
-    font-weight: 600;
-  }
-  .multiplier input {
-    width: 5rem;
-    padding: 0.4rem 0.6rem;
-    border: 1px solid #c9c4bc;
+  /* id/compound selectors below out-specify the shared full-width input rule. */
+  #multiplier {
+    width: 6rem;
   }
   .hint {
-    width: 100%;
-    margin: 0.25rem 0 0;
+    margin: 0.5rem 0 0;
     font-size: 0.8rem;
-    color: #6f6b64;
+    color: #8a8680;
   }
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.875rem;
-  }
-  th,
-  td {
-    padding: 0.5rem 0.5rem;
-    border-bottom: 1px solid #e5e5e5;
-    text-align: left;
-  }
-  th.num,
-  td.num {
-    text-align: right;
-  }
-  td.price {
+  .admin-table :global(td.price) {
     font-weight: 600;
   }
-  td.eaten {
-    color: #dc2626;
+  .admin-table :global(td.eaten) {
+    color: #b3261e;
   }
-  .ship-input {
+  .admin-table .ship-input {
     width: 5.5rem;
-    padding: 0.3rem 0.4rem;
-    border: 1px solid #c9c4bc;
     text-align: right;
   }
   .save {
     margin-top: 1.5rem;
-    padding: 0.6rem 1.4rem;
-    background: #1a1a1a;
-    color: #fff;
-    border: 0;
-    cursor: pointer;
-  }
-  .save:disabled {
-    opacity: 0.5;
   }
 </style>

@@ -41,21 +41,48 @@
 </svelte:head>
 
 <main>
-  <h1>Admin Login</h1>
-  <Form context={{ ...formState, schema: formSchema }}>
-    <LabeledField name="email" label="Email" type="text" placeholder="you@example.com" />
-    <LabeledPassword name="password" label="Password" />
-    <SubmitButton buttonName="Sign In" class="submit-button mt-4" />
-  </Form>
+  <div class="card login-card">
+    <div class="brand"><span class="mark">[s.labs]</span> admin</div>
+    <h1>Sign in</h1>
+    <Form context={{ ...formState, schema: formSchema }}>
+      <LabeledField name="email" label="Email" type="text" placeholder="you@example.com" />
+      <LabeledPassword name="password" label="Password" />
+      <SubmitButton buttonName="Sign In" class="submit-button mt-4" />
+    </Form>
+  </div>
 </main>
 
 <style>
   main {
+    min-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1.5rem;
+  }
+  .login-card {
+    width: 100%;
     max-width: 360px;
-    margin: 4rem auto;
-    padding: 0 1.5rem;
+  }
+  .brand {
+    font-size: 0.8rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #8a8680;
+    margin-bottom: 1.25rem;
+  }
+  .brand .mark {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 1.3rem;
+    letter-spacing: normal;
+    text-transform: none;
+    color: #1a1a1a;
+    margin-right: 0.35rem;
   }
   h1 {
-    margin-bottom: 1.5rem;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-weight: 400;
+    font-size: 1.8rem;
+    margin: 0 0 1.25rem;
   }
 </style>

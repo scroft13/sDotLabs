@@ -38,21 +38,24 @@
 </script>
 
 <svelte:head>
-  <title>{data.album.title} - Photos</title>
+  <title>{data.album.title} — Photos</title>
 </svelte:head>
 
-<main>
-  <a href="/admin" class="back">&larr; Albums</a>
+<main class="admin-page">
+  <a href="/admin" class="back">← Albums</a>
   <h1>{data.album.title}</h1>
 
-  <PhotoUploader albumId={data.album.id} {nextSortOrder} on:uploaded={refresh} />
+  <div class="card uploader-card">
+    <div class="section-label">Add photos</div>
+    <PhotoUploader albumId={data.album.id} {nextSortOrder} on:uploaded={refresh} />
+  </div>
 
   {#if data.photos.length === 0}
-    <p class="secondary-text mt-4">No photos in this album yet.</p>
+    <p class="muted empty">No photos in this album yet.</p>
   {:else}
     <ul class="photo-list">
       {#each data.photos as photo, index (photo.id)}
-        <li>
+        <li class="card photo-item">
           <img src={db.photos.publicUrl(photo.storage_path)} alt={photo.title ?? ''} />
           <div class="photo-body">
             {#if editingId === photo.id}
@@ -62,16 +65,24 @@
               <div class="photo-meta">
                 <strong>{photo.title || 'Untitled'}</strong>
                 {#if photo.caption}
-                  <p class="secondary-text">{photo.caption}</p>
+                  <p class="muted caption">{photo.caption}</p>
                 {/if}
               </div>
               <div class="actions">
-                <button disabled={index === 0} on:click={() => move(photo, -1)}>&uarr;</button>
-                <button disabled={index === data.photos.length - 1} on:click={() => move(photo, 1)}
-                  >&darr;</button
+                <button
+                  class="btn-ghost"
+                  disabled={index === 0}
+                  title="Move up"
+                  on:click={() => move(photo, -1)}>↑</button
                 >
-                <button on:click={() => (editingId = photo.id)}>Edit</button>
-                <button class="danger" on:click={() => (deletingPhoto = photo)}>Delete</button>
+                <button
+                  class="btn-ghost"
+                  disabled={index === data.photos.length - 1}
+                  title="Move down"
+                  on:click={() => move(photo, 1)}>↓</button
+                >
+                <button class="btn" on:click={() => (editingId = photo.id)}>Edit</button>
+                <button class="btn-danger" on:click={() => (deletingPhoto = photo)}>Delete</button>
               </div>
             {/if}
           </div>
@@ -91,37 +102,41 @@
 {/if}
 
 <style>
-  main {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-  }
   .back {
     display: inline-block;
-    margin-bottom: 1.5rem;
-    color: inherit;
-    opacity: 0.7;
+    margin-bottom: 1rem;
+    color: #8a8680;
     text-decoration: none;
+    font-size: 0.85rem;
   }
-  h1 {
+  .back:hover {
+    color: #1a1a1a;
+  }
+  .uploader-card {
     margin-bottom: 1.5rem;
+  }
+  .empty {
+    margin-top: 1rem;
   }
   .photo-list {
     list-style: none;
     padding: 0;
-    margin: 2rem 0 0;
-  }
-  .photo-list li {
+    margin: 0;
     display: flex;
-    gap: 1rem;
-    padding: 1rem 0;
-    border-bottom: 1px solid #e5e5e5;
+    flex-direction: column;
+    gap: 0.75rem;
   }
-  .photo-list img {
+  .photo-item {
+    display: flex;
+    gap: 1.25rem;
+    padding: 1rem 1.25rem;
+    align-items: flex-start;
+  }
+  .photo-item img {
     width: 120px;
     height: 90px;
     object-fit: cover;
-    border-radius: 0.25rem;
+    border-radius: 6px;
     flex-shrink: 0;
   }
   .photo-body {
@@ -130,22 +145,29 @@
     justify-content: space-between;
     align-items: flex-start;
     gap: 1rem;
+    min-width: 0;
+  }
+  .photo-meta strong {
+    font-size: 1rem;
+  }
+  .caption {
+    margin: 0.25rem 0 0;
+    font-size: 0.85rem;
   }
   .actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 0.4rem;
     flex-shrink: 0;
+    align-items: center;
   }
-  button.link {
+  .link {
     background: none;
     border: 0;
     text-decoration: underline;
     cursor: pointer;
-    color: inherit;
+    color: #6f6b64;
     padding: 0;
-    margin-top: 0.5rem;
-  }
-  button.danger {
-    color: #dc2626;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
   }
 </style>

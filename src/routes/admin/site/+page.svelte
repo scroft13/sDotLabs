@@ -57,15 +57,14 @@
   <title>Site settings</title>
 </svelte:head>
 
-<main>
-  <a href="/admin" class="back">&larr; Albums</a>
+<main class="admin-page">
   <h1>Site settings</h1>
 
   {#if !loaded}
-    <p class="secondary-text">Loading…</p>
+    <p class="muted">Loading…</p>
   {:else}
-    <section>
-      <h2>Home page</h2>
+    <div class="card">
+      <div class="section-label">Home page</div>
       <label class="field">
         <span>Title</span>
         <input type="text" bind:value={settings.title} placeholder={DEFAULT_SITE.title} />
@@ -75,10 +74,10 @@
         <input type="text" bind:value={settings.subtitle} placeholder={DEFAULT_SITE.subtitle} />
         <span class="hint">Small line above the title. Leave blank to hide it.</span>
       </label>
-    </section>
+    </div>
 
-    <section>
-      <h2>Sale banner</h2>
+    <div class="card">
+      <div class="section-label">Sale banner</div>
       <label class="checkbox">
         <input type="checkbox" bind:checked={settings.banner.enabled} />
         <span>Show the banner across the site</span>
@@ -115,7 +114,7 @@
         <span class="hint">Text color adjusts automatically for contrast.</span>
       </div>
 
-      <div class="preview-label">Preview</div>
+      <div class="section-label preview-label">Preview</div>
       {#if settings.banner.text.trim()}
         <div
           class="banner-preview"
@@ -128,9 +127,9 @@
       {:else}
         <p class="hint">Add banner text to see a preview.</p>
       {/if}
-    </section>
+    </div>
 
-    <button class="save" disabled={saving} on:click={save}>
+    <button class="btn-primary" disabled={saving} on:click={save}>
       {saving ? 'Saving…' : 'Save settings'}
     </button>
   {/if}
@@ -139,28 +138,16 @@
 <style>
   main {
     max-width: 640px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
   }
-  .back {
-    font-size: 0.85rem;
-    color: inherit;
-  }
-  h1 {
-    margin: 0.5rem 0 1.5rem;
-  }
-  h2 {
-    margin: 0 0 0.75rem;
-    font-size: 1rem;
-  }
-  section {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid #e5e5e5;
+  .card {
+    margin-bottom: 1.5rem;
   }
   .field {
     display: block;
     margin-bottom: 1rem;
+  }
+  .field:last-child {
+    margin-bottom: 0;
   }
   .field > span {
     display: block;
@@ -168,30 +155,54 @@
     font-weight: 600;
     margin-bottom: 0.3rem;
   }
-  .field input {
-    width: 100%;
-    padding: 0.5rem 0.6rem;
-    border: 1px solid #c9c4bc;
-  }
   .checkbox {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 0.6rem;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+    cursor: pointer;
+  }
+  /* Tailwind's form reset strips the native checkbox (appearance: none), so
+     render a custom box. */
+  .checkbox input {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+    border: 1px solid #d5cfc4;
+    border-radius: 4px;
+    background: #fff;
+    cursor: pointer;
+    position: relative;
+  }
+  .checkbox input:checked {
+    background: #1a1a1a;
+    border-color: #1a1a1a;
+  }
+  .checkbox input:checked::after {
+    content: '✓';
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #fbfaf8;
+    font-size: 12px;
+  }
+  .checkbox input:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(26, 26, 26, 0.12);
   }
   .hint {
     display: block;
     margin-top: 0.3rem;
     font-size: 0.8rem;
-    color: #6f6b64;
+    color: #8a8680;
   }
   .preview-label {
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    color: #8a8680;
-    margin-bottom: 0.5rem;
+    margin-top: 1.25rem;
   }
   .banner-preview {
     padding: 10px 24px;
@@ -223,15 +234,5 @@
   .swatch.selected {
     outline: 2px solid #1a1a1a;
     outline-offset: 2px;
-  }
-  .save {
-    padding: 0.6rem 1.4rem;
-    background: #1a1a1a;
-    color: #fff;
-    border: 0;
-    cursor: pointer;
-  }
-  .save:disabled {
-    opacity: 0.5;
   }
 </style>
