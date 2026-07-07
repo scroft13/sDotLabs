@@ -1,6 +1,7 @@
 <script lang="ts">
   import { page } from '$app/stores';
   import Toasts from '$lib/components/Toasts.svelte';
+  import { bannerTextColor } from '$lib/site';
   import type { LayoutData } from './$types';
   import '../app.css';
 
@@ -11,15 +12,16 @@
   $: isAdmin = $page.url.pathname.startsWith('/admin');
   $: banner = data.site.banner;
   $: showBanner = !isAdmin && banner.enabled && banner.text.trim().length > 0;
+  $: bannerStyle = `background: ${banner.color}; color: ${bannerTextColor(banner.color)}`;
 </script>
 
 <Toasts />
 
 {#if showBanner}
   {#if banner.link.trim()}
-    <a class="site-banner" href={banner.link}>{banner.text}</a>
+    <a class="site-banner" href={banner.link} style={bannerStyle}>{banner.text}</a>
   {:else}
-    <div class="site-banner">{banner.text}</div>
+    <div class="site-banner" style={bannerStyle}>{banner.text}</div>
   {/if}
 {/if}
 
@@ -39,8 +41,6 @@
   .site-banner {
     display: block;
     padding: 10px 24px;
-    background: #1a1a1a;
-    color: #fbfaf8;
     text-align: center;
     font-size: 12px;
     letter-spacing: 0.16em;
@@ -48,6 +48,6 @@
     text-decoration: none;
   }
   a.site-banner:hover {
-    background: #000;
+    filter: brightness(0.9);
   }
 </style>

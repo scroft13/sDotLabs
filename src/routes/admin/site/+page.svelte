@@ -1,12 +1,16 @@
 <script lang="ts">
   import { onMount } from 'svelte';
   import db from '$lib/db';
-  import { DEFAULT_SITE, type SiteSettings } from '$lib/site';
+  import { bannerTextColor, DEFAULT_SITE, type SiteSettings } from '$lib/site';
   import { addToast } from '$lib/stores';
 
   let settings: SiteSettings = structuredClone(DEFAULT_SITE);
   let loaded = false;
   let saving = false;
+
+  // Quick-pick accents for the banner (ink, oak, deep red, forest, plum);
+  // the color input allows anything else.
+  const BANNER_PRESETS = ['#1a1a1a', '#a86f3e', '#8a2f2f', '#2f5233', '#4a2f4a'];
 
   onMount(async () => {
     settings = await db.settings.site();
@@ -37,6 +41,7 @@
           enabled: settings.banner.enabled,
           text: settings.banner.text.trim(),
           link: settings.banner.link.trim(),
+          color: settings.banner.color,
         },
       });
       toast('success', 'Site settings saved');
@@ -92,9 +97,34 @@
         <span class="hint">Where the banner links to when clicked. Leave blank for no link.</span>
       </label>
 
+      <div class="field">
+        <span>Accent color</span>
+        <div class="color-row">
+          <input type="color" bind:value={settings.banner.color} aria-label="Banner color" />
+          {#each BANNER_PRESETS as preset (preset)}
+            <button
+              type="button"
+              class="swatch"
+              class:selected={settings.banner.color.toLowerCase() === preset}
+              style={`background: ${preset}`}
+              aria-label={`Use ${preset}`}
+              on:click={() => (settings.banner.color = preset)}
+            />
+          {/each}
+        </div>
+        <span class="hint">Text color adjusts automatically for contrast.</span>
+      </div>
+
       <div class="preview-label">Preview</div>
       {#if settings.banner.text.trim()}
-        <div class="banner-preview">{settings.banner.text}</div>
+        <div
+          class="banner-preview"
+          style={`background: ${settings.banner.color}; color: ${bannerTextColor(
+            settings.banner.color,
+          )}`}
+        >
+          {settings.banner.text}
+        </div>
       {:else}
         <p class="hint">Add banner text to see a preview.</p>
       {/if}
@@ -165,12 +195,34 @@
   }
   .banner-preview {
     padding: 10px 24px;
-    background: #1a1a1a;
-    color: #fbfaf8;
     text-align: center;
     font-size: 12px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
+  }
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+  .color-row input[type='color'] {
+    width: 3rem;
+    height: 2rem;
+    padding: 0;
+    border: 1px solid #c9c4bc;
+    cursor: pointer;
+  }
+  .swatch {
+    width: 1.75rem;
+    height: 1.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 50%;
+    cursor: pointer;
+    padding: 0;
+  }
+  .swatch.selected {
+    outline: 2px solid #1a1a1a;
+    outline-offset: 2px;
   }
   .save {
     padding: 0.6rem 1.4rem;
