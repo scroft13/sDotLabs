@@ -117,47 +117,53 @@
       </p>
     </div>
 
-    <table class="admin-table">
-      <thead>
-        <tr>
-          <th>Product</th>
-          <th>Size</th>
-          <th>Mat</th>
-          <th class="num">Cost</th>
-          <th class="num">Price</th>
-          <th class="num">Prodigi ship</th>
-          <th class="num">You charge</th>
-          <th class="num">Ship margin</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each rows as row (row.prodigiSku)}
-          {@const charged = chargedCents(row)}
-          {@const margin = charged - row.variant.shippingCents}
+    <div class="table-wrap">
+      <table class="admin-table">
+        <thead>
           <tr>
-            <td>{row.productLabel}</td>
-            <td>{row.size}</td>
-            <td>{row.mount}</td>
-            <td class="num">{formatPrice(row.variant.costCents)}</td>
-            <td class="num price">{formatPrice(retailCentsFor(row.variant, multiplier))}</td>
-            <td class="num">{formatPrice(row.variant.shippingCents)}</td>
-            <td class="num">
-              <input
-                class="ship-input"
-                type="number"
-                step="0.01"
-                min="0"
-                placeholder={(row.variant.shippingCents / 100).toFixed(2)}
-                bind:value={shippingInput[row.prodigiSku]}
-              />
-            </td>
-            <td class="num" class:eaten={margin < 0}>
-              {margin === 0 ? '—' : formatPrice(margin)}
-            </td>
+            <th>Product</th>
+            <th>Size</th>
+            <th>Mat</th>
+            <th class="num">Cost</th>
+            <th class="num">Price</th>
+            <th class="num">Prodigi ship</th>
+            <th class="num">You charge</th>
+            <th class="num">Ship margin</th>
+            <th class="num">Profit</th>
           </tr>
-        {/each}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {#each rows as row (row.prodigiSku)}
+            {@const charged = chargedCents(row)}
+            {@const margin = charged - row.variant.shippingCents}
+            {@const retail = retailCentsFor(row.variant, multiplier)}
+            {@const profit = retail + charged - (row.variant.costCents + row.variant.shippingCents)}
+            <tr>
+              <td>{row.productLabel}</td>
+              <td>{row.size}</td>
+              <td>{row.mount}</td>
+              <td class="num">{formatPrice(row.variant.costCents)}</td>
+              <td class="num price">{formatPrice(retail)}</td>
+              <td class="num">{formatPrice(row.variant.shippingCents)}</td>
+              <td class="num">
+                <input
+                  class="ship-input"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  placeholder={(row.variant.shippingCents / 100).toFixed(2)}
+                  bind:value={shippingInput[row.prodigiSku]}
+                />
+              </td>
+              <td class="num" class:eaten={margin < 0}>
+                {margin === 0 ? '—' : formatPrice(margin)}
+              </td>
+              <td class="num profit" class:eaten={profit < 0}>{formatPrice(profit)}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    </div>
 
     <button class="btn-primary save" disabled={saving} on:click={save}>
       {saving ? 'Saving…' : 'Save pricing'}
@@ -182,11 +188,15 @@
     font-size: 0.8rem;
     color: #8a8680;
   }
-  .admin-table :global(td.price) {
+  .admin-table :global(td.price),
+  .admin-table :global(td.profit) {
     font-weight: 600;
   }
   .admin-table :global(td.eaten) {
     color: #b3261e;
+  }
+  .table-wrap {
+    overflow-x: auto;
   }
   .admin-table .ship-input {
     width: 5.5rem;
