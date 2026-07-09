@@ -1,11 +1,21 @@
 <script lang="ts">
+  import { browser } from '$app/environment';
   import { page } from '$app/stores';
   import Toasts from '$lib/components/Toasts.svelte';
-  import { bannerTextColor } from '$lib/site';
+  import { bannerTextColor, themeVars } from '$lib/site';
   import type { LayoutData } from './$types';
   import '../app.css';
 
   export let data: LayoutData;
+
+  // Apply the admin-chosen theme as CSS variables on :root (inline style wins
+  // over the app.css defaults, which cover the pre-hydration first paint).
+  // Admin keeps its own neutral palette via .admin-shell overrides.
+  $: if (browser) {
+    for (const [key, value] of Object.entries(themeVars(data.site.theme))) {
+      document.documentElement.style.setProperty(key, value);
+    }
+  }
 
   // The sales banner is public marketing -- show it on the gallery/prints
   // side, never over the admin tools.
@@ -34,8 +44,9 @@
   }
 
   :global(body) {
-    background: #fbfaf8;
-    color: #1a1a1a;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: var(--font-body);
   }
 
   .site-banner {

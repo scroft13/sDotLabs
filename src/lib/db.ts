@@ -274,8 +274,10 @@ export default {
       const snap = await getDoc(doc(firestore, 'settings', 'site'));
       return toSiteSettings(snap.exists() ? snap.data() : null);
     },
-    async setSite(settings: SiteSettings): Promise<void> {
-      await setDoc(doc(firestore, 'settings', 'site'), settings);
+    // Merge so the Site and Theme admin pages, which write different slices
+    // of the same settings/site doc, don't clobber each other's fields.
+    async setSite(settings: Partial<SiteSettings>): Promise<void> {
+      await setDoc(doc(firestore, 'settings', 'site'), settings, { merge: true });
     },
   },
 };

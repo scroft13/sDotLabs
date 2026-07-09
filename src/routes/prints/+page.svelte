@@ -100,11 +100,11 @@
   .eyebrow {
     font-size: 11px;
     letter-spacing: 0.32em;
-    color: #8a8680;
+    color: var(--muted);
   }
   h1 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 52px;
     letter-spacing: 0.02em;
@@ -112,7 +112,7 @@
   .rule {
     width: 40px;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--accent);
   }
   main {
     max-width: 720px;
@@ -130,7 +130,7 @@
     font-size: 14px;
     letter-spacing: 0.04em;
     line-height: 1.7;
-    color: #6f6b64;
+    color: var(--muted);
   }
   .hero {
     margin: 0;
@@ -150,7 +150,7 @@
     font-size: 11px;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #a8a39b;
+    color: var(--muted);
   }
   .finishes {
     display: flex;
@@ -174,7 +174,7 @@
     font-size: 10px;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: #8a8680;
+    color: var(--muted);
   }
   .editions {
     display: grid;
@@ -189,7 +189,7 @@
   }
   .edition h2 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 26px;
     text-align: center;
@@ -199,7 +199,7 @@
     font-size: 12px;
     letter-spacing: 0.05em;
     line-height: 1.6;
-    color: #a8a39b;
+    color: var(--muted);
     text-align: center;
   }
   ul {
@@ -216,7 +216,7 @@
     gap: 8px;
     font-size: 13px;
     letter-spacing: 0.08em;
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .dots {
     flex: 1;
@@ -226,19 +226,19 @@
     margin: 0;
     font-size: 12px;
     letter-spacing: 0.08em;
-    color: #6f6b64;
+    color: var(--muted);
   }
   .cta {
     font-size: 11px;
     letter-spacing: 0.22em;
     text-decoration: none;
-    color: #1a1a1a;
-    border: 1px solid #1a1a1a;
+    color: var(--accent);
+    border: 1px solid var(--accent);
     padding: 12px 28px;
     transition: background 0.15s ease, color 0.15s ease;
   }
   .cta:hover {
-    background: #1a1a1a;
-    color: #fbfaf8;
+    background: var(--accent);
+    color: var(--on-accent);
   }
 </style>

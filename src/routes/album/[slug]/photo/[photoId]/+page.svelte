@@ -107,11 +107,11 @@
     font-size: 11px;
     letter-spacing: 0.22em;
     text-decoration: none;
-    color: #8a8680;
+    color: var(--muted);
     transition: color 0.15s ease;
   }
   .back:hover {
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .stage {
     display: flex;
@@ -128,17 +128,17 @@
     height: auto;
   }
   .nav-arrow {
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-size: 44px;
     line-height: 1;
-    color: #a8a39b;
+    color: var(--muted);
     text-decoration: none;
     padding: 12px;
     user-select: none;
     transition: color 0.15s ease;
   }
   .nav-arrow:hover {
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .caption {
     max-width: 560px;
@@ -146,7 +146,7 @@
     text-align: center;
     font-size: 13px;
     letter-spacing: 0.08em;
-    color: #6f6b64;
+    color: var(--muted);
   }
   .order-toggle-wrap {
     display: flex;
@@ -155,8 +155,8 @@
   }
   .order-toggle {
     background: none;
-    border: 1px solid #1a1a1a;
-    color: #1a1a1a;
+    border: 1px solid var(--accent);
+    color: var(--accent);
     font-size: 11px;
     letter-spacing: 0.22em;
     padding: 12px 28px;
@@ -164,8 +164,8 @@
     transition: background 0.15s ease, color 0.15s ease;
   }
   .order-toggle:hover {
-    background: #1a1a1a;
-    color: #fbfaf8;
+    background: var(--accent);
+    color: var(--on-accent);
   }
   @media (max-width: 640px) {
     main {

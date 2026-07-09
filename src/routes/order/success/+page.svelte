@@ -45,11 +45,11 @@
   .rule {
     width: 40px;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--accent);
   }
   h1 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 44px;
   }
@@ -58,7 +58,7 @@
     font-size: 14px;
     letter-spacing: 0.04em;
     line-height: 1.7;
-    color: #6f6b64;
+    color: var(--muted);
   }
   .reference a {
     color: inherit;
@@ -72,11 +72,11 @@
     font-size: 11px;
     letter-spacing: 0.22em;
     text-decoration: none;
-    color: #1a1a1a;
+    color: var(--ink);
     border-bottom: 1px solid #c9c4bc;
     padding-bottom: 3px;
   }
   .back-link:hover {
-    border-bottom-color: #1a1a1a;
+    border-bottom-color: var(--ink);
   }
 </style>

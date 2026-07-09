@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;1,400&display=swap');
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -29,8 +30,20 @@
   }
 }
 
+/* Theme token defaults -- the admin can override these on :root at runtime
+   (see src/routes/+layout.svelte). Public components reference var(--*). */
+:root {
+  --bg: #fbfaf8;
+  --ink: #1a1a1a;
+  --muted: #6f6b64;
+  --accent: #1a1a1a;
+  --on-accent: #fbfaf8;
+  --font-display: 'Cormorant Garamond', Georgia, serif;
+  --font-body: 'Inter', sans-serif;
+}
+
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: var(--font-body);
 }
 
 /* Skeleton shimmer for loading states -- a quiet pulse on the warm gray the

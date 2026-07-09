@@ -23,10 +23,10 @@
     align-items: baseline;
     gap: 10px;
     text-decoration: none;
-    color: #1a1a1a;
+    color: var(--ink);
   }
   .mark {
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-size: 24px;
     font-weight: 500;
   }
@@ -39,12 +39,12 @@
     font-size: 12px;
     letter-spacing: 0.18em;
     text-decoration: none;
-    color: #6f6b64;
+    color: var(--muted);
     transition: color 0.15s ease;
   }
   .links a:hover,
   .links a.active {
-    color: #1a1a1a;
+    color: var(--ink);
   }
   @media (max-width: 640px) {
     nav {

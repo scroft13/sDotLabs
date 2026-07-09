@@ -21,14 +21,12 @@
   const tabs = [
     { href: '/admin', label: 'Albums' },
     { href: '/admin/site', label: 'Site' },
+    { href: '/admin/theme', label: 'Theme' },
     { href: '/admin/pricing', label: 'Pricing' },
   ];
-  $: activeHref =
-    path.startsWith('/admin/site') || path.startsWith('/admin/pricing')
-      ? path.startsWith('/admin/site')
-        ? '/admin/site'
-        : '/admin/pricing'
-      : '/admin';
+  // Albums (/admin and /admin/[albumId]) is the fallback; the others match
+  // their own path prefix.
+  $: activeHref = tabs.slice(1).find((t) => path.startsWith(t.href))?.href ?? '/admin';
 </script>
 
 <div class="admin-shell">
@@ -60,8 +58,12 @@
      Scoped under .admin-shell so it only styles the admin area. Warm palette
      matching the public site (cream page, ink text, serif titles), with clean
      form controls and button helpers the pages share. */
+  /* Admin keeps its own neutral palette regardless of the public theme. */
   .admin-shell {
     min-height: 100vh;
+    background: #fbfaf8;
+    color: #1a1a1a;
+    font-family: 'Inter', sans-serif;
   }
   .admin-status {
     padding: 3rem 1.5rem;

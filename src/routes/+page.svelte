@@ -72,11 +72,11 @@
   .eyebrow {
     font-size: 11px;
     letter-spacing: 0.32em;
-    color: #8a8680;
+    color: var(--muted);
   }
   h1 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 52px;
     letter-spacing: 0.02em;
@@ -84,7 +84,7 @@
   .rule {
     width: 40px;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--accent);
   }
   /* Justified rows: uniform frame height, width follows each cover's aspect
      ratio (see PhotoGrid for the same treatment on album pages). */
@@ -119,7 +119,7 @@
   }
   .empty {
     text-align: center;
-    color: #8a8680;
+    color: var(--muted);
   }
   @media (max-width: 900px) {
     main {

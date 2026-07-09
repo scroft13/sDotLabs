@@ -342,7 +342,7 @@
   .rule {
     width: 40px;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--accent);
   }
   .preview {
     display: flex;
@@ -372,7 +372,7 @@
   }
   h2 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 30px;
   }
@@ -386,7 +386,7 @@
   .field-label {
     font-size: 10px;
     letter-spacing: 0.28em;
-    color: #8a8680;
+    color: var(--muted);
   }
   .options {
     display: flex;
@@ -397,7 +397,7 @@
   .option {
     background: none;
     border: 1px solid #c9c4bc;
-    color: #1a1a1a;
+    color: var(--ink);
     font-size: 12px;
     letter-spacing: 0.08em;
     padding: 8px 16px;
@@ -405,12 +405,12 @@
     transition: border-color 0.15s ease;
   }
   .option:hover:not(:disabled) {
-    border-color: #1a1a1a;
+    border-color: var(--ink);
   }
   .option.selected {
-    border-color: #1a1a1a;
-    background: #1a1a1a;
-    color: #fbfaf8;
+    border-color: var(--accent);
+    background: var(--accent);
+    color: var(--on-accent);
   }
   .option:disabled {
     opacity: 0.35;
@@ -434,7 +434,7 @@
     object-fit: cover;
   }
   .swatch.selected {
-    outline: 2px solid #1a1a1a;
+    outline: 2px solid var(--accent);
     outline-offset: 2px;
   }
   .field-note,
@@ -442,19 +442,19 @@
     margin: 0;
     font-size: 11px;
     letter-spacing: 0.06em;
-    color: #a8a39b;
+    color: var(--muted);
     max-width: 360px;
   }
   .crop-note {
     margin: 0;
     font-size: 11px;
     letter-spacing: 0.06em;
-    color: #8a8680;
+    color: var(--muted);
     max-width: 360px;
   }
   .order-button {
-    background: #1a1a1a;
-    color: #fbfaf8;
+    background: var(--accent);
+    color: var(--on-accent);
     border: 0;
     font-size: 12px;
     letter-spacing: 0.22em;

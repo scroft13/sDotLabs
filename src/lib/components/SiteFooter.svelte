@@ -20,26 +20,26 @@
   .rule {
     width: 40px;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--accent);
   }
   h2 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 34px;
   }
   section a {
     font-size: 13px;
     letter-spacing: 0.14em;
-    color: #6f6b64;
+    color: var(--muted);
     text-decoration: none;
     border-bottom: 1px solid #c9c4bc;
     padding-bottom: 3px;
     transition: color 0.15s ease, border-bottom-color 0.15s ease;
   }
   section a:hover {
-    color: #1a1a1a;
-    border-bottom-color: #1a1a1a;
+    color: var(--ink);
+    border-bottom-color: var(--ink);
   }
   footer {
     display: flex;
@@ -49,6 +49,6 @@
   footer div {
     font-size: 11px;
     letter-spacing: 0.28em;
-    color: #a09b93;
+    color: var(--muted);
   }
 </style>

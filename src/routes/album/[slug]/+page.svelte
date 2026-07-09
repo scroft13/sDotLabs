@@ -56,15 +56,15 @@
     font-size: 11px;
     letter-spacing: 0.22em;
     text-decoration: none;
-    color: #8a8680;
+    color: var(--muted);
     transition: color 0.15s ease;
   }
   .back:hover {
-    color: #1a1a1a;
+    color: var(--ink);
   }
   h1 {
     margin: 0;
-    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-family: var(--font-display);
     font-weight: 400;
     font-size: 44px;
     letter-spacing: 0.02em;
@@ -73,13 +73,13 @@
     margin: 0;
     font-size: 13px;
     letter-spacing: 0.08em;
-    color: #6f6b64;
+    color: var(--muted);
     max-width: 560px;
   }
   .rule {
     width: 40px;
     height: 1px;
-    background: #1a1a1a;
+    background: var(--accent);
   }
   main {
     max-width: 1240px;
@@ -101,7 +101,7 @@
   }
   .empty {
     text-align: center;
-    color: #8a8680;
+    color: var(--muted);
   }
   @media (max-width: 900px) {
     .skeleton-grid {

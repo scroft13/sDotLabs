@@ -86,12 +86,12 @@
   .caption-title {
     font-size: 12px;
     letter-spacing: 0.08em;
-    color: #6f6b64;
+    color: var(--muted);
   }
   .caption-exif {
     font-family: Menlo, Consolas, monospace;
     font-size: 10px;
     letter-spacing: 0.1em;
-    color: #a8a39b;
+    color: var(--muted);
   }
 </style>
