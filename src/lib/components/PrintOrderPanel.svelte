@@ -283,6 +283,11 @@
           </button>
         {/each}
       </div>
+      {#if productId === 'framed'}
+        <p class="field-note">
+          Sizes are the frame dimensions. Matted prints show a smaller image within the mat.
+        </p>
+      {/if}
       {#if sizes.some(sizeTooSmall)}
         <p class="field-note">Grayed sizes exceed this photo’s resolution.</p>
       {/if}
@@ -349,7 +354,10 @@
     justify-content: center;
   }
   .pv-frame {
-    box-shadow: 0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
+    /* Theme-contrast hairline edge (see GalleryFrame) so the frame stays
+       visible against a dark theme background. */
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent),
+      0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
   }
   .pv-mat {
     background: #fdfdfb;
@@ -368,7 +376,8 @@
     object-fit: cover;
   }
   .pv-bare {
-    box-shadow: 0 10px 24px -12px rgba(30, 25, 18, 0.3), 0 2px 5px rgba(30, 25, 18, 0.12);
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 14%, transparent),
+      0 10px 24px -12px rgba(30, 25, 18, 0.3), 0 2px 5px rgba(30, 25, 18, 0.12);
   }
   h2 {
     margin: 0;

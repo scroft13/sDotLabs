@@ -58,7 +58,12 @@
   .frame {
     background: #161616;
     padding: 16px;
-    box-shadow: 0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
+    /* First shadow is a hairline edge tinted with the theme's text color,
+       which always contrasts with the background -- so a dark frame stays
+       visible on a dark theme instead of blending in. The warm drop shadows
+       add depth on light themes (they read as nothing on dark ones). */
+    box-shadow: 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent),
+      0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
   }
   .mat {
     background: #fdfdfb;
