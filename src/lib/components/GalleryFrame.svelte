@@ -66,7 +66,9 @@
       0 24px 44px -20px rgba(30, 25, 18, 0.4), 0 3px 8px rgba(30, 25, 18, 0.16);
   }
   .mat {
-    background: #fdfdfb;
+    /* Wall display only -- themeable. The order-panel preview uses the real
+       product mat (see PrintOrderPanel .pv-mat), which is not themed. */
+    background: var(--frame-mat);
     padding: 34px;
   }
   /* Unmatted: the print sits almost flush in the frame, just a thin recessed

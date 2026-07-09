@@ -21,11 +21,16 @@
     loaded = true;
   });
 
-  const colorFields: { key: 'bg' | 'ink' | 'muted' | 'accent'; label: string; hint: string }[] = [
+  const colorFields: {
+    key: 'bg' | 'ink' | 'muted' | 'accent' | 'mat';
+    label: string;
+    hint: string;
+  }[] = [
     { key: 'bg', label: 'Background', hint: 'The page color.' },
     { key: 'ink', label: 'Text', hint: 'Headings and body text.' },
     { key: 'muted', label: 'Muted text', hint: 'Captions, labels, secondary text.' },
     { key: 'accent', label: 'Accent', hint: 'Rules, buttons, and emphasis.' },
+    { key: 'mat', label: 'Frame mat', hint: 'Mat board behind photos on the gallery wall.' },
   ];
   const fonts = Object.keys(FONT_LABELS) as FontPairing[];
 
@@ -128,11 +133,23 @@
         <p class="pv-body" style={`color: ${theme.muted}`}>
           A gallery of framed, museum-quality prints.
         </p>
+        <div
+          class="pv-frame"
+          style={`box-shadow: 0 0 0 1px color-mix(in srgb, ${theme.ink} 18%, transparent), 0 16px 30px -14px rgba(0,0,0,0.5)`}
+        >
+          <div class="pv-mat" style={`background: ${theme.mat}`}>
+            <div class="pv-photo" />
+          </div>
+        </div>
         <span class="pv-button" style={`background: ${theme.accent}; color: ${previewOnAccent}`}>
           ORDER A PRINT
         </span>
       </div>
     </div>
+    <p class="hint mat-note">
+      The mat here is the gallery-wall display only — the mat shown while ordering a print always
+      matches the real product.
+    </p>
 
     <button class="btn-primary" disabled={saving} on:click={save}>
       {saving ? 'Saving…' : 'Save theme'}
@@ -250,5 +267,21 @@
     font-size: 11px;
     letter-spacing: 0.22em;
     padding: 12px 26px;
+  }
+  .pv-frame {
+    background: #161616;
+    padding: 9px;
+    margin-top: 0.25rem;
+  }
+  .pv-mat {
+    padding: 14px;
+  }
+  .pv-photo {
+    width: 130px;
+    height: 86px;
+    background: linear-gradient(135deg, #6d8fa6, #2f3b46);
+  }
+  .mat-note {
+    margin-top: 0.6rem;
   }
 </style>

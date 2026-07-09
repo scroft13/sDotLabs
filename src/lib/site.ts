@@ -23,6 +23,10 @@ export type ThemeSettings = {
   ink: string; // primary text + headings
   muted: string; // secondary text
   accent: string; // rules, active nav, primary buttons
+  // The mat board color of the framed photos ON THE GALLERY WALL only. The
+  // order-panel preview keeps the real product mat (cream) so it represents
+  // what ships -- this is purely a display/styling choice.
+  mat: string;
   font: FontPairing;
 };
 
@@ -47,6 +51,7 @@ export const DEFAULT_THEME: ThemeSettings = {
   ink: '#1a1a1a',
   muted: '#6f6b64',
   accent: '#1a1a1a',
+  mat: '#fdfdfb',
   font: 'editorial',
 };
 
@@ -56,7 +61,14 @@ export const THEME_PRESETS: { key: string; label: string; theme: ThemeSettings }
   {
     key: 'paper',
     label: 'Paper',
-    theme: { bg: '#ffffff', ink: '#1c1c1c', muted: '#6b6b6b', accent: '#1c1c1c', font: 'classic' },
+    theme: {
+      bg: '#ffffff',
+      ink: '#1c1c1c',
+      muted: '#6b6b6b',
+      accent: '#1c1c1c',
+      mat: '#ffffff',
+      font: 'classic',
+    },
   },
   {
     key: 'charcoal',
@@ -66,6 +78,7 @@ export const THEME_PRESETS: { key: string; label: string; theme: ThemeSettings }
       ink: '#efece6',
       muted: '#a49f96',
       accent: '#d8c39a',
+      mat: '#26242c',
       font: 'editorial',
     },
   },
@@ -77,13 +90,21 @@ export const THEME_PRESETS: { key: string; label: string; theme: ThemeSettings }
       ink: '#2a2620',
       muted: '#7c7364',
       accent: '#9a6a3c',
+      mat: '#faf6ec',
       font: 'editorial',
     },
   },
   {
     key: 'ink',
     label: 'Ink & Sky',
-    theme: { bg: '#f7f8fa', ink: '#12233a', muted: '#5a6b80', accent: '#2f6db0', font: 'modern' },
+    theme: {
+      bg: '#f7f8fa',
+      ink: '#12233a',
+      muted: '#5a6b80',
+      accent: '#2f6db0',
+      mat: '#ffffff',
+      font: 'modern',
+    },
   },
 ];
 
@@ -127,6 +148,7 @@ export function toSiteSettings(data: Record<string, unknown> | undefined | null)
       ink: hexOr(theme.ink, DEFAULT_THEME.ink),
       muted: hexOr(theme.muted, DEFAULT_THEME.muted),
       accent: hexOr(theme.accent, DEFAULT_THEME.accent),
+      mat: hexOr(theme.mat, DEFAULT_THEME.mat),
       font,
     },
   };
@@ -141,6 +163,7 @@ export function themeVars(theme: ThemeSettings): Record<string, string> {
     '--muted': theme.muted,
     '--accent': theme.accent,
     '--on-accent': contrastText(theme.accent),
+    '--frame-mat': theme.mat,
     '--font-display': FONT_STACKS[theme.font].display,
     '--font-body': FONT_STACKS[theme.font].body,
   };
