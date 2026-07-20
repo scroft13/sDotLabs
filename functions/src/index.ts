@@ -13,6 +13,9 @@ import {
 import { parsePricingSettings, retailCentsFor, shippingCentsFor } from './pricing';
 import { createProdigiOrder, prodigiColorAttribute } from './prodigi';
 import { publicUrl } from './publicUrl';
+import { backfillThumbnails, resizeImage } from './resizeImage';
+
+export { backfillThumbnails, resizeImage };
 
 initializeApp();
 const db = getFirestore();

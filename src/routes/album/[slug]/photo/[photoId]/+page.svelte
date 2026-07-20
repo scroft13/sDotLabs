@@ -40,7 +40,7 @@
   $: if (browser && hasSiblings) {
     for (const neighbor of [prevPhoto, nextPhoto]) {
       const img = new Image();
-      img.src = db.photos.publicUrl(neighbor.storage_path);
+      img.src = db.photos.publicUrl(neighbor.display_path ?? neighbor.storage_path);
     }
   }
 </script>
@@ -65,7 +65,7 @@
     <div class="frame-wrap" style={`max-width: ${frameMaxWidth}`}>
       <GalleryFrame title={photo.title} exif={photo.exif}>
         <img
-          src={db.photos.publicUrl(photo.storage_path)}
+          src={db.photos.publicUrl(photo.display_path ?? photo.storage_path)}
           alt={photo.title ?? ''}
           class="skeleton-shimmer"
           style={aspect ? `aspect-ratio: ${aspect}` : undefined}

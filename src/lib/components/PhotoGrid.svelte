@@ -12,7 +12,7 @@
     <a class="photo-tile" href={`/album/${albumSlug}/photo/${photo.id}`}>
       <GalleryFrame title={photo.title ?? photo.caption} exif={photo.exif}>
         <img
-          src={db.photos.publicUrl(photo.storage_path)}
+          src={db.photos.publicUrl(photo.thumb_path ?? photo.storage_path)}
           alt={photo.title ?? ''}
           class="skeleton-shimmer"
           style={photo.width && photo.height

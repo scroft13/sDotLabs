@@ -205,7 +205,7 @@
         >
           <div class="pv-mat" style={`padding: ${geom.matPx}px`}>
             <div class="pv-open" style={`width: ${geom.openWpx}px; height: ${geom.openHpx}px`}>
-              <img src={db.photos.publicUrl(photo.storage_path)} alt="" />
+              <img src={db.photos.publicUrl(photo.display_path ?? photo.storage_path)} alt="" />
             </div>
           </div>
         </div>

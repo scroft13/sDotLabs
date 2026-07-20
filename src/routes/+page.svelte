@@ -39,7 +39,7 @@
           <GalleryFrame title={album.title} exif={album.coverExif}>
             {#if album.coverStoragePath}
               <img
-                src={db.photos.publicUrl(album.coverStoragePath)}
+                src={db.photos.publicUrl(album.coverThumbPath ?? album.coverStoragePath)}
                 alt={album.title}
                 class="skeleton-shimmer"
                 style={album.coverWidth && album.coverHeight

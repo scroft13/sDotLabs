@@ -24,6 +24,12 @@ export type Photo = {
   id: string;
   album_id: string;
   storage_path: string;
+  // Resized derivatives generated server-side after upload (see functions/
+  // resizeImage.ts) -- null until that function finishes, or for photos
+  // uploaded before it existed and not yet backfilled. Display code should
+  // fall back to storage_path when null.
+  thumb_path: string | null;
+  display_path: string | null;
   title: string | null;
   caption: string | null;
   sort_order: number;

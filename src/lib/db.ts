@@ -63,6 +63,8 @@ function toPhoto(snap: DocumentSnapshot | QueryDocumentSnapshot): Photo {
     id: snap.id,
     album_id: data.album_id,
     storage_path: data.storage_path,
+    thumb_path: data.thumb_path ?? null,
+    display_path: data.display_path ?? null,
     title: data.title ?? null,
     caption: data.caption ?? null,
     sort_order: data.sort_order ?? 0,
@@ -76,6 +78,7 @@ function toPhoto(snap: DocumentSnapshot | QueryDocumentSnapshot): Photo {
 
 type AlbumCover = {
   storagePath: string | null;
+  thumbPath: string | null;
   exif: PhotoExif | null;
   width: number | null;
   height: number | null;
@@ -88,6 +91,7 @@ async function coverForAlbum(album: Album): Promise<AlbumCover> {
       const photo = toPhoto(snap);
       return {
         storagePath: photo.storage_path,
+        thumbPath: photo.thumb_path,
         exif: photo.exif,
         width: photo.width,
         height: photo.height,
@@ -97,10 +101,13 @@ async function coverForAlbum(album: Album): Promise<AlbumCover> {
   const firstPhoto = await getDocs(
     query(photosCol, where('album_id', '==', album.id), orderBy('sort_order'), limit(1)),
   );
-  if (firstPhoto.empty) return { storagePath: null, exif: null, width: null, height: null };
+  if (firstPhoto.empty) {
+    return { storagePath: null, thumbPath: null, exif: null, width: null, height: null };
+  }
   const photo = toPhoto(firstPhoto.docs[0]);
   return {
     storagePath: photo.storage_path,
+    thumbPath: photo.thumb_path,
     exif: photo.exif,
     width: photo.width,
     height: photo.height,
@@ -128,6 +135,7 @@ export default {
     async allWithCover(): Promise<
       (Album & {
         coverStoragePath: string | null;
+        coverThumbPath: string | null;
         coverExif: PhotoExif | null;
         coverWidth: number | null;
         coverHeight: number | null;
@@ -140,6 +148,7 @@ export default {
           return {
             ...album,
             coverStoragePath: cover.storagePath,
+            coverThumbPath: cover.thumbPath,
             coverExif: cover.exif,
             coverWidth: cover.width,
             coverHeight: cover.height,

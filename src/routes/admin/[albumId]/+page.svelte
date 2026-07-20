@@ -56,7 +56,10 @@
     <ul class="photo-list">
       {#each data.photos as photo, index (photo.id)}
         <li class="card photo-item">
-          <img src={db.photos.publicUrl(photo.storage_path)} alt={photo.title ?? ''} />
+          <img
+            src={db.photos.publicUrl(photo.thumb_path ?? photo.storage_path)}
+            alt={photo.title ?? ''}
+          />
           <div class="photo-body">
             {#if editingId === photo.id}
               <PhotoEditForm {photo} on:saved={refresh} />
