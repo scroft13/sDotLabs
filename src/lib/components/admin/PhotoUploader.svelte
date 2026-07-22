@@ -10,6 +10,7 @@
 
   const dispatch = createEventDispatcher<{ uploaded: void }>();
   let uploading = false;
+  let pendingFiles: { file: File; url: string }[] = [];
 
   function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
     return new Promise((resolve) => {
@@ -53,14 +54,24 @@
     }
   }
 
-  async function handleFiles(e: Event) {
+  function handleFileSelect(e: Event) {
     const input = e.target as HTMLInputElement;
     const files = Array.from(input.files ?? []);
+    input.value = '';
     if (!files.length) return;
+    pendingFiles = files.map((file) => ({ file, url: URL.createObjectURL(file) }));
+  }
 
+  function cancelSelection() {
+    for (const { url } of pendingFiles) URL.revokeObjectURL(url);
+    pendingFiles = [];
+  }
+
+  async function confirmUpload() {
+    const files = pendingFiles;
     uploading = true;
     let sortOrder = nextSortOrder;
-    for (const file of files) {
+    for (const { file, url } of files) {
       try {
         const [storagePath, size, exif] = await Promise.all([
           db.photos.upload(albumId, file),
@@ -83,18 +94,38 @@
           dismissible: true,
           timeout: 4000,
         });
+      } finally {
+        URL.revokeObjectURL(url);
       }
     }
     uploading = false;
-    input.value = '';
+    pendingFiles = [];
     dispatch('uploaded');
   }
 </script>
 
-<label class="uploader" class:uploading>
-  <input type="file" accept="image/*" multiple on:change={handleFiles} disabled={uploading} />
-  {uploading ? 'Uploading...' : 'Upload Photos'}
-</label>
+{#if pendingFiles.length}
+  <div class="preview-panel">
+    <div class="preview-grid">
+      {#each pendingFiles as { url }}
+        <img class="preview-thumb" src={url} alt="" />
+      {/each}
+    </div>
+    <div class="preview-actions">
+      <button type="button" on:click={confirmUpload} disabled={uploading}>
+        {uploading
+          ? 'Uploading...'
+          : `Upload ${pendingFiles.length} Photo${pendingFiles.length === 1 ? '' : 's'}`}
+      </button>
+      <button type="button" on:click={cancelSelection} disabled={uploading}>Cancel</button>
+    </div>
+  </div>
+{:else}
+  <label class="uploader">
+    <input type="file" accept="image/*" multiple on:change={handleFileSelect} />
+    Upload Photos
+  </label>
+{/if}
 
 <style>
   .uploader {
@@ -104,11 +135,42 @@
     border-radius: 0.25rem;
     cursor: pointer;
   }
-  .uploader.uploading {
-    opacity: 0.6;
-    cursor: default;
-  }
   .uploader input {
     display: none;
+  }
+
+  .preview-panel {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+  .preview-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  .preview-thumb {
+    width: 96px;
+    height: 96px;
+    object-fit: cover;
+    border-radius: 0.25rem;
+    border: 1px solid #444;
+  }
+  .preview-actions {
+    display: flex;
+    gap: 0.5rem;
+  }
+  .preview-actions button {
+    padding: 0.6rem 1.2rem;
+    border-radius: 0.25rem;
+    border: 1px solid #555;
+    cursor: pointer;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+  }
+  .preview-actions button:disabled {
+    opacity: 0.6;
+    cursor: default;
   }
 </style>
