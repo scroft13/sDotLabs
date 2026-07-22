@@ -4,6 +4,7 @@
   import SiteNav from '$lib/components/SiteNav.svelte';
   import SkeletonFrame from '$lib/components/SkeletonFrame.svelte';
   import db from '$lib/db';
+  import { shimmerUntilLoaded } from '$lib/actions/shimmerUntilLoaded';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -46,6 +47,7 @@
                   ? `aspect-ratio: ${album.coverWidth} / ${album.coverHeight}`
                   : undefined}
                 loading="lazy"
+                use:shimmerUntilLoaded
               />
             {:else}
               <div class="cover-empty" />

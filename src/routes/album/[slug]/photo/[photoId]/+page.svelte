@@ -7,6 +7,7 @@
   import SiteFooter from '$lib/components/SiteFooter.svelte';
   import SiteNav from '$lib/components/SiteNav.svelte';
   import db from '$lib/db';
+  import { shimmerUntilLoaded } from '$lib/actions/shimmerUntilLoaded';
   import type { PageData } from './$types';
 
   export let data: PageData;
@@ -69,6 +70,7 @@
           alt={photo.title ?? ''}
           class="skeleton-shimmer"
           style={aspect ? `aspect-ratio: ${aspect}` : undefined}
+          use:shimmerUntilLoaded
         />
       </GalleryFrame>
     </div>

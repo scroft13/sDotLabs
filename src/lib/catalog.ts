@@ -66,13 +66,15 @@ const ASPECT_RATIOS: Record<'2:3' | '4:5' | '3:4' | '1:1' | '2:1', number> = {
   '1:1': 1,
   '2:1': 2,
 };
-const AUTO_MATCH_TOLERANCE = 0.03;
 
 // Which manufactured aspect category a photo should be sold as: the admin's
 // explicit override if set, otherwise whichever category its own dimensions
-// are closest to -- but only if that's a close-enough match to look
-// deliberate (within 3%); otherwise null, so the panel falls back to
-// offering every size with the existing border note.
+// are closest to. Always resolves to a category -- no photo is ever without
+// print sizes just because its native aspect ratio doesn't exactly match a
+// manufactured one. The order panel's own crop-note UI (see
+// PrintOrderPanel.svelte) discloses exactly how much gets trimmed to fill
+// the print when the match isn't perfect; cropping to fill is the accepted
+// tradeoff, not a reason to block the sale.
 export function resolveAspectCategory(photo: Photo): PrintAspectRatio {
   if (photo.printAspectRatio) return photo.printAspectRatio;
   if (!photo.width || !photo.height) return null;
@@ -90,5 +92,5 @@ export function resolveAspectCategory(photo: Photo): PrintAspectRatio {
       bestDiff = diff;
     }
   }
-  return bestDiff <= AUTO_MATCH_TOLERANCE ? best : null;
+  return best;
 }

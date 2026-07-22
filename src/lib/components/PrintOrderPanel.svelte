@@ -217,9 +217,9 @@
     </div>
     {#if cropFrac > 0.01}
       <p class="crop-note">
-        The mat opening on this size is a slightly different shape — about {Math.round(
+        This size crops about {Math.round(
           cropFrac * 100,
-        )}% of the photo’s {cropDimension} is trimmed to fill it, exactly as shown above.
+        )}% off the photo’s {cropDimension} to fill the frame, exactly as shown above.
       </p>
     {/if}
   {/if}

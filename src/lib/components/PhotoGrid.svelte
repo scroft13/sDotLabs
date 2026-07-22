@@ -2,6 +2,7 @@
   import GalleryFrame from '$lib/components/GalleryFrame.svelte';
   import db from '$lib/db';
   import type { Photo } from '$lib/shared';
+  import { shimmerUntilLoaded } from '$lib/actions/shimmerUntilLoaded';
 
   export let photos: Photo[];
   export let albumSlug: string;
@@ -19,6 +20,7 @@
             ? `aspect-ratio: ${photo.width} / ${photo.height}`
             : undefined}
           loading="lazy"
+          use:shimmerUntilLoaded
         />
       </GalleryFrame>
     </a>
