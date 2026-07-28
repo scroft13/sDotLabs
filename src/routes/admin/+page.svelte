@@ -2,7 +2,9 @@
   import { invalidateAll } from '$app/navigation';
   import AlbumForm from '$lib/components/admin/AlbumForm.svelte';
   import ConfirmationModal from '$lib/components/ConfirmationModal.svelte';
+  import Loading from '$lib/components/Loading.svelte';
   import db from '$lib/db';
+  import { addToast } from '$lib/stores';
   import type { Album } from '$lib/shared';
   import type { PageData } from './$types';
 
@@ -11,6 +13,8 @@
   let editingId: string | null = null;
   let creating = false;
   let deletingAlbum: Album | null = null;
+  let deletingBusy = false;
+  let moving: { id: string; direction: -1 | 1 } | null = null;
 
   $: nextSortOrder = data.albums.length ? Math.max(...data.albums.map((a) => a.sort_order)) + 1 : 0;
 
@@ -26,18 +30,44 @@
     const swapIndex = index + direction;
     if (swapIndex < 0 || swapIndex >= albums.length) return;
     [albums[index], albums[swapIndex]] = [albums[swapIndex], albums[index]];
-    // Reassign sequential sort_order values from the new order rather than
-    // swapping the two albums' existing values, since albums created before
-    // this fix all share sort_order 0 and a plain swap would be a no-op.
-    await Promise.all(albums.map((a, i) => db.albums.update(a.id, { sort_order: i })));
-    await invalidateAll();
+    moving = { id: album.id, direction };
+    try {
+      // Reassign sequential sort_order values from the new order rather than
+      // swapping the two albums' existing values, since albums created before
+      // this fix all share sort_order 0 and a plain swap would be a no-op.
+      await Promise.all(albums.map((a, i) => db.albums.update(a.id, { sort_order: i })));
+      await invalidateAll();
+    } catch (err) {
+      addToast({
+        id: Math.floor(Math.random() * 100000),
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Reorder failed',
+        dismissible: true,
+        timeout: 4000,
+      });
+    } finally {
+      moving = null;
+    }
   }
 
   async function confirmDelete() {
     if (!deletingAlbum) return;
-    await db.albums.remove(deletingAlbum.id);
-    deletingAlbum = null;
-    await invalidateAll();
+    deletingBusy = true;
+    try {
+      await db.albums.remove(deletingAlbum.id);
+      deletingAlbum = null;
+      await invalidateAll();
+    } catch (err) {
+      addToast({
+        id: Math.floor(Math.random() * 100000),
+        type: 'error',
+        message: err instanceof Error ? err.message : 'Delete failed',
+        dismissible: true,
+        timeout: 4000,
+      });
+    } finally {
+      deletingBusy = false;
+    }
   }
 </script>
 
@@ -80,16 +110,28 @@
               <div class="actions">
                 <button
                   class="btn-ghost"
-                  disabled={index === 0}
+                  disabled={index === 0 || !!moving}
                   title="Move up"
-                  on:click={() => move(album, -1)}>↑</button
+                  on:click={() => move(album, -1)}
                 >
+                  {#if moving?.id === album.id && moving.direction === -1}
+                    <span class="btn-spinner"><Loading /></span>
+                  {:else}
+                    ↑
+                  {/if}
+                </button>
                 <button
                   class="btn-ghost"
-                  disabled={index === data.albums.length - 1}
+                  disabled={index === data.albums.length - 1 || !!moving}
                   title="Move down"
-                  on:click={() => move(album, 1)}>↓</button
+                  on:click={() => move(album, 1)}
                 >
+                  {#if moving?.id === album.id && moving.direction === 1}
+                    <span class="btn-spinner"><Loading /></span>
+                  {:else}
+                    ↓
+                  {/if}
+                </button>
                 <a class="btn" href={`/admin/${album.id}`}>Photos</a>
                 <button class="btn" on:click={() => (editingId = album.id)}>Edit</button>
                 <button class="btn-danger" on:click={() => (deletingAlbum = album)}>Delete</button>
@@ -106,6 +148,7 @@
   <ConfirmationModal
     open={!!deletingAlbum}
     confirmationMessage={`Delete album "${deletingAlbum.title}"? This also deletes all of its photos.`}
+    confirming={deletingBusy}
     on:confirmed={confirmDelete}
     on:close={() => (deletingAlbum = null)}
   />
@@ -174,5 +217,10 @@
     padding: 0;
     margin-top: 0.75rem;
     font-size: 0.85rem;
+  }
+  .btn-spinner {
+    display: inline-flex;
+    width: 0.9em;
+    height: 0.9em;
   }
 </style>

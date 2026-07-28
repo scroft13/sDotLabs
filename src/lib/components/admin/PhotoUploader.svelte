@@ -11,6 +11,13 @@
   const dispatch = createEventDispatcher<{ uploaded: void }>();
   let uploading = false;
   let pendingFiles: { file: File; url: string }[] = [];
+  let uploadIndex = 0;
+  let uploadTotal = 0;
+  let uploadFraction = 0;
+
+  $: overallProgress = uploadTotal
+    ? Math.round(((uploadIndex - 1 + uploadFraction) / uploadTotal) * 100)
+    : 0;
 
   function readImageSize(file: File): Promise<{ width: number; height: number } | null> {
     return new Promise((resolve) => {
@@ -70,11 +77,16 @@
   async function confirmUpload() {
     const files = pendingFiles;
     uploading = true;
+    uploadIndex = 0;
+    uploadTotal = files.length;
+    uploadFraction = 0;
     let sortOrder = nextSortOrder;
     for (const { file, url } of files) {
+      uploadIndex++;
+      uploadFraction = 0;
       try {
         const [storagePath, size, exif] = await Promise.all([
-          db.photos.upload(albumId, file),
+          db.photos.upload(albumId, file, (fraction) => (uploadFraction = fraction)),
           readImageSize(file),
           readExif(file),
         ]);
@@ -111,6 +123,16 @@
         <img class="preview-thumb" src={url} alt="" />
       {/each}
     </div>
+    {#if uploading}
+      <div class="progress">
+        <div class="progress-track">
+          <div class="progress-fill" style="width: {overallProgress}%" />
+        </div>
+        <span class="progress-label"
+          >Uploading photo {uploadIndex} of {uploadTotal} — {overallProgress}%</span
+        >
+      </div>
+    {/if}
     <div class="preview-actions">
       <button type="button" on:click={confirmUpload} disabled={uploading}>
         {uploading
@@ -172,5 +194,29 @@
   .preview-actions button:disabled {
     opacity: 0.6;
     cursor: default;
+  }
+
+  .progress {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .progress-track {
+    flex: 1;
+    height: 0.4rem;
+    background: #333;
+    border-radius: 999px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: currentColor;
+    border-radius: 999px;
+    transition: width 0.15s ease-out;
+  }
+  .progress-label {
+    font-size: 0.85rem;
+    color: #999;
+    white-space: nowrap;
   }
 </style>

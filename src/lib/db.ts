@@ -16,7 +16,7 @@ import {
   type DocumentSnapshot,
   type QueryDocumentSnapshot,
 } from 'firebase/firestore';
-import { deleteObject, ref, uploadBytes } from 'firebase/storage';
+import { deleteObject, ref, uploadBytesResumable } from 'firebase/storage';
 import { firestore, storage, STORAGE_BUCKET } from './firebase';
 import type { PricingSettings } from './pricing';
 import { toSiteSettings, type SiteSettings } from './site';
@@ -251,12 +251,20 @@ export default {
         storagePath,
       )}?alt=media`;
     },
-    async upload(albumId: string, file: File): Promise<string> {
+    async upload(albumId: string, file: File, onProgress?: (fraction: number) => void): Promise<string> {
       const ext = file.name.split('.').pop() ?? 'jpg';
       const path = `${albumId}/${generateId()}.${ext}`;
-      await uploadBytes(ref(storage, path), file, {
+      const task = uploadBytesResumable(ref(storage, path), file, {
         contentType: file.type || 'image/jpeg',
         cacheControl: 'public, max-age=3600',
+      });
+      await new Promise<void>((resolve, reject) => {
+        task.on(
+          'state_changed',
+          (snapshot) => onProgress?.(snapshot.bytesTransferred / snapshot.totalBytes),
+          reject,
+          () => resolve(),
+        );
       });
       return path;
     },

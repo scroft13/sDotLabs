@@ -7,9 +7,11 @@
   } from '@rgossiaux/svelte-headlessui';
   import { XIcon } from '@rgossiaux/svelte-heroicons/outline';
   import { createEventDispatcher } from 'svelte';
+  import Loading from './Loading.svelte';
 
   export let confirmationMessage: string;
   export let open: boolean;
+  export let confirming = false;
   const dispatch = createEventDispatcher();
 
   function confirm() {
@@ -17,6 +19,7 @@
   }
 
   function close() {
+    if (confirming) return;
     open = false;
     setTimeout(() => {
       dispatch('close');
@@ -53,7 +56,7 @@
         class="absolute left-1/2 -translate-x-1/2 transform rounded-md modal-background overflow-y-auto mb-3 mt-64 max-w-sm px-6"
       >
         <div class="flex justify-end w-full mt-2">
-          <button on:click|preventDefault={close} class="w-10 h-9 p-2">
+          <button on:click|preventDefault={close} class="w-10 h-9 p-2" disabled={confirming}>
             <span class="sr-only">Close</span>
             <XIcon class="h-5 w-5" />
           </button>
@@ -64,10 +67,22 @@
         <p class="w=full text-center text-gray-600 mt-2 mb-4">This cannot be undone.</p>
         <div class="flex w-full justify-around mb-6 mt-10 gap-2">
           <button
-            class="rounded border-2 border-secondary dark:border-gray-500 dark:text-gray-300 text-secondary h-12 w-32 ring-secondary ring-offset-2 focus:ring-2"
-            on:click={close}>Cancel</button
+            class="rounded border-2 border-secondary dark:border-gray-500 dark:text-gray-300 text-secondary h-12 w-32 ring-secondary ring-offset-2 focus:ring-2 disabled:opacity-60"
+            on:click={close}
+            disabled={confirming}>Cancel</button
           >
-          <button class="submit-button h-12 w-32" on:click={confirm}>Confirm</button>
+          <button
+            class="bg-secondary text-white rounded shadow-button shadow-primary/30 hover:bg-primary/90 h-12 w-32 flex items-center justify-center disabled:opacity-80"
+            on:click={confirm}
+            disabled={confirming}
+          >
+            {#if confirming}
+              <span class="w-6 h-6"><Loading /></span>
+              <span class="sr-only">Working…</span>
+            {:else}
+              Confirm
+            {/if}
+          </button>
         </div>
       </div>
     </TransitionChild>
